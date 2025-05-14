@@ -1,6 +1,6 @@
 import React from 'react';
 import { GithubAuthState } from '../types';
-import { FaGithub, FaSignOutAlt } from 'react-icons/fa';
+import { FaGithub, FaSignOutAlt, FaCode } from 'react-icons/fa';
 
 interface HeaderProps {
   authState: GithubAuthState;
@@ -9,6 +9,8 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ authState, onLogin, onLogout }) => {
+  const repoUrl = "https://github.com/sukjuhong/willing-to-contribute";
+  
   return (
     <header className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 px-6 shadow-md">
       <div className="container mx-auto flex justify-between items-center">
@@ -19,7 +21,18 @@ const Header: React.FC<HeaderProps> = ({ authState, onLogin, onLogout }) => {
           </span>
         </div>
         
-        <div>
+        <div className="flex items-center space-x-4">
+          <a 
+            href={repoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center space-x-1 bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-md transition-colors text-sm"
+            title="View on GitHub"
+          >
+            <FaCode className="text-lg" />
+            <span className="hidden md:inline-block">Source</span>
+          </a>
+          
           {authState.isLoggedIn ? (
             <div className="flex items-center space-x-4">
               {authState.user && (
