@@ -1,49 +1,86 @@
-# Willing To Contribute
+# Willing to Contribute
 
-# 🧩 프로젝트 기능 정리
+A browser-based tool to collect, track, and manage beginner-friendly GitHub issues across your favorite repositories.
 
-사용자가 원하는 GitHub 레포의 초보자 친화 이슈를 수집, 추적하고 저장/공유할 수 있는 브라우저 기반 도구입니다.
+## Features
 
----
+### Repository Collection & Issue Exploration
+- Manually add GitHub repositories you want to track
+- View issues with "good first issue" labels
+- Filter issues by custom labels (easy, help wanted, etc.)
 
-## 🔧 핵심 기능
+### Storage & Sync
+- LocalStorage saving for repository list and settings
+- GitHub Gist integration for cross-device syncing
+- GitHub OAuth login support
 
-### ✅ 레포 수집 및 이슈 탐색
-- 브라우저에서 사용자가 원하는 GitHub 레포를 수동으로 추가
-- 해당 레포의 `good first issue` 라벨이 붙은 이슈 목록 불러오기
-- `good first issue` 외에 사용자가 지정한 커스텀 라벨(`easy`, `help wanted` 등)로도 필터링 가능
+### Notification Features
+- Browser notifications for new beginner-friendly issues
+- Visual "NEW" badge for highlighting recently added issues
+- Configurable notification frequency (hourly, 6-hour, daily)
 
----
+### Issue Management
+- Hide or dim closed issues
+- Sort and filter issues by age and status
 
-## 💾 저장 및 연동 기능
+## Getting Started
 
-### ✅ LocalStorage 저장
-- 사용자 설정 및 추가한 레포 목록을 브라우저에 저장
-- 재방문 시 자동 복원
+### Prerequisites
+- Node.js 18+ and npm
 
-### ✅ GitHub Gist 연동
-- GitHub OAuth 로그인 지원
-- 사용자 설정을 GitHub Gist에 저장 및 불러오기
-- 기기 간 동기화 가능
+### Installation
 
----
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/willing-to-contribute.git
+cd willing-to-contribute
+```
 
-## 🔔 알림 체크 기능
+2. Install dependencies:
+```bash
+npm install
+```
 
-### ✅ 새로운 이슈 알림
-- 저장된 레포에서 새로운 `good first issue`가 생기면 브라우저 알림 표시
-- 새로운 이슈에는 “NEW” 배지 또는 강조 표시
-- 알림 주기 설정 가능 (예: 1시간/6시간/하루 등)
+3. Create a `.env.local` file with your GitHub OAuth app credentials:
+```
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+NEXT_PUBLIC_GITHUB_CLIENT_ID=your_github_client_id
+NEXT_PUBLIC_GITHUB_REDIRECT_URI=http://localhost:3000
+```
 
-### ✅ 닫힌 이슈 필터링
-- 이미 해결된 이슈는 숨기거나 흐리게 표시
-- 오래된 이슈 자동 정리 옵션 가능
+4. Start the development server:
+```bash
+npm run dev
+```
 
----
+5. Open your browser and navigate to `http://localhost:3000`
 
-## ✨ 요약
+### GitHub OAuth App Setup
 
-- 원하는 레포의 초보자용 이슈를 쉽게 탐색하고 관리
-- 커스텀 라벨 지원으로 다양한 프로젝트 스타일 대응
-- localStorage + GitHub Gist 연동으로 설정 영구 저장
-- 새로운 이슈 발생 시 브라우저에서 실시간 알림
+To use the GitHub authentication features:
+
+1. Register a new OAuth application at [GitHub Developer Settings](https://github.com/settings/developers)
+2. Set the Authorization callback URL to `http://localhost:3000` for development
+3. Copy the Client ID and Client Secret to your `.env.local` file
+
+## Technologies Used
+
+- Next.js 15
+- React 19
+- TypeScript
+- TailwindCSS
+- Octokit (GitHub API)
+- SWR for data fetching
+- DaisyUI components
+
+## Future Improvements
+
+- Email notifications
+- More advanced issue filtering options
+- Repository categories and organization
+- Issue notes and personal tracking
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
