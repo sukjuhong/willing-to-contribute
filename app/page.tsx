@@ -6,11 +6,13 @@ import Header from './components/Header';
 import AddRepositoryForm from './components/AddRepositoryForm';
 import RepositoryItem from './components/RepositoryItem';
 import IssueItem from './components/IssueItem';
+import RepositoryIssueList from './components/RepositoryIssueList';
 import SettingsPanel from './components/SettingsPanel';
 import useGithubAuth from './hooks/useGithubAuth';
 import useSettings from './hooks/useSettings';
 import useIssues from './hooks/useIssues';
 import { checkNotificationPermission } from './utils/notifications';
+import { Repository } from './types';
 
 export default function Home() {
   // GitHub authentication state
@@ -121,6 +123,40 @@ export default function Home() {
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
   
+  // Group issues by repository
+  const issuesByRepository: Record<string, typeof sortedIssues> = {};
+  const repositoryMap: Record<string, Repository> = {};
+  
+  // Initialize repository map for quick lookup
+  settings.repositories.forEach(repo => {
+    const repoKey = `${repo.owner}/${repo.name}`;
+    repositoryMap[repoKey] = repo;
+    issuesByRepository[repoKey] = [];
+  });
+  
+  // Group issues by repository
+  sortedIssues.forEach(issue => {
+    const repoKey = `${issue.repository.owner}/${issue.repository.name}`;
+    if (!issuesByRepository[repoKey]) {
+      issuesByRepository[repoKey] = [];
+      repositoryMap[repoKey] = issue.repository;
+    }
+    issuesByRepository[repoKey].push(issue);
+  });
+  
+  // Sort repositories by the ones with new issues first, then by issue count
+  const sortedRepositoryKeys = Object.keys(issuesByRepository).sort((a, b) => {
+    const aHasNew = issuesByRepository[a].some(issue => issue.isNew);
+    const bHasNew = issuesByRepository[b].some(issue => issue.isNew);
+    
+    // First, sort by repositories with new issues
+    if (aHasNew && !bHasNew) return -1;
+    if (!aHasNew && bHasNew) return 1;
+    
+    // Then by issue count
+    return issuesByRepository[b].length - issuesByRepository[a].length;
+  });
+  
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <Header 
@@ -194,9 +230,13 @@ export default function Home() {
                 <span className="text-gray-700 dark:text-gray-300">Loading issues...</span>
               </div>
             ) : sortedIssues.length > 0 ? (
-              <div className="grid gap-4 grid-cols-1">
-                {sortedIssues.map(issue => (
-                  <IssueItem key={issue.id} issue={issue} />
+              <div className="space-y-2">
+                {sortedRepositoryKeys.map(repoKey => (
+                  <RepositoryIssueList 
+                    key={repoKey}
+                    repository={repositoryMap[repoKey]}
+                    issues={issuesByRepository[repoKey]}
+                  />
                 ))}
               </div>
             ) : (

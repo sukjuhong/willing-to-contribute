@@ -42,13 +42,120 @@ export const getRepository = async (owner: string, name: string): Promise<Reposi
       description: data.description || undefined,
       stargazersCount: data.stargazers_count,
     };
-  } catch (error) {
+  } catch (error: any) {
+    // Check specifically for rate limit errors
+    if (error?.status === 403 && error?.response?.headers?.['x-ratelimit-remaining'] === '0') {
+      const resetTime = new Date(Number(error?.response?.headers?.['x-ratelimit-reset']) * 1000);
+      console.error(`GitHub API rate limit exceeded. Reset at ${resetTime.toLocaleTimeString()}`);
+      
+      // Re-throw with rate limit information
+      throw {
+        isRateLimit: true,
+        resetTime,
+        message: `GitHub API rate limit exceeded. Reset at ${resetTime.toLocaleTimeString()}`
+      };
+    }
+    
     console.error(`Error fetching repository ${owner}/${name}:`, error);
     return null;
   }
 };
 
-// Get issues for a repository with specific labels
+// Get issues with any of the provided labels (OR operation)
+export const getIssuesWithOrLabels = async (
+  octokit: any,
+  repository: Repository,
+  labels: string[],
+  state: string
+): Promise<Issue[]> => {
+  try {
+    // Create promises for fetching issues with each label separately
+    const issuePromises = labels.map(label => 
+      octokit.issues.listForRepo({
+        owner: repository.owner,
+        repo: repository.name,
+        labels: label,
+        state,
+        per_page: 100,
+      })
+    );
+    
+    // Execute all promises in parallel
+    const responses = await Promise.all(issuePromises);
+    
+    // Extract data from responses
+    const issuesArrays = responses.map(response => response.data);
+    
+    // Track processed issues by ID to avoid duplicates
+    const uniqueIssues = new Map<number, any>();
+    
+    // Flatten and deduplicate issues
+    issuesArrays.forEach(issues => {
+      issues.forEach((issue: any) => {
+        uniqueIssues.set(issue.id, issue);
+      });
+    });
+    
+    // Convert to array
+    const allIssues = Array.from(uniqueIssues.values());
+    
+    console.log(`Found ${allIssues.length} unique issues for ${repository.owner}/${repository.name} with labels: ${labels.join(', ')}`);
+    return processIssueData(allIssues, repository);
+  } catch (error: any) {
+    // Check specifically for rate limit errors
+    if (error?.status === 403 && error?.response?.headers?.['x-ratelimit-remaining'] === '0') {
+      const resetTime = new Date(Number(error?.response?.headers?.['x-ratelimit-reset']) * 1000);
+      console.error(`GitHub API rate limit exceeded. Reset at ${resetTime.toLocaleTimeString()}`);
+      
+      // Re-throw with rate limit information
+      throw {
+        isRateLimit: true,
+        resetTime,
+        message: `GitHub API rate limit exceeded. Reset at ${resetTime.toLocaleTimeString()}`
+      };
+    }
+    
+    console.error(`Error fetching issues for ${repository.owner}/${repository.name}:`, error);
+    return [];
+  }
+};
+
+// Helper function to process GitHub API data into our Issue type
+const processIssueData = (data: any[], repository: Repository): Issue[] => {
+  return data.map(issue => {
+    // Convert GitHub API label objects to our Label type
+    const issueLabels: Label[] = (issue.labels as any[]).map(label => {
+      if (typeof label === 'string') {
+        return {
+          id: label,
+          name: label,
+          color: 'gray',
+        };
+      } else {
+        return {
+          id: String(label.id),
+          name: label.name || '',
+          color: label.color || 'gray',
+        };
+      }
+    });
+    
+    return {
+      id: issue.id.toString(),
+      number: issue.number,
+      title: issue.title,
+      url: issue.html_url,
+      body: issue.body || undefined,
+      labels: issueLabels,
+      createdAt: issue.created_at,
+      updatedAt: issue.updated_at,
+      state: issue.state as 'open' | 'closed',
+      repository,
+    };
+  });
+};
+
+// Refactored getIssues to use the new function
 export const getIssues = async (
   repository: Repository, 
   labels: string[],
@@ -57,48 +164,18 @@ export const getIssues = async (
   try {
     const octokit = getOctokit();
     const state = hideClosedIssues ? 'open' : 'all';
-    const labelsString = labels.join(',');
     
-    const { data } = await octokit.issues.listForRepo({
-      owner: repository.owner,
-      repo: repository.name,
-      labels: labelsString,
-      state,
-      per_page: 100,
-    });
+    if (labels.length === 0) {
+      return [];
+    }
     
-    return data.map(issue => {
-      // Convert GitHub API label objects to our Label type
-      const issueLabels: Label[] = (issue.labels as any[]).map(label => {
-        if (typeof label === 'string') {
-          return {
-            id: label,
-            name: label,
-            color: 'gray',
-          };
-        } else {
-          return {
-            id: String(label.id),
-            name: label.name || '',
-            color: label.color || 'gray',
-          };
-        }
-      });
-      
-      return {
-        id: issue.id.toString(),
-        number: issue.number,
-        title: issue.title,
-        url: issue.html_url,
-        body: issue.body || undefined,
-        labels: issueLabels,
-        createdAt: issue.created_at,
-        updatedAt: issue.updated_at,
-        state: issue.state as 'open' | 'closed',
-        repository,
-      };
-    });
-  } catch (error) {
+    return getIssuesWithOrLabels(octokit, repository, labels, state);
+  } catch (error: any) {
+    // Pass through rate limit errors
+    if (error.isRateLimit) {
+      throw error;
+    }
+    
     console.error(`Error fetching issues for ${repository.owner}/${repository.name}:`, error);
     return [];
   }
@@ -130,7 +207,7 @@ export const saveSettingsToGist = async (content: string): Promise<string | null
           },
         },
       });
-      return data.id;
+      return data.id ?? null;
     } else {
       // Create new gist
       const { data } = await octokit.gists.create({
@@ -142,7 +219,7 @@ export const saveSettingsToGist = async (content: string): Promise<string | null
           },
         },
       });
-      return data.id;
+      return data.id ?? null;
     }
   } catch (error) {
     console.error('Error saving settings to GitHub Gist:', error);

@@ -120,9 +120,17 @@ const useSettings = (isLoggedIn: boolean) => {
       await saveUserSettings(newSettings);
       
       return true;
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error adding repository:', err);
-      setError(err instanceof Error ? err.message : 'Failed to add repository');
+      
+      // Handle rate limit errors
+      if (err.isRateLimit) {
+        const formattedTime = err.resetTime.toLocaleTimeString();
+        setError(`GitHub API 사용 한도를 초과했습니다. ${formattedTime}에 다시 시도해주세요.`);
+      } else {
+        setError(err instanceof Error ? err.message : 'Failed to add repository');
+      }
+      
       return false;
     }
   }, [settings, saveUserSettings]);
