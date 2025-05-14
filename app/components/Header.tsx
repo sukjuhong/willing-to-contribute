@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { GithubAuthState } from '../types';
 import { FaGithub, FaSignOutAlt, FaCode } from 'react-icons/fa';
 
@@ -9,8 +10,8 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ authState, onLogin, onLogout }) => {
-  const repoUrl = "https://github.com/sukjuhong/willing-to-contribute";
-  
+  const repoUrl = 'https://github.com/sukjuhong/willing-to-contribute';
+
   return (
     <header className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 px-6 shadow-md">
       <div className="container mx-auto flex justify-between items-center">
@@ -20,9 +21,9 @@ const Header: React.FC<HeaderProps> = ({ authState, onLogin, onLogout }) => {
             BETA
           </span>
         </div>
-        
+
         <div className="flex items-center space-x-4">
-          <a 
+          <a
             href={repoUrl}
             target="_blank"
             rel="noopener noreferrer"
@@ -32,16 +33,20 @@ const Header: React.FC<HeaderProps> = ({ authState, onLogin, onLogout }) => {
             <FaCode className="text-lg" />
             <span className="hidden md:inline-block">Source</span>
           </a>
-          
+
           {authState.isLoggedIn ? (
             <div className="flex items-center space-x-4">
               {authState.user && (
                 <div className="flex items-center space-x-2">
-                  <img 
-                    src={authState.user.avatarUrl} 
-                    alt={`${authState.user.login}'s avatar`} 
-                    className="w-8 h-8 rounded-full"
-                  />
+                  <div className="relative w-8 h-8 rounded-full overflow-hidden">
+                    <Image
+                      src={authState.user.avatarUrl}
+                      alt={`${authState.user.login}'s avatar`}
+                      width={32}
+                      height={32}
+                      className="rounded-full"
+                    />
+                  </div>
                   <span className="text-sm font-medium hidden md:inline-block">
                     {authState.user.login}
                   </span>
@@ -70,4 +75,4 @@ const Header: React.FC<HeaderProps> = ({ authState, onLogin, onLogout }) => {
   );
 };
 
-export default Header; 
+export default Header;

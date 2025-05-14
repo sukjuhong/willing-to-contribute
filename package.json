@@ -2,11 +2,13 @@
   "name": "willing-to-contribute",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prepare": "husky"
   },
   "dependencies": {
     "@octokit/rest": "^21.1.1",
@@ -23,8 +25,12 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9",
+    "eslint": "^9.26.0",
     "eslint-config-next": "15.3.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.0.0",
+    "markdownlint-cli": "^0.44.0",
+    "prettier": "3.5.3",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

@@ -4,7 +4,9 @@ import { FaCog, FaRegBell, FaSave, FaSpinner } from 'react-icons/fa';
 
 interface SettingsPanelProps {
   settings: UserSettings;
-  onUpdateFrequency: (frequency: 'hourly' | '6hours' | 'daily' | 'never') => Promise<boolean>;
+  onUpdateFrequency: (
+    frequency: 'hourly' | '6hours' | 'daily' | 'never',
+  ) => Promise<boolean>;
   onToggleHideClosedIssues: (hide: boolean) => Promise<boolean>;
   onToggleCustomLabel: (label: string, add: boolean) => Promise<boolean>;
   disabled?: boolean;
@@ -27,7 +29,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
     try {
       const value = e.target.value as 'hourly' | '6hours' | 'daily' | 'never';
       await onUpdateFrequency(value);
-    } catch (err) {
+    } catch {
       setError('Failed to update notification frequency');
     } finally {
       setLoading(false);
@@ -39,8 +41,10 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
     setError(null);
     try {
       await onToggleHideClosedIssues(e.target.checked);
-    } catch (err) {
-      setError('Failed to update hide closed issues setting');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError('Failed to update hide closed issues setting');
+      }
     } finally {
       setLoading(false);
     }
@@ -49,7 +53,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
   const handleAddCustomLabel = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newLabel.trim()) return;
-    
+
     setLoading(true);
     setError(null);
     try {
@@ -57,7 +61,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
       if (success) {
         setNewLabel('');
       }
-    } catch (err) {
+    } catch {
       setError('Failed to add custom label');
     } finally {
       setLoading(false);
@@ -69,7 +73,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
     setError(null);
     try {
       await onToggleCustomLabel(label, false);
-    } catch (err) {
+    } catch {
       setError('Failed to remove custom label');
     } finally {
       setLoading(false);
@@ -80,9 +84,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
       <div className="flex items-center mb-4">
         <FaCog className="text-indigo-600 dark:text-indigo-400 mr-2" />
-        <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-          Settings
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Settings</h3>
       </div>
 
       {error && (
@@ -136,7 +138,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             Custom Labels
           </label>
           <div className="flex flex-wrap gap-2 mb-2">
-            {settings.customLabels.map((label) => (
+            {settings.customLabels.map(label => (
               <span
                 key={label}
                 className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300"
@@ -148,8 +150,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                   disabled={disabled || loading}
                   className="ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full text-indigo-400 hover:bg-indigo-200 hover:text-indigo-700 focus:outline-none"
                 >
-                  <span className="sr-only">Remove {label} label</span>
-                  ×
+                  <span className="sr-only">Remove {label} label</span>×
                 </button>
               </span>
             ))}
@@ -158,7 +159,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             <input
               type="text"
               value={newLabel}
-              onChange={(e) => setNewLabel(e.target.value)}
+              onChange={e => setNewLabel(e.target.value)}
               placeholder="Add a custom label..."
               disabled={disabled || loading}
               className="block w-full px-3 py-2 border border-gray-300 rounded-l-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
@@ -176,7 +177,8 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             </button>
           </form>
           <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-            Add custom labels to filter issues (e.g., "help wanted", "easy", "beginner")
+            Add custom labels to filter issues (e.g., &quot;help wanted&quot;,
+            &quot;easy&quot;, &quot;beginner&quot;)
           </p>
         </div>
       </div>
@@ -184,4 +186,4 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
   );
 };
 
-export default SettingsPanel; 
+export default SettingsPanel;
