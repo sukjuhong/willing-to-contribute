@@ -1,0 +1,71 @@
+{
+  "common": {
+    "welcome": "Willing to Contribute",
+    "description": "Find and contribute to open source projects that match your interests",
+    "search": "Search",
+    "language": "Language",
+    "logout": "Logout",
+    "loginWithGithub": "Login with GitHub",
+    "viewOnGithub": "View on GitHub",
+    "removeRepository": "Remove repository",
+    "refresh": "Refresh",
+    "loadingIssues": "Loading issues...",
+    "loadingRepositories": "Loading repositories...",
+    "note": "Note",
+    "new": "NEW",
+    "viewIssue": "View Issue",
+    "viewRepo": "View Repo",
+    "issues": "issues",
+    "adding": "Adding..."
+  },
+  "navigation": {
+    "home": "Home",
+    "projects": "Projects",
+    "about": "About"
+  },
+  "tabs": {
+    "issues": "Issues",
+    "repositories": "Repositories",
+    "settings": "Settings"
+  },
+  "settings": {
+    "beginnerFriendlyIssues": "Beginner-Friendly Issues",
+    "trackedRepositories": "Tracked Repositories",
+    "preferences": "Preferences",
+    "addRepository": "Add Repository",
+    "repositoryPlaceholder": "owner/repository",
+    "add": "Add",
+    "remove": "Remove",
+    "noRepositories": "No repositories added",
+    "addRepositoriesToStart": "Add repositories to start tracking issues",
+    "settingsSavedLocally": "Your settings are currently saved locally in your browser",
+    "toSyncSettings": "to sync your settings across devices",
+    "title": "Settings",
+    "notificationFrequency": "Notification Frequency",
+    "frequency": {
+      "hourly": "Hourly",
+      "every6Hours": "Every 6 hours",
+      "daily": "Daily",
+      "never": "Never"
+    },
+    "hideClosedIssues": "Hide closed issues",
+    "customLabels": "Custom Labels",
+    "removeLabel": "Remove {label} label",
+    "addCustomLabel": "Add a custom label...",
+    "customLabelsDescription": "Add custom labels to filter issues (e.g., \"help wanted\", \"easy\", \"beginner\")"
+  },
+  "repository": {
+    "addRepository": "Add Repository",
+    "githubUrlOrOwnerName": "GitHub Repository URL or owner/name",
+    "urlPlaceholder": "https://github.com/owner/repo or owner/repo",
+    "monitorDescription": "Enter a GitHub repository URL to monitor for beginner-friendly issues."
+  },
+  "errors": {
+    "enterRepositoryUrl": "Please enter a repository URL",
+    "failedToAddRepository": "Failed to add repository",
+    "failedToUpdateNotificationFrequency": "Failed to update notification frequency",
+    "failedToUpdateHideClosedIssues": "Failed to update hide closed issues setting",
+    "failedToAddCustomLabel": "Failed to add custom label",
+    "failedToRemoveCustomLabel": "Failed to remove custom label"
+  }
+}

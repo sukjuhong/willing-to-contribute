@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { UserSettings } from '../types';
 import { FaCog, FaRegBell, FaSave, FaSpinner } from 'react-icons/fa';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface SettingsPanelProps {
   settings: UserSettings;
@@ -19,6 +20,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
   onToggleCustomLabel,
   disabled = false,
 }) => {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [newLabel, setNewLabel] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -30,7 +32,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
       const value = e.target.value as 'hourly' | '6hours' | 'daily' | 'never';
       await onUpdateFrequency(value);
     } catch {
-      setError('Failed to update notification frequency');
+      setError(t('errors.failedToUpdateNotificationFrequency'));
     } finally {
       setLoading(false);
     }
@@ -43,7 +45,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
       await onToggleHideClosedIssues(e.target.checked);
     } catch (error: unknown) {
       if (error instanceof Error) {
-        setError('Failed to update hide closed issues setting');
+        setError(t('errors.failedToUpdateHideClosedIssues'));
       }
     } finally {
       setLoading(false);
@@ -62,7 +64,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
         setNewLabel('');
       }
     } catch {
-      setError('Failed to add custom label');
+      setError(t('errors.failedToAddCustomLabel'));
     } finally {
       setLoading(false);
     }
@@ -74,7 +76,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
     try {
       await onToggleCustomLabel(label, false);
     } catch {
-      setError('Failed to remove custom label');
+      setError(t('errors.failedToRemoveCustomLabel'));
     } finally {
       setLoading(false);
     }
@@ -84,7 +86,9 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
       <div className="flex items-center mb-4">
         <FaCog className="text-indigo-600 dark:text-indigo-400 mr-2" />
-        <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Settings</h3>
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+          {t('settings.title')}
+        </h3>
       </div>
 
       {error && (
@@ -96,7 +100,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Notification Frequency
+            {t('settings.notificationFrequency')}
           </label>
           <div className="flex items-center">
             <FaRegBell className="text-gray-400 mr-2" />
@@ -106,10 +110,10 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
               disabled={disabled || loading}
               className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             >
-              <option value="hourly">Hourly</option>
-              <option value="6hours">Every 6 hours</option>
-              <option value="daily">Daily</option>
-              <option value="never">Never</option>
+              <option value="hourly">{t('settings.frequency.hourly')}</option>
+              <option value="6hours">{t('settings.frequency.every6Hours')}</option>
+              <option value="daily">{t('settings.frequency.daily')}</option>
+              <option value="never">{t('settings.frequency.never')}</option>
             </select>
           </div>
         </div>
@@ -128,14 +132,14 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
               htmlFor="hideClosedIssues"
               className="ml-2 block text-sm text-gray-700 dark:text-gray-300"
             >
-              Hide closed issues
+              {t('settings.hideClosedIssues')}
             </label>
           </div>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Custom Labels
+            {t('settings.customLabels')}
           </label>
           <div className="flex flex-wrap gap-2 mb-2">
             {settings.customLabels.map(label => (
@@ -150,7 +154,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                   disabled={disabled || loading}
                   className="ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full text-indigo-400 hover:bg-indigo-200 hover:text-indigo-700 focus:outline-none"
                 >
-                  <span className="sr-only">Remove {label} label</span>×
+                  <span className="sr-only">{t('settings.removeLabel', { label })}</span>×
                 </button>
               </span>
             ))}
@@ -160,7 +164,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
               type="text"
               value={newLabel}
               onChange={e => setNewLabel(e.target.value)}
-              placeholder="Add a custom label..."
+              placeholder={t('settings.addCustomLabel')}
               disabled={disabled || loading}
               className="block w-full px-3 py-2 border border-gray-300 rounded-l-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             />
@@ -177,8 +181,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             </button>
           </form>
           <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-            Add custom labels to filter issues (e.g., &quot;help wanted&quot;,
-            &quot;easy&quot;, &quot;beginner&quot;)
+            {t('settings.customLabelsDescription')}
           </p>
         </div>
       </div>

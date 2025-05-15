@@ -12,8 +12,10 @@ import useSettings from './hooks/useSettings';
 import useIssues from './hooks/useIssues';
 import { checkNotificationPermission } from './utils/notifications';
 import { Repository } from './types';
+import { useTranslation } from './hooks/useTranslation';
 
 export default function Home() {
+  const { t } = useTranslation();
   // GitHub authentication state - GitHub App
   const { authState, login, logout, handleCallback } = useGithubAuth();
 
@@ -182,9 +184,9 @@ export default function Home() {
               }
               className="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
             >
-              <option value="issues">Issues</option>
-              <option value="repositories">Repositories</option>
-              <option value="settings">Settings</option>
+              <option value="issues">{t('tabs.issues')}</option>
+              <option value="repositories">{t('tabs.repositories')}</option>
+              <option value="settings">{t('tabs.settings')}</option>
             </select>
           </div>
 
@@ -203,7 +205,7 @@ export default function Home() {
                   } px-3 py-2 font-medium text-sm rounded-md`}
                   aria-current={activeTab === tab ? 'page' : undefined}
                 >
-                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                  {t(`tabs.${tab}`)}
                 </button>
               ))}
             </nav>
@@ -214,7 +216,7 @@ export default function Home() {
           <div className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                Beginner-Friendly Issues
+                {t('settings.beginnerFriendlyIssues')}
               </h2>
 
               <button
@@ -227,7 +229,7 @@ export default function Home() {
                 <FaSync
                   className={`mr-2 ${refreshing || issuesLoading ? 'animate-spin' : ''}`}
                 />
-                Refresh
+                {t('common.refresh')}
               </button>
             </div>
 
@@ -241,17 +243,17 @@ export default function Home() {
               <div className="flex justify-center items-center p-8">
                 <FaSync className="animate-spin text-indigo-600 mr-2" />
                 <span className="text-gray-700 dark:text-gray-300">
-                  Loading issues...
+                  {t('common.loadingIssues')}
                 </span>
               </div>
             ) : settings.repositories.length === 0 ? (
               <div className="text-center p-8 bg-white dark:bg-gray-800 rounded-lg shadow-md">
                 <FaGithub className="mx-auto h-12 w-12 text-gray-400" />
                 <h3 className="mt-2 text-lg font-medium text-gray-900 dark:text-white">
-                  No repositories added
+                  {t('settings.noRepositories')}
                 </h3>
                 <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                  Add repositories to start tracking issues.
+                  {t('settings.addRepositoriesToStart')}
                 </p>
               </div>
             ) : (
@@ -271,7 +273,7 @@ export default function Home() {
         {activeTab === 'repositories' && (
           <div className="space-y-6">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-              Tracked Repositories
+              {t('settings.trackedRepositories')}
             </h2>
 
             <AddRepositoryForm
@@ -289,7 +291,7 @@ export default function Home() {
               <div className="flex justify-center items-center p-8">
                 <FaSync className="animate-spin text-indigo-600 mr-2" />
                 <span className="text-gray-700 dark:text-gray-300">
-                  Loading repositories...
+                  {t('common.loadingRepositories')}
                 </span>
               </div>
             ) : settings.repositories.length > 0 ? (
@@ -306,10 +308,10 @@ export default function Home() {
               <div className="text-center p-8 bg-white dark:bg-gray-800 rounded-lg shadow-md">
                 <FaGithub className="mx-auto h-12 w-12 text-gray-400" />
                 <h3 className="mt-2 text-lg font-medium text-gray-900 dark:text-white">
-                  No repositories added
+                  {t('settings.noRepositories')}
                 </h3>
                 <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                  Add repositories to start tracking beginner-friendly issues.
+                  {t('settings.addRepositoriesToStart')}
                 </p>
               </div>
             )}
@@ -319,7 +321,7 @@ export default function Home() {
         {activeTab === 'settings' && (
           <div className="space-y-6">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-              Preferences
+              {t('settings.preferences')}
             </h2>
 
             <SettingsPanel
@@ -333,15 +335,15 @@ export default function Home() {
             {!authState.isLoggedIn && (
               <div className="p-4 bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300 rounded-md">
                 <p className="text-sm">
-                  <strong>Note:</strong> Your settings are currently saved locally in your
-                  browser.{' '}
+                  <strong>{t('common.note')}:</strong>{' '}
+                  {t('settings.settingsSavedLocally')}{' '}
                   <button
                     onClick={login}
                     className="text-indigo-600 dark:text-indigo-400 hover:underline"
                   >
-                    Log in with GitHub
+                    {t('common.loginWithGithub')}
                   </button>{' '}
-                  to sync your settings across devices.
+                  {t('settings.toSyncSettings')}
                 </p>
               </div>
             )}

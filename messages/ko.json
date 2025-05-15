@@ -1,0 +1,66 @@
+{
+  "common": {
+    "welcome": "Willing to Contribute",
+    "description": "당신의 관심사와 일치하는 오픈 소스 프로젝트를 찾고 기여하세요",
+    "search": "검색",
+    "language": "언어",
+    "logout": "로그아웃",
+    "loginWithGithub": "GitHub로 로그인",
+    "viewOnGithub": "GitHub에서 보기",
+    "removeRepository": "저장소 제거",
+    "refresh": "새로고침",
+    "loadingIssues": "이슈를 불러오는 중...",
+    "loadingRepositories": "저장소를 불러오는 중...",
+    "note": "참고",
+    "new": "새로운",
+    "viewIssue": "이슈 보기",
+    "viewRepo": "저장소 보기",
+    "issues": "이슈",
+    "adding": "추가 중..."
+  },
+  "tabs": {
+    "issues": "이슈",
+    "repositories": "저장소",
+    "settings": "설정"
+  },
+  "settings": {
+    "beginnerFriendlyIssues": "기여하기 좋은 이슈",
+    "trackedRepositories": "등록된 저장소",
+    "preferences": "설정",
+    "addRepository": "저장소 추가",
+    "repositoryPlaceholder": "소유자/저장소",
+    "add": "추가",
+    "remove": "제거",
+    "noRepositories": "추가된 저장소가 없습니다.",
+    "addRepositoriesToStart": "기여하기 좋은 이슈를 찾기 위해 저장소를 추가하세요.",
+    "settingsSavedLocally": "현재 설정이 브라우저에 로컬로 저장되어 있습니다. 설정을 여러 기기에서 동기화하려면",
+    "toSyncSettings": "을 해주세요.",
+    "title": "설정",
+    "notificationFrequency": "알림 빈도",
+    "frequency": {
+      "hourly": "매시간",
+      "every6Hours": "6시간마다",
+      "daily": "매일",
+      "never": "알림 끄기"
+    },
+    "hideClosedIssues": "닫힌 이슈 숨기기",
+    "customLabels": "사용자 정의 라벨",
+    "removeLabel": "{label} 라벨 제거",
+    "addCustomLabel": "사용자 정의 라벨 추가...",
+    "customLabelsDescription": "이슈를 필터링할 사용자 정의 라벨을 추가하세요 (예: \"help wanted\", \"easy\", \"beginner\")"
+  },
+  "repository": {
+    "addRepository": "저장소 추가",
+    "githubUrlOrOwnerName": "GitHub 저장소 URL 또는 소유자/이름",
+    "urlPlaceholder": "https://github.com/owner/repo 또는 owner/repo",
+    "monitorDescription": "초보자 친화적인 이슈를 모니터링할 GitHub 저장소 URL을 입력하세요."
+  },
+  "errors": {
+    "enterRepositoryUrl": "저장소 URL을 입력해주세요",
+    "failedToAddRepository": "저장소 추가에 실패했습니다",
+    "failedToUpdateNotificationFrequency": "알림 빈도 업데이트에 실패했습니다",
+    "failedToUpdateHideClosedIssues": "닫힌 이슈 숨기기 설정 업데이트에 실패했습니다",
+    "failedToAddCustomLabel": "사용자 정의 라벨 추가에 실패했습니다",
+    "failedToRemoveCustomLabel": "사용자 정의 라벨 제거에 실패했습니다"
+  }
+}
