@@ -16,7 +16,8 @@
     "viewIssue": "이슈 보기",
     "viewRepo": "저장소 보기",
     "issues": "이슈",
-    "adding": "추가 중..."
+    "adding": "추가 중...",
+    "cancel": "취소"
   },
   "tabs": {
     "issues": "이슈",
@@ -47,7 +48,12 @@
     "customLabels": "사용자 정의 라벨",
     "removeLabel": "{label} 라벨 제거",
     "addCustomLabel": "사용자 정의 라벨 추가...",
-    "customLabelsDescription": "이슈를 필터링할 사용자 정의 라벨을 추가하세요 (예: \"help wanted\", \"easy\", \"beginner\")"
+    "customLabelsDescription": "이슈를 필터링할 사용자 정의 라벨을 추가하세요 (예: \"help wanted\", \"easy\", \"beginner\")",
+    "syncTitle": "저장소 동기화",
+    "syncDescription": "로컬과 GitHub Gist의 저장소 목록이 다릅니다. 어떤 저장소 목록을 유지할지 선택해주세요.",
+    "keepLocal": "로컬 저장소 유지 ({count}개)",
+    "keepGist": "Gist 저장소 유지 ({count}개)",
+    "mergeRepositories": "두 저장소 목록 병합"
   },
   "repository": {
     "addRepository": "저장소 추가",

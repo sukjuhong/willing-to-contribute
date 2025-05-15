@@ -13,6 +13,8 @@ const useSettings = (isLoggedIn: boolean) => {
   const [settings, setSettings] = useState<UserSettings>(defaultSettings);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [showSyncModal, setShowSyncModal] = useState<boolean>(false);
+  const [gistSettings, setGistSettings] = useState<UserSettings | null>(null);
 
   // Load settings on mount and when auth state changes
   useEffect(() => {
@@ -29,31 +31,47 @@ const useSettings = (isLoggedIn: boolean) => {
 
             if (gistContent) {
               // Parse gist content
-              const gistSettings = JSON.parse(gistContent) as UserSettings;
+              const parsedGistSettings = JSON.parse(gistContent) as UserSettings;
 
-              // Merge with default settings to ensure all fields exist
-              setSettings({
-                ...defaultSettings,
-                ...gistSettings,
-              });
+              // Compare local and gist repositories
+              const localRepos = localSettings.repositories;
+              const gistRepos = parsedGistSettings.repositories;
 
-              // Also save to localStorage
-              saveSettings({
-                ...defaultSettings,
-                ...gistSettings,
-              });
+              // Check if repositories are different
+              const hasDifferentRepos =
+                localRepos.length !== gistRepos.length ||
+                localRepos.some(
+                  localRepo =>
+                    !gistRepos.some(
+                      gistRepo =>
+                        gistRepo.owner === localRepo.owner &&
+                        gistRepo.name === localRepo.name,
+                    ),
+                );
 
-              setLoading(false);
-              return;
+              if (hasDifferentRepos) {
+                // Show sync modal
+                setGistSettings(parsedGistSettings);
+                setShowSyncModal(true);
+                setSettings(localSettings);
+              } else {
+                // Use gist settings if they're the same
+                setSettings(parsedGistSettings);
+                saveSettings(parsedGistSettings);
+              }
+            } else {
+              // No gist settings, use local settings
+              setSettings(localSettings);
             }
           } catch (gistError) {
             console.error('Error loading settings from Gist:', gistError);
             // Continue with local settings if Gist loading fails
+            setSettings(localSettings);
           }
+        } else {
+          // Not logged in, use local settings
+          setSettings(localSettings);
         }
-
-        // Fall back to local settings
-        setSettings(localSettings);
       } catch (err) {
         console.error('Error loading settings:', err);
         setError('Failed to load settings');
@@ -66,6 +84,52 @@ const useSettings = (isLoggedIn: boolean) => {
 
     loadUserSettings();
   }, [isLoggedIn]);
+
+  // Handle repository synchronization
+  const handleSync = useCallback(
+    async (option: 'local' | 'gist' | 'merge') => {
+      if (!gistSettings) return;
+
+      let newSettings: UserSettings;
+
+      switch (option) {
+        case 'local':
+          // Keep local repositories
+          newSettings = settings;
+          break;
+        case 'gist':
+          // Use gist repositories
+          newSettings = gistSettings;
+          break;
+        case 'merge':
+          // Merge repositories, removing duplicates
+          const mergedRepos = [...settings.repositories];
+          gistSettings.repositories.forEach(gistRepo => {
+            const exists = mergedRepos.some(
+              localRepo =>
+                localRepo.owner === gistRepo.owner && localRepo.name === gistRepo.name,
+            );
+            if (!exists) {
+              mergedRepos.push(gistRepo);
+            }
+          });
+          newSettings = {
+            ...settings,
+            repositories: mergedRepos,
+          };
+          break;
+      }
+
+      // Save the new settings
+      saveSettings(newSettings);
+      if (isLoggedIn) {
+        await saveSettingsToGist(JSON.stringify(newSettings));
+      }
+      setSettings(newSettings);
+      setShowSyncModal(false);
+    },
+    [settings, gistSettings, isLoggedIn],
+  );
 
   // Save settings to localStorage and optionally to GitHub Gist
   const saveUserSettings = useCallback(
@@ -154,29 +218,19 @@ const useSettings = (isLoggedIn: boolean) => {
   // Remove a repository
   const removeRepository = useCallback(
     async (repoId: string) => {
-      try {
-        // Filter out the repository to remove
-        const newSettings = {
-          ...settings,
-          repositories: settings.repositories.filter(repo => repo.id !== repoId),
-        };
+      const newSettings = {
+        ...settings,
+        repositories: settings.repositories.filter(repo => repo.id !== repoId),
+      };
 
-        // Save settings
-        await saveUserSettings(newSettings);
-
-        return true;
-      } catch (err) {
-        console.error('Error removing repository:', err);
-        setError('Failed to remove repository');
-        return false;
-      }
+      await saveUserSettings(newSettings);
     },
     [settings, saveUserSettings],
   );
 
   // Update notification frequency
   const updateNotificationFrequency = useCallback(
-    async (frequency: 'hourly' | '6hours' | 'daily' | 'never') => {
+    async (frequency: 'hourly' | '6hours' | 'daily' | 'never'): Promise<boolean> => {
       try {
         const newSettings = {
           ...settings,
@@ -184,7 +238,6 @@ const useSettings = (isLoggedIn: boolean) => {
         };
 
         await saveUserSettings(newSettings);
-
         return true;
       } catch (err) {
         console.error('Error updating notification frequency:', err);
@@ -195,27 +248,18 @@ const useSettings = (isLoggedIn: boolean) => {
     [settings, saveUserSettings],
   );
 
-  // Add or remove a custom label
+  // Toggle custom label
   const toggleCustomLabel = useCallback(
-    async (label: string, add: boolean) => {
+    async (label: string, add: boolean): Promise<boolean> => {
       try {
-        let customLabels = [...settings.customLabels];
-
-        if (add && !customLabels.includes(label)) {
-          // Add label
-          customLabels.push(label);
-        } else if (!add && customLabels.includes(label)) {
-          // Remove label
-          customLabels = customLabels.filter(l => l !== label);
-        }
-
         const newSettings = {
           ...settings,
-          customLabels,
+          customLabels: add
+            ? [...settings.customLabels, label]
+            : settings.customLabels.filter(l => l !== label),
         };
 
         await saveUserSettings(newSettings);
-
         return true;
       } catch (err) {
         console.error('Error updating custom labels:', err);
@@ -226,27 +270,29 @@ const useSettings = (isLoggedIn: boolean) => {
     [settings, saveUserSettings],
   );
 
-  // Update lastCheckedAt timestamp
-  const updateLastCheckedAt = useCallback(async () => {
-    try {
-      const newSettings = {
-        ...settings,
-        lastCheckedAt: new Date().toISOString(),
-      };
+  // Update last checked timestamp
+  const updateLastCheckedAt = useCallback(
+    async (timestamp: Date): Promise<boolean> => {
+      try {
+        const newSettings = {
+          ...settings,
+          lastCheckedAt: timestamp.toISOString(),
+        };
 
-      await saveUserSettings(newSettings);
+        await saveUserSettings(newSettings);
+        return true;
+      } catch (err) {
+        console.error('Error updating last checked timestamp:', err);
+        setError('Failed to update last checked timestamp');
+        return false;
+      }
+    },
+    [settings, saveUserSettings],
+  );
 
-      return true;
-    } catch (err) {
-      console.error('Error updating last checked timestamp:', err);
-      setError('Failed to update last checked timestamp');
-      return false;
-    }
-  }, [settings, saveUserSettings]);
-
-  // Toggle hide closed issues setting
+  // Toggle hide closed issues
   const toggleHideClosedIssues = useCallback(
-    async (hide: boolean) => {
+    async (hide: boolean): Promise<boolean> => {
       try {
         const newSettings = {
           ...settings,
@@ -254,7 +300,6 @@ const useSettings = (isLoggedIn: boolean) => {
         };
 
         await saveUserSettings(newSettings);
-
         return true;
       } catch (err) {
         console.error('Error updating hide closed issues setting:', err);
@@ -269,12 +314,16 @@ const useSettings = (isLoggedIn: boolean) => {
     settings,
     loading,
     error,
+    showSyncModal,
+    setShowSyncModal,
+    handleSync,
     addRepository,
     removeRepository,
     updateNotificationFrequency,
     toggleCustomLabel,
     updateLastCheckedAt,
     toggleHideClosedIssues,
+    gistSettings,
   };
 };
 

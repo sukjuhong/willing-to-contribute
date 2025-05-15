@@ -7,6 +7,7 @@ import AddRepositoryForm from './components/AddRepositoryForm';
 import RepositoryItem from './components/RepositoryItem';
 import RepositoryIssueList from './components/RepositoryIssueList';
 import SettingsPanel from './components/SettingsPanel';
+import SyncModal from './components/SyncModal';
 import useGithubAuth from './hooks/useGithubAuth';
 import useSettings from './hooks/useSettings';
 import useIssues from './hooks/useIssues';
@@ -24,12 +25,16 @@ export default function Home() {
     settings,
     loading: settingsLoading,
     error: settingsError,
+    showSyncModal,
+    setShowSyncModal,
+    handleSync,
     addRepository,
     removeRepository,
     updateNotificationFrequency,
     toggleCustomLabel,
     updateLastCheckedAt,
     toggleHideClosedIssues,
+    gistSettings,
   } = useSettings(authState.isLoggedIn);
 
   // Issues state
@@ -112,7 +117,7 @@ export default function Home() {
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
     await fetchIssues(false);
-    await updateLastCheckedAt();
+    await updateLastCheckedAt(new Date());
     setRefreshing(false);
   }, [fetchIssues, updateLastCheckedAt]);
 
@@ -166,12 +171,12 @@ export default function Home() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header
         authState={authState}
         onAppLogin={login}
         onLogout={logout}
-        showAppLogin={true}
+        showAppLogin={!authState.isLoggedIn}
       />
 
       <main className="container mx-auto px-4 py-8">
@@ -350,6 +355,14 @@ export default function Home() {
           </div>
         )}
       </main>
+
+      <SyncModal
+        isOpen={showSyncModal}
+        onClose={() => setShowSyncModal(false)}
+        onSync={handleSync}
+        localRepositories={settings.repositories}
+        gistRepositories={gistSettings?.repositories || []}
+      />
     </div>
   );
 }
