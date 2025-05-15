@@ -5,11 +5,17 @@ import { FaGithub, FaSignOutAlt, FaCode } from 'react-icons/fa';
 
 interface HeaderProps {
   authState: GithubAuthState;
-  onLogin: () => void;
+  onAppLogin?: () => void;
   onLogout: () => void;
+  showAppLogin?: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ authState, onLogin, onLogout }) => {
+const Header: React.FC<HeaderProps> = ({
+  authState,
+  onAppLogin,
+  onLogout,
+  showAppLogin = false,
+}) => {
   const repoUrl = 'https://github.com/sukjuhong/willing-to-contribute';
 
   return (
@@ -20,9 +26,6 @@ const Header: React.FC<HeaderProps> = ({ authState, onLogin, onLogout }) => {
           <span className="bg-white text-indigo-600 text-xs font-semibold px-2.5 py-0.5 rounded-full">
             BETA
           </span>
-        </div>
-
-        <div className="flex items-center space-x-4">
           <a
             href={repoUrl}
             target="_blank"
@@ -33,7 +36,9 @@ const Header: React.FC<HeaderProps> = ({ authState, onLogin, onLogout }) => {
             <FaCode className="text-lg" />
             <span className="hidden md:inline-block">Source</span>
           </a>
+        </div>
 
+        <div className="flex items-center space-x-4">
           {authState.isLoggedIn ? (
             <div className="flex items-center space-x-4">
               {authState.user && (
@@ -61,13 +66,17 @@ const Header: React.FC<HeaderProps> = ({ authState, onLogin, onLogout }) => {
               </button>
             </div>
           ) : (
-            <button
-              onClick={onLogin}
-              className="flex items-center space-x-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-md transition-colors"
-            >
-              <FaGithub className="text-lg" />
-              <span>Login with GitHub</span>
-            </button>
+            <div className="flex items-center space-x-2">
+              {showAppLogin && onAppLogin && (
+                <button
+                  onClick={onAppLogin}
+                  className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition-colors"
+                >
+                  <FaGithub className="text-lg" />
+                  <span>Login with GitHub</span>
+                </button>
+              )}
+            </div>
           )}
         </div>
       </div>

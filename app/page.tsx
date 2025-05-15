@@ -14,7 +14,7 @@ import { checkNotificationPermission } from './utils/notifications';
 import { Repository } from './types';
 
 export default function Home() {
-  // GitHub authentication state
+  // GitHub authentication state - GitHub App
   const { authState, login, logout, handleCallback } = useGithubAuth();
 
   // Settings state
@@ -48,14 +48,19 @@ export default function Home() {
   useEffect(() => {
     const url = new URL(window.location.href);
     const code = url.searchParams.get('code');
+    const installationId = url.searchParams.get('installation_id');
 
     if (code) {
       // Remove code from URL
       url.searchParams.delete('code');
-      window.history.replaceState({}, document.title, url.toString());
+      if (installationId) {
+        url.searchParams.delete('installation_id');
+        window.history.replaceState({}, document.title, url.toString());
+      } else {
+        window.history.replaceState({}, document.title, url.toString());
+      }
 
-      // Handle the callback
-      handleCallback(code);
+      handleCallback(code, installationId ?? undefined);
     }
   }, [handleCallback]);
 
@@ -160,7 +165,12 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      <Header authState={authState} onLogin={login} onLogout={logout} />
+      <Header
+        authState={authState}
+        onAppLogin={login}
+        onLogout={logout}
+        showAppLogin={true}
+      />
 
       <main className="container mx-auto px-4 py-8">
         <div className="mb-6">

@@ -40,9 +40,11 @@ export interface UserSettings {
 // GitHub Auth types
 export interface GithubAuthState {
   isLoggedIn: boolean;
+  isAppAuth?: boolean; // Whether authentication is via GitHub App (true) or OAuth App (false/undefined)
   token?: string;
+  installationToken?: string; // Token for GitHub App installation
   user?: {
     login: string;
     avatarUrl: string;
   };
-} 
+}
