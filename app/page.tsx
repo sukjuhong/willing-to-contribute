@@ -244,7 +244,17 @@ export default function Home() {
                   Loading issues...
                 </span>
               </div>
-            ) : sortedIssues.length > 0 ? (
+            ) : settings.repositories.length === 0 ? (
+              <div className="text-center p-8 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <FaGithub className="mx-auto h-12 w-12 text-gray-400" />
+                <h3 className="mt-2 text-lg font-medium text-gray-900 dark:text-white">
+                  No repositories added
+                </h3>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  Add repositories to start tracking issues.
+                </p>
+              </div>
+            ) : (
               <div className="space-y-2">
                 {sortedRepositoryKeys.map(repoKey => (
                   <RepositoryIssueList
@@ -253,18 +263,6 @@ export default function Home() {
                     issues={issuesByRepository[repoKey]}
                   />
                 ))}
-              </div>
-            ) : (
-              <div className="text-center p-8 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-                <FaGithub className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 text-lg font-medium text-gray-900 dark:text-white">
-                  No issues found
-                </h3>
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                  {settings.repositories.length === 0
-                    ? 'Add some repositories to start tracking issues.'
-                    : 'No issues matching your criteria found in the tracked repositories.'}
-                </p>
               </div>
             )}
           </div>
