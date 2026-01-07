@@ -11,6 +11,11 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Performance optimizations
+  compress: true,
+  poweredByHeader: false,
+  // Uncomment for Docker deployment
+  // output: 'standalone',
 };
 
 export default nextConfig;

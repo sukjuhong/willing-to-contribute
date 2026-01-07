@@ -23,12 +23,20 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
+  alternates: {
+    canonical: 'https://willing-to-contribute.vercel.app',
+    languages: {
+      'en-US': 'https://willing-to-contribute.vercel.app',
+      'ko-KR': 'https://willing-to-contribute.vercel.app?lang=ko',
+    },
+  },
   openGraph: {
     title: 'Willing to Contribute - Find Beginner-Friendly GitHub Issues',
     description:
       'Discover and contribute to beginner-friendly GitHub issues. Track repositories, get notifications, and start your open source journey.',
     type: 'website',
     locale: 'en_US',
+    alternateLocale: ['ko_KR'],
     siteName: 'Willing to Contribute',
     url: 'https://willing-to-contribute.vercel.app',
     images: [
@@ -39,6 +47,15 @@ export const metadata: Metadata = {
         alt: 'Willing to Contribute',
       },
     ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Willing to Contribute - Find Beginner-Friendly GitHub Issues',
+    description:
+      'Discover and contribute to beginner-friendly GitHub issues. Track repositories, get notifications, and start your open source journey.',
+    images: ['/og-image.png'],
+    creator: '@willing2contribute',
+    site: '@willing2contribute',
   },
   robots: {
     index: true,
@@ -57,7 +74,6 @@ export const metadata: Metadata = {
   viewport: {
     width: 'device-width',
     initialScale: 1,
-    maximumScale: 1,
   },
   category: 'technology',
 };
