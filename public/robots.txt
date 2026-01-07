@@ -1,0 +1,14 @@
+# Robots.txt for Willing to Contribute
+# https://willing-to-contribute.vercel.app
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://willing-to-contribute.vercel.app/sitemap.xml
+
+# Disallow API endpoints from crawling
+Disallow: /api/
+
+# Crawl-delay for specific bots (if needed)
+# Crawl-delay: 1

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 type Language = 'en' | 'ko';
 
@@ -25,6 +25,13 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     setLanguage(lang);
     localStorage.setItem('language', lang);
   };
+
+  // Update html lang attribute when language changes
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = language;
+    }
+  }, [language]);
 
   return (
     <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage }}>

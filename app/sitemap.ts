@@ -9,24 +9,48 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 1,
+      alternates: {
+        languages: {
+          en: baseUrl,
+          ko: `${baseUrl}?lang=ko`,
+        },
+      },
     },
     {
       url: `${baseUrl}/issues`,
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.8,
+      alternates: {
+        languages: {
+          en: `${baseUrl}/issues`,
+          ko: `${baseUrl}/issues?lang=ko`,
+        },
+      },
     },
     {
       url: `${baseUrl}/repositories`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.7,
+      alternates: {
+        languages: {
+          en: `${baseUrl}/repositories`,
+          ko: `${baseUrl}/repositories?lang=ko`,
+        },
+      },
     },
     {
       url: `${baseUrl}/settings`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.5,
+      alternates: {
+        languages: {
+          en: `${baseUrl}/settings`,
+          ko: `${baseUrl}/settings?lang=ko`,
+        },
+      },
     },
   ];
 }
