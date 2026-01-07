@@ -1,10 +1,48 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import localFont from 'next/font/local';
 import './globals.css';
 import { LanguageProvider } from './contexts/LanguageContext';
 import JsonLd from './components/JsonLd';
 
-const inter = Inter({ subsets: ['latin'] });
+const pretendard = localFont({
+  src: [
+    {
+      path: '../public/fonts/pretendard/Pretendard-Regular.woff2',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: '../public/fonts/pretendard/Pretendard-Medium.woff2',
+      weight: '500',
+      style: 'normal',
+    },
+    {
+      path: '../public/fonts/pretendard/Pretendard-SemiBold.woff2',
+      weight: '600',
+      style: 'normal',
+    },
+    {
+      path: '../public/fonts/pretendard/Pretendard-Bold.woff2',
+      weight: '700',
+      style: 'normal',
+    },
+  ],
+  variable: '--font-pretendard',
+  display: 'swap',
+  preload: true,
+  fallback: [
+    '-apple-system',
+    'BlinkMacSystemFont',
+    'system-ui',
+    'Roboto',
+    'Helvetica Neue',
+    'Segoe UI',
+    'Apple SD Gothic Neo',
+    'Noto Sans KR',
+    'Malgun Gothic',
+    'sans-serif',
+  ],
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://willing-to-contribute.vercel.app'),
@@ -84,7 +122,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <JsonLd />
       </head>
-      <body className={inter.className} suppressHydrationWarning>
+      <body className={pretendard.className} suppressHydrationWarning>
         <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>
