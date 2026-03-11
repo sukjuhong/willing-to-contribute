@@ -183,27 +183,27 @@ interface GithubIssue {
   state: 'open' | 'closed';
 }
 
+// Shared helper to convert a GitHub API label (object or string) to our Label type
+const convertLabel = (label: GithubLabel | string): Label => {
+  if (typeof label === 'string') {
+    return { id: label, name: label, color: 'gray' };
+  }
+  return {
+    id: String(label.id),
+    name: label.name || '',
+    color: label.color || 'gray',
+  };
+};
+
 // Helper function to process GitHub API data into our Issue type
 const processIssueData = (data: unknown[], repository: Repository): Issue[] => {
   return data.map(issueData => {
     const issue = issueData as GithubIssue;
 
     // Convert GitHub API label objects to our Label type
-    const issueLabels: Label[] = (issue.labels as (GithubLabel | string)[]).map(label => {
-      if (typeof label === 'string') {
-        return {
-          id: label,
-          name: label,
-          color: 'gray',
-        };
-      } else {
-        return {
-          id: String(label.id),
-          name: label.name || '',
-          color: label.color || 'gray',
-        };
-      }
-    });
+    const issueLabels: Label[] = (issue.labels as (GithubLabel | string)[]).map(
+      convertLabel,
+    );
 
     return {
       id: issue.id.toString(),
@@ -280,16 +280,9 @@ export const getRecommendedIssues = async (language?: string): Promise<Issue[]> 
       const repoName = repoUrlParts[repoUrlParts.length - 1];
       const repoOwner = repoUrlParts[repoUrlParts.length - 2];
 
-      const issueLabels: Label[] = item.labels.map(label => {
-        if (typeof label === 'string') {
-          return { id: label, name: label, color: 'gray' };
-        }
-        return {
-          id: String(label.id),
-          name: label.name || '',
-          color: label.color || 'gray',
-        };
-      });
+      const issueLabels: Label[] = (item.labels as (GithubLabel | string)[]).map(
+        convertLabel,
+      );
 
       return {
         id: item.id.toString(),

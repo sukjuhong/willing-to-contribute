@@ -120,10 +120,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, [fetchIssues, settingsLoading]);
 
-  // Fetch recommended issues on mount
+  // Fetch recommended issues on mount only (changeLanguageFilter handles re-fetch on filter change)
   useEffect(() => {
     fetchRecommendedIssues();
-  }, [fetchRecommendedIssues]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Setup periodic checks for new issues
   useEffect(() => {
