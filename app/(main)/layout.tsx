@@ -4,6 +4,7 @@ import { AppProvider, useApp } from '../contexts/AppContext';
 import Header from '../components/Header';
 import Navigation from '../components/Navigation';
 import SyncModal from '../components/SyncModal';
+import AdSidebar from '../components/AdSidebar';
 
 function MainLayoutContent({ children }: { children: React.ReactNode }) {
   const {
@@ -28,7 +29,10 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
 
       <main className="container mx-auto px-4 py-8">
         <Navigation />
-        {children}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
+          <div className="lg:col-span-3">{children}</div>
+          <AdSidebar />
+        </div>
       </main>
 
       <SyncModal
