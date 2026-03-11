@@ -129,19 +129,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         <JsonLd />
-      </head>
-      <body
-        className={`${pretendard.variable} ${jetbrainsMono.variable} font-sans`}
-        suppressHydrationWarning
-      >
+        <meta name="google-adsense-account" content="ca-pub-9157231737129938" />
         {process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID && (
           <Script
             async
             src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID}`}
             crossOrigin="anonymous"
-            strategy="afterInteractive"
+            strategy="beforeInteractive"
           />
         )}
+      </head>
+      <body
+        className={`${pretendard.variable} ${jetbrainsMono.variable} font-sans`}
+        suppressHydrationWarning
+      >
         <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>
