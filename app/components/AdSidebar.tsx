@@ -41,18 +41,27 @@ function AdUnit({ adSlot, adFormat = 'auto', fullWidthResponsive = true }: AdUni
   );
 }
 
-export default function AdSidebar() {
+interface AdSidebarProps {
+  position: 'left' | 'right';
+}
+
+export default function AdSidebar({ position }: AdSidebarProps) {
   const adSlot = process.env.NEXT_PUBLIC_ADSENSE_SLOT_ID;
 
   if (!adSlot) return null;
 
+  const positionClass =
+    position === 'left'
+      ? 'left-0 xl:left-4 2xl:left-8'
+      : 'right-0 xl:right-4 2xl:right-8';
+
   return (
-    <aside className="hidden lg:block lg:col-span-1">
-      <div className="sticky top-8 space-y-6">
-        <div className="rounded-lg bg-white p-4 shadow-md dark:bg-gray-800">
-          <p className="mb-2 text-center text-xs text-gray-400 dark:text-gray-500">AD</p>
-          <AdUnit adSlot={adSlot} />
-        </div>
+    <aside
+      className={`fixed top-1/3 hidden w-40 xl:w-44 2xl:w-52 xl:block ${positionClass}`}
+    >
+      <div className="rounded-lg bg-white p-3 shadow-md dark:bg-gray-800">
+        <p className="mb-2 text-center text-xs text-gray-400 dark:text-gray-500">AD</p>
+        <AdUnit adSlot={adSlot} />
       </div>
     </aside>
   );

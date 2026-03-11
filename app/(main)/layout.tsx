@@ -27,13 +27,14 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
         showAppLogin={!authState.isLoggedIn}
       />
 
-      <main className="container mx-auto px-4 py-8">
-        <Navigation />
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
-          <div className="lg:col-span-3">{children}</div>
-          <AdSidebar />
-        </div>
-      </main>
+      <div className="relative">
+        <AdSidebar position="left" />
+        <main className="container mx-auto px-4 py-8">
+          <Navigation />
+          {children}
+        </main>
+        <AdSidebar position="right" />
+      </div>
 
       <SyncModal
         isOpen={showSyncModal}
