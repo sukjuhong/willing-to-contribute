@@ -17,11 +17,6 @@ export default function IssuesPage() {
     issuesError,
     fetchIssues,
     updateLastCheckedAt,
-    recommendedIssues,
-    recommendedLoading,
-    recommendedError,
-    languageFilter,
-    changeLanguageFilter,
   } = useApp();
 
   const [refreshing, setRefreshing] = useState(false);
@@ -86,13 +81,7 @@ export default function IssuesPage() {
   return (
     <div className="space-y-6">
       {/* Recommended Issues Section */}
-      <RecommendedIssues
-        recommendedIssues={recommendedIssues}
-        recommendedLoading={recommendedLoading}
-        recommendedError={recommendedError}
-        languageFilter={languageFilter}
-        changeLanguageFilter={changeLanguageFilter}
-      />
+      <RecommendedIssues />
 
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-bold text-gray-100">

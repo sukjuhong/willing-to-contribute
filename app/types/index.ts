@@ -1,4 +1,11 @@
 // Repository and Issue types
+export interface MaintainerScore {
+  grade: 'A' | 'B' | 'C';
+  avgResponseTimeHours: number;
+  avgMergeTimeHours: number;
+  mergeRate: number;
+}
+
 export interface Repository {
   id: string;
   owner: string;
@@ -6,6 +13,11 @@ export interface Repository {
   url: string;
   description?: string;
   stargazersCount?: number;
+  maintainerScore?: MaintainerScore;
+  language?: string;
+  forksCount?: number;
+  openIssuesCount?: number;
+  lastPushedAt?: string;
 }
 
 export interface Label {
@@ -26,6 +38,7 @@ export interface Issue {
   state: 'open' | 'closed';
   repository: Repository;
   isNew?: boolean;
+  difficulty?: 'beginner' | 'intermediate' | 'advanced';
 }
 
 // User settings types

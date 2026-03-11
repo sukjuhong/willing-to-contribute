@@ -1,6 +1,6 @@
 import React from 'react';
 import { Issue } from '../types';
-import { FaGithub, FaClock } from 'react-icons/fa';
+import { FaGithub, FaClock, FaStar, FaCodeBranch } from 'react-icons/fa';
 import { useTranslation } from '../hooks/useTranslation';
 
 interface IssueItemProps {
@@ -29,6 +29,18 @@ const formatRelativeTime = (dateString: string): string => {
   } else {
     return date.toLocaleDateString();
   }
+};
+
+const difficultyStyles = {
+  beginner: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+  intermediate: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
+  advanced: 'bg-red-500/15 text-red-400 border-red-500/30',
+};
+
+const maintainerGradeStyles = {
+  A: 'bg-emerald-500/15 text-emerald-400',
+  B: 'bg-amber-500/15 text-amber-400',
+  C: 'bg-gray-500/15 text-gray-400',
 };
 
 const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
@@ -77,6 +89,14 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
               {issue.labels.length > 3 && (
                 <span className="text-xs text-gray-500">+{issue.labels.length - 3}</span>
               )}
+              {issue.difficulty && (
+                <span
+                  className={`text-xs px-1.5 py-0.5 rounded border ${difficultyStyles[issue.difficulty]}`}
+                  title={t('difficulty.estimated')}
+                >
+                  {t(`difficulty.${issue.difficulty}`)}
+                </span>
+              )}
             </div>
           </div>
 
@@ -107,7 +127,7 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
     >
       <div className="flex items-start">
         <div className="flex-1">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <h3 className="text-lg font-semibold text-gray-100">
               <a
                 href={issue.url}
@@ -122,6 +142,25 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
             {issue.isNew && (
               <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-mono px-2.5 py-0.5 rounded">
                 {t('common.new')}
+              </span>
+            )}
+
+            {issue.difficulty && (
+              <span
+                className={`text-xs px-2 py-0.5 rounded border ${difficultyStyles[issue.difficulty]}`}
+                title={t('difficulty.estimated')}
+              >
+                {t(`difficulty.${issue.difficulty}`)}
+              </span>
+            )}
+
+            {issue.repository.maintainerScore && (
+              <span
+                className={`text-xs px-2 py-0.5 rounded ${maintainerGradeStyles[issue.repository.maintainerScore.grade]}`}
+                title={`${t(`maintainer.grade${issue.repository.maintainerScore.grade}`)} · avg response ${issue.repository.maintainerScore.avgResponseTimeHours}h · merge rate ${Math.round(issue.repository.maintainerScore.mergeRate * 100)}%`}
+              >
+                {issue.repository.maintainerScore.grade} ·{' '}
+                {t(`maintainer.grade${issue.repository.maintainerScore.grade}`)}
               </span>
             )}
           </div>
@@ -142,12 +181,38 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
             ))}
           </div>
 
-          <div className="flex items-center mt-3 text-sm text-gray-500">
+          <div className="flex items-center mt-3 text-sm text-gray-500 flex-wrap gap-y-1">
             <div className="flex items-center mr-4">
               <span className="text-xs font-[family-name:var(--font-mono)]">
                 {issue.repository.owner}/{issue.repository.name} #{issue.number}
               </span>
             </div>
+
+            {issue.repository.stargazersCount !== undefined && (
+              <div className="flex items-center mr-3">
+                <FaStar className="mr-1 text-xs text-amber-400/70" />
+                <span className="text-xs">
+                  {issue.repository.stargazersCount.toLocaleString()}
+                </span>
+              </div>
+            )}
+
+            {issue.repository.forksCount !== undefined && (
+              <div className="flex items-center mr-3">
+                <FaCodeBranch className="mr-1 text-xs" />
+                <span className="text-xs">
+                  {issue.repository.forksCount.toLocaleString()}
+                </span>
+              </div>
+            )}
+
+            {issue.repository.lastPushedAt && (
+              <div className="flex items-center mr-4">
+                <span className="text-xs">
+                  {formatRelativeTime(issue.repository.lastPushedAt)}
+                </span>
+              </div>
+            )}
 
             <div className="flex items-center mr-4">
               <FaClock className="mr-1 text-xs" />

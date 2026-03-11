@@ -60,7 +60,10 @@
     "stars": "스타",
     "searching": "검색 중...",
     "noResults": "저장소를 찾을 수 없습니다.",
-    "add": "추가"
+    "add": "추가",
+    "loginToTrack": "로그인하여 추적",
+    "forks": "포크",
+    "lastPushed": "마지막 푸시 {date}"
   },
   "recommended": {
     "title": "추천 이슈",
@@ -69,7 +72,62 @@
     "addRepo": "추가",
     "alreadyTracked": "추가됨",
     "noIssues": "추천 이슈가 없습니다.",
-    "loading": "추천 이슈를 불러오는 중..."
+    "loading": "추천 이슈를 불러오는 중...",
+    "searchPlaceholder": "키워드로 이슈 검색...",
+    "loginToTrack": "로그인하여 추적",
+    "loadMore": "더 보기",
+    "showingCount": "{total}개 중 {count}개 표시"
+  },
+  "filters": {
+    "title": "필터",
+    "advanced": "고급 필터",
+    "language": "언어",
+    "allLanguages": "전체 언어",
+    "difficulty": "난이도",
+    "maintainerScore": "메인테이너 친절도",
+    "starsRange": "스타",
+    "forksRange": "포크",
+    "freshness": "최근 업데이트",
+    "label": "라벨",
+    "labelPlaceholder": "라벨로 필터...",
+    "clearAll": "전체 초기화",
+    "apply": "적용",
+    "starsPreset": {
+      "any": "전체",
+      "100+": "100+",
+      "500+": "500+",
+      "1k+": "1,000+",
+      "5k+": "5,000+",
+      "10k+": "10,000+"
+    },
+    "forksPreset": {
+      "any": "전체",
+      "50+": "50+",
+      "100+": "100+",
+      "500+": "500+",
+      "1k+": "1,000+"
+    },
+    "freshnessPreset": {
+      "any": "전체",
+      "1w": "지난 1주",
+      "1m": "지난 1달",
+      "3m": "지난 3달",
+      "6m": "지난 6달"
+    }
+  },
+  "difficulty": {
+    "beginner": "초급",
+    "intermediate": "중급",
+    "advanced": "고급",
+    "estimated": "추정"
+  },
+  "maintainer": {
+    "gradeA": "친절함",
+    "gradeB": "보통",
+    "gradeC": "느림",
+    "responseTime": "평균 응답: {hours}시간",
+    "mergeTime": "평균 머지: {hours}시간",
+    "mergeRate": "머지율: {rate}%"
   },
   "errors": {
     "enterRepositoryUrl": "저장소 URL을 입력해주세요",
@@ -77,6 +135,8 @@
     "failedToUpdateNotificationFrequency": "알림 빈도 업데이트에 실패했습니다",
     "failedToUpdateHideClosedIssues": "닫힌 이슈 숨기기 설정 업데이트에 실패했습니다",
     "failedToAddCustomLabel": "사용자 정의 라벨 추가에 실패했습니다",
-    "failedToRemoveCustomLabel": "사용자 정의 라벨 제거에 실패했습니다"
+    "failedToRemoveCustomLabel": "사용자 정의 라벨 제거에 실패했습니다",
+    "rateLimitExceeded": "GitHub API 요청 한도에 도달했습니다. 잠시 후 다시 시도하거나 로그인하여 한도를 늘려보세요.",
+    "rateLimitExceededLoggedIn": "GitHub API 요청 한도에 도달했습니다. 잠시 후 다시 시도해주세요."
   }
 }
