@@ -334,6 +334,55 @@ export const getRecommendedIssues = async (language?: string): Promise<Issue[]> 
   }
 };
 
+// Search GitHub repositories by query
+export const searchRepositories = async (query: string): Promise<Repository[]> => {
+  try {
+    const octokit = getOctokit();
+    const { data } = await octokit.search.repos({
+      q: query,
+      sort: 'stars',
+      order: 'desc',
+      per_page: 5,
+    });
+
+    return data.items.map(item => ({
+      id: item.id.toString(),
+      owner: item.owner?.login ?? '',
+      name: item.name,
+      url: item.html_url,
+      description: item.description || undefined,
+      stargazersCount: item.stargazers_count,
+    }));
+  } catch (error: unknown) {
+    const err = error as {
+      status?: number;
+      response?: {
+        headers?: {
+          'x-ratelimit-remaining'?: string;
+          'x-ratelimit-reset'?: string;
+        };
+      };
+    };
+
+    if (
+      err?.status === 403 &&
+      err?.response?.headers?.['x-ratelimit-remaining'] === '0'
+    ) {
+      const resetTime = new Date(
+        Number(err?.response?.headers?.['x-ratelimit-reset']) * 1000,
+      );
+      throw {
+        isRateLimit: true,
+        resetTime,
+        message: `GitHub API rate limit exceeded. Reset at ${resetTime.toLocaleTimeString()}`,
+      };
+    }
+
+    console.error('Error searching repositories:', error);
+    return [];
+  }
+};
+
 // Save settings to GitHub Gist
 export const saveSettingsToGist = async (content: string): Promise<string | null> => {
   try {

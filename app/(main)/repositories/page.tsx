@@ -8,8 +8,14 @@ import { useTranslation } from '../../hooks/useTranslation';
 
 export default function RepositoriesPage() {
   const { t } = useTranslation();
-  const { settings, settingsLoading, settingsError, addRepository, removeRepository } =
-    useApp();
+  const {
+    settings,
+    settingsLoading,
+    settingsError,
+    addRepository,
+    removeRepository,
+    authState,
+  } = useApp();
 
   return (
     <div className="space-y-6">
@@ -17,7 +23,12 @@ export default function RepositoriesPage() {
         {t('settings.trackedRepositories')}
       </h2>
 
-      <AddRepositoryForm onAddRepository={addRepository} disabled={settingsLoading} />
+      <AddRepositoryForm
+        onAddRepository={addRepository}
+        disabled={settingsLoading}
+        isLoggedIn={authState.isLoggedIn}
+        trackedRepositories={settings.repositories}
+      />
 
       {settingsError && (
         <div className="bg-red-500/10 text-red-400 border border-red-500/20 rounded-md p-4">

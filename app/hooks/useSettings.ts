@@ -13,9 +13,6 @@ const useSettings = (isLoggedIn: boolean) => {
   const [settings, setSettings] = useState<UserSettings>(defaultSettings);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [showSyncModal, setShowSyncModal] = useState<boolean>(false);
-  const [gistSettings, setGistSettings] = useState<UserSettings | null>(null);
-
   // Load settings on mount and when auth state changes
   useEffect(() => {
     const loadUserSettings = async () => {
@@ -30,52 +27,22 @@ const useSettings = (isLoggedIn: boolean) => {
             const gistContent = await loadSettingsFromGist();
 
             if (gistContent) {
-              // Parse gist content
               const parsedGistSettings = JSON.parse(gistContent) as UserSettings;
-
-              // Compare local and gist repositories
-              const localRepos = localSettings.repositories;
-              const gistRepos = parsedGistSettings.repositories;
-
-              // Check if repositories are different
-              const hasDifferentRepos =
-                localRepos.length !== gistRepos.length ||
-                localRepos.some(
-                  localRepo =>
-                    !gistRepos.some(
-                      gistRepo =>
-                        gistRepo.owner === localRepo.owner &&
-                        gistRepo.name === localRepo.name,
-                    ),
-                );
-
-              if (hasDifferentRepos) {
-                // Show sync modal
-                setGistSettings(parsedGistSettings);
-                setShowSyncModal(true);
-                setSettings(localSettings);
-              } else {
-                // Use gist settings if they're the same
-                setSettings(parsedGistSettings);
-                saveSettings(parsedGistSettings);
-              }
+              setSettings(parsedGistSettings);
+              saveSettings(parsedGistSettings);
             } else {
-              // No gist settings, use local settings
               setSettings(localSettings);
             }
           } catch (gistError) {
             console.error('Error loading settings from Gist:', gistError);
-            // Continue with local settings if Gist loading fails
             setSettings(localSettings);
           }
         } else {
-          // Not logged in, use local settings
           setSettings(localSettings);
         }
       } catch (err) {
         console.error('Error loading settings:', err);
         setError('Failed to load settings');
-        // Use default settings if all else fails
         setSettings(defaultSettings);
       } finally {
         setLoading(false);
@@ -84,52 +51,6 @@ const useSettings = (isLoggedIn: boolean) => {
 
     loadUserSettings();
   }, [isLoggedIn]);
-
-  // Handle repository synchronization
-  const handleSync = useCallback(
-    async (option: 'local' | 'gist' | 'merge') => {
-      if (!gistSettings) return;
-
-      let newSettings: UserSettings;
-
-      switch (option) {
-        case 'local':
-          // Keep local repositories
-          newSettings = settings;
-          break;
-        case 'gist':
-          // Use gist repositories
-          newSettings = gistSettings;
-          break;
-        case 'merge':
-          // Merge repositories, removing duplicates
-          const mergedRepos = [...settings.repositories];
-          gistSettings.repositories.forEach(gistRepo => {
-            const exists = mergedRepos.some(
-              localRepo =>
-                localRepo.owner === gistRepo.owner && localRepo.name === gistRepo.name,
-            );
-            if (!exists) {
-              mergedRepos.push(gistRepo);
-            }
-          });
-          newSettings = {
-            ...settings,
-            repositories: mergedRepos,
-          };
-          break;
-      }
-
-      // Save the new settings
-      saveSettings(newSettings);
-      if (isLoggedIn) {
-        await saveSettingsToGist(JSON.stringify(newSettings));
-      }
-      setSettings(newSettings);
-      setShowSyncModal(false);
-    },
-    [settings, gistSettings, isLoggedIn],
-  );
 
   // Save settings to localStorage and optionally to GitHub Gist
   const saveUserSettings = useCallback(
@@ -314,16 +235,12 @@ const useSettings = (isLoggedIn: boolean) => {
     settings,
     loading,
     error,
-    showSyncModal,
-    setShowSyncModal,
-    handleSync,
     addRepository,
     removeRepository,
     updateNotificationFrequency,
     toggleCustomLabel,
     updateLastCheckedAt,
     toggleHideClosedIssues,
-    gistSettings,
   };
 };
 

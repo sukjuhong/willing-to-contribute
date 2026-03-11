@@ -17,9 +17,6 @@ interface AppContextType {
   settings: ReturnType<typeof useSettings>['settings'];
   settingsLoading: boolean;
   settingsError: string | null;
-  showSyncModal: boolean;
-  setShowSyncModal: (show: boolean) => void;
-  handleSync: ReturnType<typeof useSettings>['handleSync'];
   addRepository: (repoUrl: string) => Promise<boolean>;
   removeRepository: (repoId: string) => Promise<void>;
   updateNotificationFrequency: ReturnType<
@@ -28,7 +25,6 @@ interface AppContextType {
   toggleCustomLabel: ReturnType<typeof useSettings>['toggleCustomLabel'];
   updateLastCheckedAt: ReturnType<typeof useSettings>['updateLastCheckedAt'];
   toggleHideClosedIssues: ReturnType<typeof useSettings>['toggleHideClosedIssues'];
-  gistSettings: ReturnType<typeof useSettings>['gistSettings'];
 
   // Issues
   issues: ReturnType<typeof useIssues>['issues'];
@@ -58,16 +54,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     settings,
     loading: settingsLoading,
     error: settingsError,
-    showSyncModal,
-    setShowSyncModal,
-    handleSync,
     addRepository,
     removeRepository,
     updateNotificationFrequency,
     toggleCustomLabel,
     updateLastCheckedAt,
     toggleHideClosedIssues,
-    gistSettings,
   } = useSettings(authState.isLoggedIn);
 
   // Issues state
@@ -163,16 +155,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     settings,
     settingsLoading,
     settingsError,
-    showSyncModal,
-    setShowSyncModal,
-    handleSync,
     addRepository,
     removeRepository,
     updateNotificationFrequency,
     toggleCustomLabel,
     updateLastCheckedAt,
     toggleHideClosedIssues,
-    gistSettings,
     issues,
     issuesLoading,
     issuesError,

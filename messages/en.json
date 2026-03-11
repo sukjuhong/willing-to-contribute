@@ -53,18 +53,19 @@
     "customLabels": "Custom Labels",
     "removeLabel": "Remove {label} label",
     "addCustomLabel": "Add custom label...",
-    "customLabelsDescription": "Add custom labels to filter issues (e.g., \"help wanted\", \"easy\", \"beginner\")",
-    "syncTitle": "Repository Sync",
-    "syncDescription": "Your local and GitHub Gist repository lists are different. Please choose which list to keep.",
-    "keepLocal": "Keep Local Repositories ({count})",
-    "keepGist": "Keep Gist Repositories ({count})",
-    "mergeRepositories": "Merge Both Lists"
+    "customLabelsDescription": "Add custom labels to filter issues (e.g., \"help wanted\", \"easy\", \"beginner\")"
   },
   "repository": {
     "addRepository": "Add Repository",
     "githubUrlOrOwnerName": "GitHub Repository URL or owner/name",
     "urlPlaceholder": "https://github.com/owner/repo or owner/repo",
-    "monitorDescription": "Enter a GitHub repository URL to monitor for beginner-friendly issues."
+    "monitorDescription": "Enter a GitHub repository URL to monitor for beginner-friendly issues.",
+    "searchPlaceholder": "Search GitHub repositories...",
+    "loginRequired": "Please log in to track repositories.",
+    "stars": "stars",
+    "searching": "Searching...",
+    "noResults": "No repositories found.",
+    "add": "Add"
   },
   "recommended": {
     "title": "Recommended Issues",
