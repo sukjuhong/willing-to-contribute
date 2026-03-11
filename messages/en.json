@@ -65,7 +65,10 @@
     "stars": "stars",
     "searching": "Searching...",
     "noResults": "No repositories found.",
-    "add": "Add"
+    "add": "Add",
+    "loginToTrack": "Login to Track",
+    "forks": "forks",
+    "lastPushed": "Last pushed {date}"
   },
   "recommended": {
     "title": "Recommended Issues",
@@ -74,7 +77,62 @@
     "addRepo": "Track",
     "alreadyTracked": "Tracked",
     "noIssues": "No recommended issues found.",
-    "loading": "Loading recommended issues..."
+    "loading": "Loading recommended issues...",
+    "searchPlaceholder": "Search issues by keyword...",
+    "loginToTrack": "Login to Track",
+    "loadMore": "Load More",
+    "showingCount": "Showing {count} of {total} issues"
+  },
+  "filters": {
+    "title": "Filters",
+    "advanced": "Advanced Filters",
+    "language": "Language",
+    "allLanguages": "All Languages",
+    "difficulty": "Difficulty",
+    "maintainerScore": "Maintainer Score",
+    "starsRange": "Stars",
+    "forksRange": "Forks",
+    "freshness": "Last Updated",
+    "label": "Label",
+    "labelPlaceholder": "Filter by label...",
+    "clearAll": "Clear All",
+    "apply": "Apply",
+    "starsPreset": {
+      "any": "Any",
+      "100+": "100+",
+      "500+": "500+",
+      "1k+": "1,000+",
+      "5k+": "5,000+",
+      "10k+": "10,000+"
+    },
+    "forksPreset": {
+      "any": "Any",
+      "50+": "50+",
+      "100+": "100+",
+      "500+": "500+",
+      "1k+": "1,000+"
+    },
+    "freshnessPreset": {
+      "any": "Any",
+      "1w": "Past Week",
+      "1m": "Past Month",
+      "3m": "Past 3 Months",
+      "6m": "Past 6 Months"
+    }
+  },
+  "difficulty": {
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced",
+    "estimated": "Estimated"
+  },
+  "maintainer": {
+    "gradeA": "Responsive",
+    "gradeB": "Moderate",
+    "gradeC": "Slow",
+    "responseTime": "Avg. response: {hours}h",
+    "mergeTime": "Avg. merge: {hours}h",
+    "mergeRate": "Merge rate: {rate}%"
   },
   "errors": {
     "enterRepositoryUrl": "Please enter a repository URL",
@@ -82,6 +140,8 @@
     "failedToUpdateNotificationFrequency": "Failed to update notification frequency",
     "failedToUpdateHideClosedIssues": "Failed to update hide closed issues setting",
     "failedToAddCustomLabel": "Failed to add custom label",
-    "failedToRemoveCustomLabel": "Failed to remove custom label"
+    "failedToRemoveCustomLabel": "Failed to remove custom label",
+    "rateLimitExceeded": "GitHub API rate limit reached. Please try again later or log in for higher limits.",
+    "rateLimitExceededLoggedIn": "GitHub API rate limit reached. Please try again later."
   }
 }
