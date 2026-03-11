@@ -3,20 +3,10 @@
 import { AppProvider, useApp } from '../contexts/AppContext';
 import Header from '../components/Header';
 import Navigation from '../components/Navigation';
-import SyncModal from '../components/SyncModal';
 import AdSidebar from '../components/AdSidebar';
 
 function MainLayoutContent({ children }: { children: React.ReactNode }) {
-  const {
-    authState,
-    login,
-    logout,
-    showSyncModal,
-    setShowSyncModal,
-    handleSync,
-    settings,
-    gistSettings,
-  } = useApp();
+  const { authState, login, logout } = useApp();
 
   return (
     <div className="min-h-screen bg-[#0d1117]">
@@ -35,14 +25,6 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
         </main>
         <AdSidebar position="right" />
       </div>
-
-      <SyncModal
-        isOpen={showSyncModal}
-        onClose={() => setShowSyncModal(false)}
-        onSync={handleSync}
-        localRepositories={settings.repositories}
-        gistRepositories={gistSettings?.repositories || []}
-      />
     </div>
   );
 }
