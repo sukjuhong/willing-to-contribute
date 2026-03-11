@@ -19,10 +19,10 @@ const RepositoryIssueList: React.FC<RepositoryIssueListProps> = ({
   const newIssuesCount = issues.filter(issue => issue.isNew).length;
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden mb-4">
+    <div className="bg-[#161b22] rounded-lg border border-gray-700 overflow-hidden mb-4">
       {/* Repository header */}
       <div
-        className="p-3 bg-gray-50 dark:bg-gray-700 flex items-center justify-between cursor-pointer border-l-4 border-indigo-500"
+        className="p-3 bg-[#21262d] flex items-center justify-between cursor-pointer border-l-2 border-cyan-500"
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center">
@@ -31,14 +31,14 @@ const RepositoryIssueList: React.FC<RepositoryIssueListProps> = ({
           ) : (
             <FaChevronRight className="text-gray-500 mr-2" />
           )}
-          <h3 className="font-medium text-gray-900 dark:text-white">
+          <h3 className="font-medium text-gray-100 font-[family-name:var(--font-mono)]">
             {repository.owner}/{repository.name}
           </h3>
-          <span className="ml-2 text-xs bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded-full">
+          <span className="ml-2 text-xs bg-gray-800 text-gray-300 border border-gray-600 px-2 py-0.5 rounded font-mono">
             {issues.length} {t('common.issues')}
           </span>
           {newIssuesCount > 0 && (
-            <span className="ml-2 text-xs bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300 px-2 py-0.5 rounded-full">
+            <span className="ml-2 text-xs bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded">
               {newIssuesCount} {t('common.new')}
             </span>
           )}
@@ -48,7 +48,7 @@ const RepositoryIssueList: React.FC<RepositoryIssueListProps> = ({
           href={`https://github.com/${repository.owner}/${repository.name}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 flex items-center text-sm"
+          className="text-cyan-400 hover:text-cyan-300 flex items-center text-sm"
           onClick={e => e.stopPropagation()}
         >
           <FaExternalLinkAlt className="mr-1 text-xs" />
@@ -58,7 +58,7 @@ const RepositoryIssueList: React.FC<RepositoryIssueListProps> = ({
 
       {/* Issues list */}
       {isExpanded && (
-        <div className="divide-y divide-gray-200 dark:divide-gray-700">
+        <div className="divide-y divide-gray-700/50">
           {issues.map(issue => (
             <div key={issue.id} className="px-2 py-1">
               <IssueItem issue={issue} compact={true} />

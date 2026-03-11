@@ -37,7 +37,7 @@ export default function LanguageSwitcher() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 px-3 py-1 text-sm rounded transition-colors hover:bg-white/10 text-white"
+        className="flex items-center space-x-2 px-3 py-1.5 text-sm rounded-md transition-colors text-gray-400 hover:text-gray-200 hover:bg-gray-800"
       >
         <FaGlobe className="w-4 h-4" />
         <span>{languages.find(lang => lang.code === language)?.name}</span>
@@ -47,7 +47,7 @@ export default function LanguageSwitcher() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-40 bg-gray-800 rounded-md shadow-lg py-1 z-10">
+        <div className="absolute right-0 mt-2 w-40 bg-[#161b22] border border-gray-700 rounded-md py-1 z-10">
           {languages.map(lang => (
             <button
               key={lang.code}
@@ -57,8 +57,8 @@ export default function LanguageSwitcher() {
               }}
               className={`w-full text-left px-4 py-2 text-sm ${
                 language === lang.code
-                  ? 'bg-white/20 text-white'
-                  : 'text-gray-300 hover:bg-white/10'
+                  ? 'bg-cyan-500/10 text-cyan-400'
+                  : 'text-gray-300 hover:bg-gray-800'
               }`}
             >
               {lang.name}

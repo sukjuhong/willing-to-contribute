@@ -13,24 +13,22 @@ export default function RepositoriesPage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+      <h2 className="text-xl font-bold text-gray-100">
         {t('settings.trackedRepositories')}
       </h2>
 
       <AddRepositoryForm onAddRepository={addRepository} disabled={settingsLoading} />
 
       {settingsError && (
-        <div className="p-4 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 rounded-md">
+        <div className="bg-red-500/10 text-red-400 border border-red-500/20 rounded-md p-4">
           {settingsError}
         </div>
       )}
 
       {settingsLoading ? (
         <div className="flex justify-center items-center p-8">
-          <FaSync className="animate-spin text-indigo-600 mr-2" />
-          <span className="text-gray-700 dark:text-gray-300">
-            {t('common.loadingRepositories')}
-          </span>
+          <FaSync className="animate-spin text-cyan-400 mr-2" />
+          <span className="text-gray-400">{t('common.loadingRepositories')}</span>
         </div>
       ) : settings.repositories.length > 0 ? (
         <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
@@ -39,12 +37,12 @@ export default function RepositoriesPage() {
           ))}
         </div>
       ) : (
-        <div className="text-center p-8 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-          <FaGithub className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-2 text-lg font-medium text-gray-900 dark:text-white">
+        <div className="text-center bg-[#161b22] border border-gray-700 rounded-lg p-8">
+          <FaGithub className="mx-auto h-12 w-12 text-gray-600" />
+          <h3 className="mt-2 text-lg font-medium text-gray-100">
             {t('settings.noRepositories')}
           </h3>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          <p className="mt-1 text-sm text-gray-500">
             {t('settings.addRepositoriesToStart')}
           </p>
         </div>
