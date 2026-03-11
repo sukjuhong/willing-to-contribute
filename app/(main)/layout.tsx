@@ -19,7 +19,7 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
   } = useApp();
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-[#0d1117]">
       <Header
         authState={authState}
         onAppLogin={login}

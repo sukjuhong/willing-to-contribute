@@ -12,22 +12,22 @@ const RepositoryItem: React.FC<RepositoryItemProps> = ({ repository, onRemove })
   const { t } = useTranslation();
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
+    <div className="bg-[#161b22] rounded-lg border border-gray-700 p-4 hover:border-gray-600 transition-colors">
       <div className="flex justify-between items-start">
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-indigo-600 dark:text-indigo-400">
+          <h3 className="text-lg font-semibold text-cyan-400 font-[family-name:var(--font-mono)]">
             {repository.owner}/{repository.name}
           </h3>
 
           {repository.description && (
-            <p className="text-gray-600 dark:text-gray-300 text-sm mt-1 line-clamp-2">
+            <p className="text-gray-400 text-sm mt-1 line-clamp-2">
               {repository.description}
             </p>
           )}
 
           <div className="flex items-center mt-3 text-sm">
             {repository.stargazersCount !== undefined && (
-              <div className="flex items-center text-amber-500 mr-4">
+              <div className="flex items-center text-amber-400 mr-4">
                 <FaStar className="mr-1" />
                 <span>{repository.stargazersCount.toLocaleString()}</span>
               </div>
@@ -37,7 +37,7 @@ const RepositoryItem: React.FC<RepositoryItemProps> = ({ repository, onRemove })
               href={repository.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors"
+              className="flex items-center text-gray-500 hover:text-cyan-400 transition-colors"
             >
               <FaGithub className="mr-1" />
               <span>{t('common.viewOnGithub')}</span>
@@ -47,7 +47,7 @@ const RepositoryItem: React.FC<RepositoryItemProps> = ({ repository, onRemove })
 
         <button
           onClick={() => onRemove(repository.id)}
-          className="text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors p-1"
+          className="text-gray-600 hover:text-red-400 transition-colors p-1"
           aria-label={t('common.removeRepository', {
             repo: `${repository.owner}/${repository.name}`,
           })}

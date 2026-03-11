@@ -83,23 +83,21 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+    <div className="bg-[#161b22] rounded-lg border border-gray-700 p-4">
       <div className="flex items-center mb-4">
-        <FaCog className="text-indigo-600 dark:text-indigo-400 mr-2" />
-        <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-          {t('settings.title')}
-        </h3>
+        <FaCog className="text-cyan-400 mr-2" />
+        <h3 className="text-lg font-semibold text-gray-100">{t('settings.title')}</h3>
       </div>
 
       {error && (
-        <div className="mb-4 p-2 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 rounded-md text-sm">
+        <div className="mb-4 bg-red-500/10 text-red-400 border border-red-500/20 rounded-md text-sm p-2">
           {error}
         </div>
       )}
 
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label className="block text-sm font-medium text-gray-300 mb-1">
             {t('settings.notificationFrequency')}
           </label>
           <div className="flex items-center">
@@ -108,7 +106,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
               value={settings.notificationFrequency}
               onChange={handleFrequencyChange}
               disabled={disabled || loading}
-              className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className="block w-full px-3 py-2 bg-[#0d1117] border border-gray-700 rounded-md text-gray-100 focus:outline-none focus:ring-cyan-500 focus:border-cyan-500"
             >
               <option value="hourly">{t('settings.frequency.hourly')}</option>
               <option value="6hours">{t('settings.frequency.every6Hours')}</option>
@@ -126,11 +124,11 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
               checked={settings.hideClosedIssues}
               onChange={handleHideClosedToggle}
               disabled={disabled || loading}
-              className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+              className="h-4 w-4 text-cyan-600 focus:ring-cyan-500 bg-[#0d1117] border-gray-600 rounded"
             />
             <label
               htmlFor="hideClosedIssues"
-              className="ml-2 block text-sm text-gray-700 dark:text-gray-300"
+              className="ml-2 block text-sm text-gray-300"
             >
               {t('settings.hideClosedIssues')}
             </label>
@@ -138,21 +136,21 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label className="block text-sm font-medium text-gray-300 mb-1">
             {t('settings.customLabels')}
           </label>
           <div className="flex flex-wrap gap-2 mb-2">
             {settings.customLabels.map(label => (
               <span
                 key={label}
-                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300"
+                className="inline-flex items-center bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-full px-2.5 py-0.5 text-xs font-medium font-[family-name:var(--font-mono)]"
               >
                 {label}
                 <button
                   type="button"
                   onClick={() => handleRemoveCustomLabel(label)}
                   disabled={disabled || loading}
-                  className="ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full text-indigo-400 hover:bg-indigo-200 hover:text-indigo-700 focus:outline-none"
+                  className="ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-cyan-500/20 hover:text-cyan-300 focus:outline-none"
                 >
                   <span className="sr-only">{t('settings.removeLabel', { label })}</span>×
                 </button>
@@ -166,12 +164,12 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
               onChange={e => setNewLabel(e.target.value)}
               placeholder={t('settings.addCustomLabel')}
               disabled={disabled || loading}
-              className="block w-full px-3 py-2 border border-gray-300 rounded-l-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className="block w-full px-3 py-2 bg-[#0d1117] border border-gray-700 text-gray-100 placeholder-gray-600 focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 rounded-l-md"
             />
             <button
               type="submit"
               disabled={disabled || loading || !newLabel.trim()}
-              className={`inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-r-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
+              className={`inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-r-md text-white bg-cyan-600 hover:bg-cyan-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 ${
                 disabled || loading || !newLabel.trim()
                   ? 'opacity-50 cursor-not-allowed'
                   : ''
@@ -180,7 +178,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
               {loading ? <FaSpinner className="animate-spin" /> : <FaSave />}
             </button>
           </form>
-          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+          <p className="mt-1 text-gray-500 text-xs">
             {t('settings.customLabelsDescription')}
           </p>
         </div>

@@ -70,20 +70,16 @@ export default function RecommendedIssues({
   };
 
   return (
-    <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-gray-800 dark:to-gray-800 rounded-lg border border-indigo-200 dark:border-gray-700">
+    <div className="bg-[#161b22] rounded-lg border border-gray-700">
       {/* Header */}
       <div
         className="flex items-center justify-between p-4 cursor-pointer"
         onClick={() => setCollapsed(!collapsed)}
       >
         <div className="flex items-center gap-2">
-          <FaStar className="text-yellow-500" />
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-            {t('recommended.title')}
-          </h3>
-          <span className="text-xs text-gray-500 dark:text-gray-400">
-            {t('recommended.description')}
-          </span>
+          <FaStar className="text-amber-400" />
+          <h3 className="text-lg font-bold text-gray-100">{t('recommended.title')}</h3>
+          <span className="text-xs text-gray-500">{t('recommended.description')}</span>
         </div>
         <div className="flex items-center gap-3">
           {!collapsed && (
@@ -94,7 +90,7 @@ export default function RecommendedIssues({
                 changeLanguageFilter(e.target.value);
               }}
               onClick={e => e.stopPropagation()}
-              className="text-sm border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 bg-white dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="text-sm bg-[#0d1117] border border-gray-700 rounded-md px-2 py-1 text-gray-200 focus:outline-none focus:ring-1 focus:ring-cyan-500"
             >
               {LANGUAGES.map(lang => (
                 <option key={lang} value={lang}>
@@ -104,9 +100,9 @@ export default function RecommendedIssues({
             </select>
           )}
           {collapsed ? (
-            <FaChevronDown className="text-gray-400" />
+            <FaChevronDown className="text-gray-500" />
           ) : (
-            <FaChevronUp className="text-gray-400" />
+            <FaChevronUp className="text-gray-500" />
           )}
         </div>
       </div>
@@ -115,20 +111,18 @@ export default function RecommendedIssues({
       {!collapsed && (
         <div className="px-4 pb-4">
           {recommendedError && (
-            <div className="p-3 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 rounded-md text-sm">
+            <div className="bg-red-500/10 text-red-400 border border-red-500/20 rounded-md text-sm p-3">
               {recommendedError}
             </div>
           )}
 
           {recommendedLoading ? (
             <div className="flex justify-center items-center p-6">
-              <FaSync className="animate-spin text-indigo-600 mr-2" />
-              <span className="text-gray-700 dark:text-gray-300 text-sm">
-                {t('recommended.loading')}
-              </span>
+              <FaSync className="animate-spin text-cyan-400 mr-2" />
+              <span className="text-gray-400 text-sm">{t('recommended.loading')}</span>
             </div>
           ) : filteredIssues.length === 0 ? (
-            <div className="text-center p-6 text-gray-500 dark:text-gray-400 text-sm">
+            <div className="text-center p-6 text-gray-500 text-sm">
               {t('recommended.noIssues')}
             </div>
           ) : (
@@ -146,12 +140,12 @@ export default function RecommendedIssues({
                     <button
                       onClick={() => handleAddRepo(issue)}
                       disabled={isTracked || isAdding}
-                      className={`flex-shrink-0 flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                      className={`flex-shrink-0 flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md transition-colors border ${
                         isTracked
-                          ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 cursor-default'
+                          ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 cursor-default'
                           : isAdding
-                            ? 'bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500 cursor-not-allowed'
-                            : 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200 dark:bg-indigo-900 dark:text-indigo-300 dark:hover:bg-indigo-800'
+                            ? 'bg-gray-800 text-gray-500 border-transparent cursor-not-allowed'
+                            : 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20 hover:bg-cyan-500/20'
                       }`}
                       title={
                         isTracked

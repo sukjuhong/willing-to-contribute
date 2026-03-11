@@ -37,24 +37,27 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
   if (compact) {
     return (
       <div
-        className={`bg-white dark:bg-gray-800 rounded p-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-l-4 ${
+        className={`bg-[#161b22] rounded p-2 hover:bg-[#21262d] transition-colors border-l-2 ${
           issue.isNew
-            ? 'border-yellow-400'
+            ? 'border-amber-400'
             : issue.state === 'open'
-              ? 'border-green-500'
-              : 'border-gray-300'
+              ? 'border-emerald-500'
+              : 'border-gray-600'
         }`}
       >
         <div className="flex items-center justify-between">
           <div className="flex-1 min-w-0">
-            <h3 className="text-sm font-medium text-gray-800 dark:text-white truncate">
+            <h3 className="text-sm font-medium text-gray-200 truncate">
               <a
                 href={issue.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                className="hover:text-cyan-400 transition-colors"
               >
-                #{issue.number} {issue.title}
+                <span className="font-[family-name:var(--font-mono)] text-gray-500">
+                  #{issue.number}
+                </span>{' '}
+                {issue.title}
               </a>
             </h3>
 
@@ -77,12 +80,12 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
             </div>
           </div>
 
-          <div className="flex items-center ml-2 text-xs text-gray-500 dark:text-gray-400">
+          <div className="flex items-center ml-2 text-xs text-gray-500">
             <span className="whitespace-nowrap">
               {formatRelativeTime(issue.createdAt)}
             </span>
             {issue.isNew && (
-              <span className="ml-1 bg-yellow-100 text-yellow-800 text-xs font-semibold px-1.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">
+              <span className="ml-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-mono px-1.5 py-0.5 rounded">
                 {t('common.new')}
               </span>
             )}
@@ -94,30 +97,30 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
 
   return (
     <div
-      className={`bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow border-l-4 ${
+      className={`bg-[#161b22] rounded-lg border border-gray-700 p-4 hover:border-gray-600 transition-colors border-l-2 ${
         issue.isNew
-          ? 'border-yellow-400'
+          ? 'border-amber-400'
           : issue.state === 'open'
-            ? 'border-green-500'
-            : 'border-gray-300'
+            ? 'border-emerald-500'
+            : 'border-gray-600'
       }`}
     >
       <div className="flex items-start">
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+            <h3 className="text-lg font-semibold text-gray-100">
               <a
                 href={issue.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                className="hover:text-cyan-400 transition-colors"
               >
                 {issue.title}
               </a>
             </h3>
 
             {issue.isNew && (
-              <span className="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300">
+              <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-mono px-2.5 py-0.5 rounded">
                 {t('common.new')}
               </span>
             )}
@@ -139,9 +142,9 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
             ))}
           </div>
 
-          <div className="flex items-center mt-3 text-sm text-gray-500 dark:text-gray-400">
+          <div className="flex items-center mt-3 text-sm text-gray-500">
             <div className="flex items-center mr-4">
-              <span className="text-xs">
+              <span className="text-xs font-[family-name:var(--font-mono)]">
                 {issue.repository.owner}/{issue.repository.name} #{issue.number}
               </span>
             </div>
@@ -155,7 +158,7 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
               href={issue.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors ml-auto text-xs"
+              className="flex items-center text-cyan-400 hover:text-cyan-300 transition-colors ml-auto text-xs"
             >
               <FaGithub className="mr-1" />
               <span>{t('common.viewIssue')}</span>

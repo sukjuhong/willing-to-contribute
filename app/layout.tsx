@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
+import { JetBrains_Mono } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
 import { LanguageProvider } from './contexts/LanguageContext';
@@ -43,6 +44,12 @@ const pretendard = localFont({
     'Malgun Gothic',
     'sans-serif',
   ],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-jetbrains-mono',
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -123,7 +130,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <JsonLd />
       </head>
-      <body className={pretendard.className} suppressHydrationWarning>
+      <body
+        className={`${pretendard.variable} ${jetbrainsMono.variable} font-sans`}
+        suppressHydrationWarning
+      >
         {process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID && (
           <Script
             async

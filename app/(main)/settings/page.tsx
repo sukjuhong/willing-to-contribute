@@ -18,9 +18,7 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-        {t('settings.preferences')}
-      </h2>
+      <h2 className="text-xl font-bold text-gray-100">{t('settings.preferences')}</h2>
 
       <SettingsPanel
         settings={settings}
@@ -31,13 +29,10 @@ export default function SettingsPage() {
       />
 
       {!authState.isLoggedIn && (
-        <div className="p-4 bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300 rounded-md">
+        <div className="bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-md p-4">
           <p className="text-sm">
             <strong>{t('common.note')}:</strong> {t('settings.settingsSavedLocally')}{' '}
-            <button
-              onClick={login}
-              className="text-indigo-600 dark:text-indigo-400 hover:underline"
-            >
+            <button onClick={login} className="text-cyan-400 hover:underline">
               {t('common.loginWithGithub')}
             </button>{' '}
             {t('settings.toSyncSettings')}
