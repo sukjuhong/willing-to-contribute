@@ -44,21 +44,21 @@ export const saveIssues = (issues: Issue[]): void => {
   if (typeof window !== 'undefined') {
     // Group issues by repository
     const repoIssues: RepositoryIssuesCache = {};
-    
+
     // Group by repository
     issues.forEach(issue => {
       const repoKey = createRepositoryKey(issue.repository);
-      
+
       if (!repoIssues[repoKey]) {
         repoIssues[repoKey] = {
           issues: [],
-          timestamp: Date.now()
+          timestamp: Date.now(),
         };
       }
-      
+
       repoIssues[repoKey].issues.push(issue);
     });
-    
+
     localStorage.setItem(ISSUES_KEY, JSON.stringify(repoIssues));
   }
 };
@@ -86,16 +86,16 @@ export const saveRepositoryIssues = (repositoryKey: string, issues: Issue[]): vo
     try {
       let repoIssues: RepositoryIssuesCache = {};
       const existingData = localStorage.getItem(ISSUES_KEY);
-      
+
       if (existingData) {
         repoIssues = JSON.parse(existingData);
       }
-      
+
       repoIssues[repositoryKey] = {
         issues: issues,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
-      
+
       localStorage.setItem(ISSUES_KEY, JSON.stringify(repoIssues));
     } catch (error) {
       console.error(`Error saving issues for repository ${repositoryKey}:`, error);
@@ -179,4 +179,45 @@ export const loadCacheTimestamp = (): number | null => {
 
 export const createRepositoryKey = (repository: Repository): string => {
   return `${repository.owner}/${repository.name}`;
-}; 
+};
+
+// Recommended issues cache
+const RECOMMENDED_ISSUES_KEY = 'willing-to-contribute-recommended-issues';
+const RECOMMENDED_CACHE_MINUTES = 30;
+
+interface RecommendedIssuesCache {
+  issues: Issue[];
+  timestamp: number;
+  language: string;
+}
+
+export const saveRecommendedIssuesCache = (issues: Issue[], language: string): void => {
+  if (typeof window !== 'undefined') {
+    const cacheKey = `${RECOMMENDED_ISSUES_KEY}-${language}`;
+    const cache: RecommendedIssuesCache = {
+      issues,
+      timestamp: Date.now(),
+      language,
+    };
+    localStorage.setItem(cacheKey, JSON.stringify(cache));
+  }
+};
+
+export const loadRecommendedIssuesCache = (language: string): Issue[] | null => {
+  if (typeof window !== 'undefined') {
+    try {
+      const cacheKey = `${RECOMMENDED_ISSUES_KEY}-${language}`;
+      const data = localStorage.getItem(cacheKey);
+      if (data) {
+        const cache: RecommendedIssuesCache = JSON.parse(data);
+        const elapsed = Date.now() - cache.timestamp;
+        if (elapsed < RECOMMENDED_CACHE_MINUTES * 60 * 1000) {
+          return cache.issues;
+        }
+      }
+    } catch (error) {
+      console.error('Error loading recommended issues cache:', error);
+    }
+  }
+  return null;
+};

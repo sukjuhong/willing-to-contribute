@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect } from 'react';
 import useGithubAuth from '../hooks/useGithubAuth';
 import useSettings from '../hooks/useSettings';
 import useIssues from '../hooks/useIssues';
+import useRecommendedIssues from '../hooks/useRecommendedIssues';
 import { checkNotificationPermission } from '../utils/notifications';
 
 interface AppContextType {
@@ -34,6 +35,16 @@ interface AppContextType {
   issuesLoading: boolean;
   issuesError: string | null;
   fetchIssues: ReturnType<typeof useIssues>['fetchIssues'];
+
+  // Recommended Issues
+  recommendedIssues: ReturnType<typeof useRecommendedIssues>['recommendedIssues'];
+  recommendedLoading: boolean;
+  recommendedError: string | null;
+  languageFilter: string;
+  changeLanguageFilter: ReturnType<typeof useRecommendedIssues>['changeLanguageFilter'];
+  fetchRecommendedIssues: ReturnType<
+    typeof useRecommendedIssues
+  >['fetchRecommendedIssues'];
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -67,6 +78,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     fetchIssues,
   } = useIssues(settings);
 
+  // Recommended issues state
+  const {
+    recommendedIssues,
+    recommendedLoading,
+    recommendedError,
+    languageFilter,
+    changeLanguageFilter,
+    fetchRecommendedIssues,
+  } = useRecommendedIssues();
+
   // Handle OAuth callback
   useEffect(() => {
     const url = new URL(window.location.href);
@@ -98,6 +119,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       fetchIssues(false);
     }
   }, [fetchIssues, settingsLoading]);
+
+  // Fetch recommended issues on mount only (changeLanguageFilter handles re-fetch on filter change)
+  useEffect(() => {
+    fetchRecommendedIssues();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Setup periodic checks for new issues
   useEffect(() => {
@@ -150,6 +177,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     issuesLoading,
     issuesError,
     fetchIssues,
+    recommendedIssues,
+    recommendedLoading,
+    recommendedError,
+    languageFilter,
+    changeLanguageFilter,
+    fetchRecommendedIssues,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

@@ -183,27 +183,27 @@ interface GithubIssue {
   state: 'open' | 'closed';
 }
 
+// Shared helper to convert a GitHub API label (object or string) to our Label type
+const convertLabel = (label: GithubLabel | string): Label => {
+  if (typeof label === 'string') {
+    return { id: label, name: label, color: 'gray' };
+  }
+  return {
+    id: String(label.id),
+    name: label.name || '',
+    color: label.color || 'gray',
+  };
+};
+
 // Helper function to process GitHub API data into our Issue type
 const processIssueData = (data: unknown[], repository: Repository): Issue[] => {
   return data.map(issueData => {
     const issue = issueData as GithubIssue;
 
     // Convert GitHub API label objects to our Label type
-    const issueLabels: Label[] = (issue.labels as (GithubLabel | string)[]).map(label => {
-      if (typeof label === 'string') {
-        return {
-          id: label,
-          name: label,
-          color: 'gray',
-        };
-      } else {
-        return {
-          id: String(label.id),
-          name: label.name || '',
-          color: label.color || 'gray',
-        };
-      }
-    });
+    const issueLabels: Label[] = (issue.labels as (GithubLabel | string)[]).map(
+      convertLabel,
+    );
 
     return {
       id: issue.id.toString(),
@@ -246,6 +246,90 @@ export const getIssues = async (
       `Error fetching issues for ${repository.owner}/${repository.name}:`,
       error,
     );
+    return [];
+  }
+};
+
+// Search for recommended issues from trending/popular repositories
+export const getRecommendedIssues = async (language?: string): Promise<Issue[]> => {
+  try {
+    const octokit = getOctokit();
+
+    // Build search query for beginner-friendly issues in popular repos
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const dateStr = thirtyDaysAgo.toISOString().split('T')[0];
+
+    let query = `is:issue is:open label:"good first issue" stars:>500 pushed:>${dateStr}`;
+    if (language && language !== 'all') {
+      query += ` language:${language}`;
+    }
+
+    const { data } = await octokit.search.issuesAndPullRequests({
+      q: query,
+      sort: 'reactions-+1',
+      order: 'desc',
+      per_page: 20,
+    });
+
+    // Convert search results to our Issue type
+    const issues: Issue[] = data.items.map(item => {
+      // Extract owner/repo from repository_url
+      // Format: https://api.github.com/repos/{owner}/{repo}
+      const repoUrlParts = item.repository_url.split('/');
+      const repoName = repoUrlParts[repoUrlParts.length - 1];
+      const repoOwner = repoUrlParts[repoUrlParts.length - 2];
+
+      const issueLabels: Label[] = (item.labels as (GithubLabel | string)[]).map(
+        convertLabel,
+      );
+
+      return {
+        id: item.id.toString(),
+        number: item.number,
+        title: item.title,
+        url: item.html_url,
+        body: item.body || undefined,
+        labels: issueLabels,
+        createdAt: item.created_at,
+        updatedAt: item.updated_at,
+        state: item.state as 'open' | 'closed',
+        repository: {
+          id: `${repoOwner}/${repoName}`,
+          owner: repoOwner,
+          name: repoName,
+          url: `https://github.com/${repoOwner}/${repoName}`,
+        },
+      };
+    });
+
+    return issues;
+  } catch (error: unknown) {
+    const err = error as {
+      status?: number;
+      response?: {
+        headers?: {
+          'x-ratelimit-remaining'?: string;
+          'x-ratelimit-reset'?: string;
+        };
+      };
+    };
+
+    if (
+      err?.status === 403 &&
+      err?.response?.headers?.['x-ratelimit-remaining'] === '0'
+    ) {
+      const resetTime = new Date(
+        Number(err?.response?.headers?.['x-ratelimit-reset']) * 1000,
+      );
+      throw {
+        isRateLimit: true,
+        resetTime,
+        message: `GitHub API rate limit exceeded. Reset at ${resetTime.toLocaleTimeString()}`,
+      };
+    }
+
+    console.error('Error fetching recommended issues:', error);
     return [];
   }
 };

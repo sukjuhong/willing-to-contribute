@@ -66,6 +66,15 @@
     "urlPlaceholder": "https://github.com/owner/repo or owner/repo",
     "monitorDescription": "Enter a GitHub repository URL to monitor for beginner-friendly issues."
   },
+  "recommended": {
+    "title": "Recommended Issues",
+    "description": "Trending repositories with beginner-friendly issues",
+    "allLanguages": "All Languages",
+    "addRepo": "Track",
+    "alreadyTracked": "Tracked",
+    "noIssues": "No recommended issues found.",
+    "loading": "Loading recommended issues..."
+  },
   "errors": {
     "enterRepositoryUrl": "Please enter a repository URL",
     "failedToAddRepository": "Failed to add repository",

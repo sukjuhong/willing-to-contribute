@@ -61,6 +61,15 @@
     "urlPlaceholder": "https://github.com/owner/repo 또는 owner/repo",
     "monitorDescription": "초보자 친화적인 이슈를 모니터링할 GitHub 저장소 URL을 입력하세요."
   },
+  "recommended": {
+    "title": "추천 이슈",
+    "description": "인기 레포지토리의 기여하기 좋은 이슈",
+    "allLanguages": "전체 언어",
+    "addRepo": "추가",
+    "alreadyTracked": "추가됨",
+    "noIssues": "추천 이슈가 없습니다.",
+    "loading": "추천 이슈를 불러오는 중..."
+  },
   "errors": {
     "enterRepositoryUrl": "저장소 URL을 입력해주세요",
     "failedToAddRepository": "저장소 추가에 실패했습니다",

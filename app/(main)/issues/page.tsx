@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import { FaSync, FaGithub } from 'react-icons/fa';
 import RepositoryIssueList from '../../components/RepositoryIssueList';
+import RecommendedIssues from '../../components/RecommendedIssues';
 import { useApp } from '../../contexts/AppContext';
 import { useTranslation } from '../../hooks/useTranslation';
 import type { Repository } from '../../types';
@@ -16,6 +17,11 @@ export default function IssuesPage() {
     issuesError,
     fetchIssues,
     updateLastCheckedAt,
+    recommendedIssues,
+    recommendedLoading,
+    recommendedError,
+    languageFilter,
+    changeLanguageFilter,
   } = useApp();
 
   const [refreshing, setRefreshing] = useState(false);
@@ -79,6 +85,15 @@ export default function IssuesPage() {
 
   return (
     <div className="space-y-6">
+      {/* Recommended Issues Section */}
+      <RecommendedIssues
+        recommendedIssues={recommendedIssues}
+        recommendedLoading={recommendedLoading}
+        recommendedError={recommendedError}
+        languageFilter={languageFilter}
+        changeLanguageFilter={changeLanguageFilter}
+      />
+
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-bold text-gray-900 dark:text-white">
           {t('settings.beginnerFriendlyIssues')}
