@@ -8,7 +8,6 @@ import {
   FaCheck,
   FaChevronDown,
   FaChevronUp,
-  FaSearch,
 } from 'react-icons/fa';
 import IssueItem from './IssueItem';
 import IssueFilters, { DEFAULT_FILTER_STATE, type FilterState } from './IssueFilters';
@@ -22,12 +21,10 @@ export default function RecommendedIssues() {
   const [collapsed, setCollapsed] = useState(false);
   const [addingRepos, setAddingRepos] = useState<Set<string>>(new Set());
 
-  // Filter & search state
+  // Filter state
   const [filters, setFilters] = useState<FilterState>({
     ...DEFAULT_FILTER_STATE,
   });
-  const [searchInput, setSearchInput] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
 
   // Data fetching state
   const [issues, setIssues] = useState<Issue[]>([]);
@@ -54,21 +51,8 @@ export default function RecommendedIssues() {
         if (filters.freshness) params.set('freshness', filters.freshness);
         if (filters.label) params.set('label', filters.label);
 
-        let res: Response;
-        if (searchQuery) {
-          params.set('page', String(currentPage));
-          const headers: HeadersInit = {};
-          if (authState.token) {
-            headers['Authorization'] = `Bearer ${authState.token}`;
-          }
-          res = await fetch(
-            `/api/search?type=issues&q=${encodeURIComponent(searchQuery)}&${params}`,
-            { headers },
-          );
-        } else {
-          params.set('page', String(currentPage));
-          res = await fetch(`/api/recommended?${params}`);
-        }
+        params.set('page', String(currentPage));
+        const res = await fetch(`/api/recommended?${params}`);
 
         if (res.status === 429) {
           throw new Error(
@@ -107,8 +91,6 @@ export default function RecommendedIssues() {
       filters.minForks,
       filters.freshness,
       filters.label,
-      searchQuery,
-      authState.token,
     ],
   );
 
@@ -129,7 +111,6 @@ export default function RecommendedIssues() {
     filters.minForks,
     filters.freshness,
     filters.label,
-    searchQuery,
   ]);
 
   const handleLoadMore = () => {
@@ -181,33 +162,6 @@ export default function RecommendedIssues() {
       {/* Content */}
       {!collapsed && (
         <div className="px-4 pb-4 space-y-3">
-          {/* Search input */}
-          <div className="flex gap-2">
-            <div className="relative flex-1">
-              <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm" />
-              <input
-                type="text"
-                value={searchInput}
-                onChange={e => setSearchInput(e.target.value)}
-                onKeyDown={e => {
-                  if (e.key === 'Enter') {
-                    setSearchQuery(searchInput);
-                  }
-                }}
-                placeholder={t('recommended.searchPlaceholder')}
-                className="w-full bg-[#0d1117] border border-gray-700 rounded-md pl-9 pr-3 py-2 text-sm text-gray-200 placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-cyan-500"
-                onClick={e => e.stopPropagation()}
-              />
-            </div>
-            <button
-              onClick={() => setSearchQuery(searchInput)}
-              disabled={loading}
-              className="px-3 py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-sm font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {t('common.search')}
-            </button>
-          </div>
-
           {/* Filters */}
           <IssueFilters filters={filters} onFilterChange={setFilters} />
 

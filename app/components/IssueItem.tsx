@@ -106,11 +106,13 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
                 </span>
               )}
             </div>
-            {/* Repo info */}
-            <div className="flex flex-wrap items-center gap-2 mt-1 text-xs text-gray-500">
-              <span className="font-[family-name:var(--font-mono)]">
-                {issue.repository.owner}/{issue.repository.name}
-              </span>
+          </div>
+
+          <div className="flex flex-col items-end ml-3 shrink-0 text-xs text-gray-500 gap-1">
+            <span className="font-[family-name:var(--font-mono)] text-gray-400">
+              {issue.repository.owner}/{issue.repository.name}
+            </span>
+            <div className="flex items-center gap-2">
               {issue.repository.stargazersCount !== undefined && (
                 <span className="inline-flex items-center gap-0.5">
                   <FaStar className="text-amber-500 text-[10px]" />
@@ -125,17 +127,16 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
               )}
               {issue.repository.language && <span>{issue.repository.language}</span>}
             </div>
-          </div>
-
-          <div className="flex items-center ml-2 text-xs text-gray-500">
-            <span className="whitespace-nowrap">
-              {formatRelativeTime(issue.createdAt)}
-            </span>
-            {issue.isNew && (
-              <span className="ml-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-mono px-1.5 py-0.5 rounded">
-                {t('common.new')}
+            <div className="flex items-center gap-1">
+              <span className="whitespace-nowrap">
+                {formatRelativeTime(issue.createdAt)}
               </span>
-            )}
+              {issue.isNew && (
+                <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-mono px-1.5 py-0.5 rounded">
+                  {t('common.new')}
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>

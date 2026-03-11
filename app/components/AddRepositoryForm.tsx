@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useCallback } from 'react';
 import { FaPlus, FaSpinner, FaStar, FaSearch, FaLock } from 'react-icons/fa';
 import { useTranslation } from '../hooks/useTranslation';
 import { useApp } from '../contexts/AppContext';
@@ -25,57 +25,44 @@ const AddRepositoryForm: React.FC<AddRepositoryFormProps> = ({
   const [searching, setSearching] = useState(false);
   const [addingId, setAddingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [rateLimited, setRateLimited] = useState(false);
 
-  useEffect(() => {
-    if (debounceTimer.current) {
-      clearTimeout(debounceTimer.current);
-    }
+  const handleSearch = useCallback(async () => {
+    if (!query.trim() || rateLimited) return;
 
-    if (!query.trim()) {
+    setSearching(true);
+    setError(null);
+    try {
+      if (isLoggedIn && authState.token) {
+        const response = await fetch(
+          `/api/search?type=repos&q=${encodeURIComponent(query.trim())}`,
+          { headers: { Authorization: `Bearer ${authState.token}` } },
+        );
+        if (response.status === 429) {
+          setError(t('errors.rateLimitExceededLoggedIn'));
+          setRateLimited(true);
+          setResults([]);
+          return;
+        }
+        const data = await response.json();
+        setResults(data.results || []);
+      } else {
+        const repos = await searchRepositories(query.trim());
+        setResults(repos);
+      }
+    } catch (err: unknown) {
+      const error = err as { isRateLimit?: boolean; message?: string };
+      if (error.isRateLimit) {
+        setError(t('errors.rateLimitExceeded'));
+        setRateLimited(true);
+      } else {
+        setError(t('errors.failedToAddRepository'));
+      }
       setResults([]);
-      return;
+    } finally {
+      setSearching(false);
     }
-
-    debounceTimer.current = setTimeout(async () => {
-      setSearching(true);
-      setError(null);
-      try {
-        if (isLoggedIn && authState.token) {
-          const response = await fetch(
-            `/api/search?type=repos&q=${encodeURIComponent(query.trim())}`,
-            { headers: { Authorization: `Bearer ${authState.token}` } },
-          );
-          if (response.status === 429) {
-            setError(t('errors.rateLimitExceededLoggedIn'));
-            setResults([]);
-            return;
-          }
-          const data = await response.json();
-          setResults(data.results || []);
-        } else {
-          const repos = await searchRepositories(query.trim());
-          setResults(repos);
-        }
-      } catch (err: unknown) {
-        const error = err as { isRateLimit?: boolean; message?: string };
-        if (error.isRateLimit) {
-          setError(t('errors.rateLimitExceeded'));
-        } else {
-          setError(t('errors.failedToAddRepository'));
-        }
-        setResults([]);
-      } finally {
-        setSearching(false);
-      }
-    }, 300);
-
-    return () => {
-      if (debounceTimer.current) {
-        clearTimeout(debounceTimer.current);
-      }
-    };
-  }, [query, t, isLoggedIn, authState.token]);
+  }, [query, t, isLoggedIn, authState.token, rateLimited]);
 
   const isTracked = (repo: Repository) =>
     trackedRepositories.some(r => r.owner === repo.owner && r.name === repo.name);
@@ -100,19 +87,31 @@ const AddRepositoryForm: React.FC<AddRepositoryFormProps> = ({
 
       <div className="space-y-3">
         <div className="relative">
-          <div className="flex items-center">
-            <FaSearch className="absolute left-3 text-gray-500 pointer-events-none" />
-            <input
-              type="text"
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              placeholder={t('repository.searchPlaceholder')}
-              className="w-full pl-9 pr-3 py-2 bg-[#0d1117] border border-gray-700 rounded-md text-gray-100 placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500"
-              disabled={disabled}
-            />
-            {searching && (
-              <FaSpinner className="absolute right-3 text-gray-500 animate-spin" />
-            )}
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1">
+              <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+              <input
+                type="text"
+                value={query}
+                onChange={e => {
+                  setQuery(e.target.value);
+                  if (rateLimited) setRateLimited(false);
+                }}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') handleSearch();
+                }}
+                placeholder={t('repository.searchPlaceholder')}
+                className="w-full pl-9 pr-3 py-2 bg-[#0d1117] border border-gray-700 rounded-md text-gray-100 placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500"
+                disabled={disabled}
+              />
+            </div>
+            <button
+              onClick={handleSearch}
+              disabled={disabled || searching || !query.trim() || rateLimited}
+              className="px-3 py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-sm font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {searching ? <FaSpinner className="animate-spin" /> : t('common.search')}
+            </button>
           </div>
 
           <p className="mt-1 text-gray-500 text-xs">
