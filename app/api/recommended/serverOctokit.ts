@@ -19,9 +19,12 @@ export async function getServerOctokit(): Promise<Octokit> {
     );
   }
 
+  // Vercel stores multiline env vars with literal \n - convert to real newlines
+  const formattedKey = privateKey.replace(/\\n/g, '\n');
+
   const auth = createAppAuth({
     appId,
-    privateKey,
+    privateKey: formattedKey,
     installationId: Number(installationId),
   });
   const { token } = await auth({ type: 'installation' });

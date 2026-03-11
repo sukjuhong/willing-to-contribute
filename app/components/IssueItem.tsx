@@ -97,6 +97,33 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
                   {t(`difficulty.${issue.difficulty}`)}
                 </span>
               )}
+              {issue.repository.maintainerScore && (
+                <span
+                  className={`text-xs px-1.5 py-0.5 rounded ${maintainerGradeStyles[issue.repository.maintainerScore.grade]}`}
+                  title={`${t('maintainer.responseTime', { hours: Math.round(issue.repository.maintainerScore.avgResponseTimeHours) })} · ${t('maintainer.mergeRate', { rate: Math.round(issue.repository.maintainerScore.mergeRate * 100) })}`}
+                >
+                  {t(`maintainer.grade${issue.repository.maintainerScore.grade}`)}
+                </span>
+              )}
+            </div>
+            {/* Repo info */}
+            <div className="flex flex-wrap items-center gap-2 mt-1 text-xs text-gray-500">
+              <span className="font-[family-name:var(--font-mono)]">
+                {issue.repository.owner}/{issue.repository.name}
+              </span>
+              {issue.repository.stargazersCount !== undefined && (
+                <span className="inline-flex items-center gap-0.5">
+                  <FaStar className="text-amber-500 text-[10px]" />
+                  {issue.repository.stargazersCount.toLocaleString()}
+                </span>
+              )}
+              {issue.repository.forksCount !== undefined && (
+                <span className="inline-flex items-center gap-0.5">
+                  <FaCodeBranch className="text-[10px]" />
+                  {issue.repository.forksCount.toLocaleString()}
+                </span>
+              )}
+              {issue.repository.language && <span>{issue.repository.language}</span>}
             </div>
           </div>
 

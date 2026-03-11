@@ -26,6 +26,7 @@ export default function RecommendedIssues() {
   const [filters, setFilters] = useState<FilterState>({
     ...DEFAULT_FILTER_STATE,
   });
+  const [searchInput, setSearchInput] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
   // Data fetching state
@@ -97,7 +98,18 @@ export default function RecommendedIssues() {
         setLoading(false);
       }
     },
-    [filters, searchQuery, authState.token, t],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      filters.language,
+      filters.difficulties,
+      filters.maintainerGrades,
+      filters.minStars,
+      filters.minForks,
+      filters.freshness,
+      filters.label,
+      searchQuery,
+      authState.token,
+    ],
   );
 
   // Serialize array filters for stable dependency tracking
@@ -170,16 +182,30 @@ export default function RecommendedIssues() {
       {!collapsed && (
         <div className="px-4 pb-4 space-y-3">
           {/* Search input */}
-          <div className="relative">
-            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              placeholder={t('recommended.searchPlaceholder')}
-              className="w-full bg-[#0d1117] border border-gray-700 rounded-md pl-9 pr-3 py-2 text-sm text-gray-200 placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-cyan-500"
-              onClick={e => e.stopPropagation()}
-            />
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm" />
+              <input
+                type="text"
+                value={searchInput}
+                onChange={e => setSearchInput(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    setSearchQuery(searchInput);
+                  }
+                }}
+                placeholder={t('recommended.searchPlaceholder')}
+                className="w-full bg-[#0d1117] border border-gray-700 rounded-md pl-9 pr-3 py-2 text-sm text-gray-200 placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                onClick={e => e.stopPropagation()}
+              />
+            </div>
+            <button
+              onClick={() => setSearchQuery(searchInput)}
+              disabled={loading}
+              className="px-3 py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-sm font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {t('common.search')}
+            </button>
           </div>
 
           {/* Filters */}
@@ -197,6 +223,22 @@ export default function RecommendedIssues() {
             <div className="flex justify-center items-center p-6">
               <FaSync className="animate-spin text-cyan-400 mr-2" />
               <span className="text-gray-400 text-sm">{t('recommended.loading')}</span>
+            </div>
+          ) : loading && issues.length > 0 ? (
+            <div className="relative">
+              <div className="absolute inset-0 bg-[#161b22]/70 flex justify-center items-center z-10 rounded-md">
+                <FaSync className="animate-spin text-cyan-400 mr-2" />
+                <span className="text-gray-400 text-sm">{t('recommended.loading')}</span>
+              </div>
+              <div className="opacity-40 pointer-events-none space-y-2">
+                {filteredIssues.slice(0, 3).map(issue => (
+                  <div key={issue.id} className="flex items-center gap-2">
+                    <div className="flex-1 min-w-0">
+                      <IssueItem issue={issue} compact />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           ) : filteredIssues.length === 0 ? (
             <div className="text-center p-6 text-gray-500 text-sm">

@@ -123,11 +123,36 @@ export async function GET(request: Request) {
 
         const maintainerScore = await calculateMaintainerScore(repoOwner, repoName);
 
+        // Fetch repo details for metadata
+        let stargazersCount: number | undefined;
+        let forksCount: number | undefined;
+        let repoLanguage: string | undefined;
+        let lastPushedAt: string | undefined;
+        let description: string | undefined;
+        try {
+          const { data: repoData } = await octokit.repos.get({
+            owner: repoOwner,
+            repo: repoName,
+          });
+          stargazersCount = repoData.stargazers_count;
+          forksCount = repoData.forks_count;
+          repoLanguage = repoData.language ?? undefined;
+          lastPushedAt = repoData.pushed_at ?? undefined;
+          description = repoData.description ?? undefined;
+        } catch {
+          // Continue without repo metadata
+        }
+
         const repository: Repository = {
           id: `${repoOwner}/${repoName}`,
           owner: repoOwner,
           name: repoName,
           url: `https://github.com/${repoOwner}/${repoName}`,
+          description,
+          stargazersCount,
+          forksCount,
+          language: repoLanguage,
+          lastPushedAt,
           maintainerScore,
         };
 
