@@ -157,8 +157,8 @@ const AddRepositoryForm: React.FC<AddRepositoryFormProps> = ({
                       </span>
                     ) : !isLoggedIn ? (
                       <button
-                        onClick={login}
-                        className="shrink-0 flex items-center gap-1 px-2 py-1 text-xs font-medium text-white bg-cyan-600 rounded hover:bg-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                        disabled
+                        className="shrink-0 flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-md border bg-gray-800 text-gray-500 border-gray-700 cursor-not-allowed"
                       >
                         <FaLock />
                         {t('repository.loginToTrack')}
