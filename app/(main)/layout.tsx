@@ -4,6 +4,7 @@ import { AppProvider, useApp } from '../contexts/AppContext';
 import Header from '../components/Header';
 import Navigation from '../components/Navigation';
 import SyncModal from '../components/SyncModal';
+import AdSidebar from '../components/AdSidebar';
 
 function MainLayoutContent({ children }: { children: React.ReactNode }) {
   const {
@@ -26,10 +27,14 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
         showAppLogin={!authState.isLoggedIn}
       />
 
-      <main className="container mx-auto px-4 py-8">
-        <Navigation />
-        {children}
-      </main>
+      <div className="relative">
+        <AdSidebar position="left" />
+        <main className="container mx-auto px-4 py-8">
+          <Navigation />
+          {children}
+        </main>
+        <AdSidebar position="right" />
+      </div>
 
       <SyncModal
         isOpen={showSyncModal}
