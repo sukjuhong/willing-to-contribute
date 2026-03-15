@@ -157,6 +157,15 @@ export const clearAuthToken = (): void => {
   }
 };
 
+export const clearAllUserData = (): void => {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem(AUTH_KEY);
+    localStorage.removeItem(SETTINGS_KEY);
+    localStorage.removeItem(ISSUES_KEY);
+    localStorage.removeItem(CACHE_TIMESTAMP_KEY);
+  }
+};
+
 // Save cache timestamp
 export const saveCacheTimestamp = (timestamp: number): void => {
   try {

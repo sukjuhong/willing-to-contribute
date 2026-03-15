@@ -1,7 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Octokit } from '@octokit/rest';
 import { GithubAuthState } from '../types';
-import { saveAuthToken, loadAuthToken, clearAuthToken } from '../utils/localStorage';
+import {
+  saveAuthToken,
+  loadAuthToken,
+  clearAuthToken,
+  clearAllUserData,
+} from '../utils/localStorage';
 
 // GitHub App configuration
 const GITHUB_APP_CLIENT_ID = process.env.NEXT_PUBLIC_GITHUB_APP_CLIENT_ID || '';
@@ -104,7 +109,7 @@ const useGithubAuth = (): {
 
   // Logout
   const logout = useCallback(() => {
-    clearAuthToken();
+    clearAllUserData();
     setAuthState({ isLoggedIn: false, isAppAuth: true });
   }, []);
 
