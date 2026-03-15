@@ -159,10 +159,10 @@ export const clearAuthToken = (): void => {
 
 export const clearAllUserData = (): void => {
   if (typeof window !== 'undefined') {
-    localStorage.removeItem(AUTH_KEY);
-    localStorage.removeItem(SETTINGS_KEY);
-    localStorage.removeItem(ISSUES_KEY);
-    localStorage.removeItem(CACHE_TIMESTAMP_KEY);
+    const appPrefix = 'willing-to-contribute-';
+    Object.keys(localStorage)
+      .filter(key => key.startsWith(appPrefix))
+      .forEach(key => localStorage.removeItem(key));
   }
 };
 
