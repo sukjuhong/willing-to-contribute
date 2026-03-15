@@ -18,11 +18,10 @@ const useSettings = (isLoggedIn: boolean) => {
     const loadUserSettings = async () => {
       setLoading(true);
       try {
-        // Try to load settings from localStorage first
-        const localSettings = loadSettings();
-
-        // If user is logged in, try to get settings from GitHub Gist
+        // Only load settings when logged in
         if (isLoggedIn) {
+          const localSettings = loadSettings();
+
           try {
             const gistContent = await loadSettingsFromGist();
 
@@ -38,7 +37,7 @@ const useSettings = (isLoggedIn: boolean) => {
             setSettings(localSettings);
           }
         } else {
-          setSettings(localSettings);
+          setSettings(defaultSettings);
         }
       } catch (err) {
         console.error('Error loading settings:', err);

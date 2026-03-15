@@ -17,7 +17,9 @@
     "viewRepo": "저장소 보기",
     "issues": "이슈",
     "adding": "추가 중...",
-    "cancel": "취소"
+    "cancel": "취소",
+    "loginRequired": "이 기능을 사용하려면 GitHub로 로그인해주세요.",
+    "loginToManage": "저장소 추적, 설정 변경, 알림 수신을 위해 로그인해주세요."
   },
   "tabs": {
     "issues": "이슈",

@@ -2,6 +2,7 @@
 
 import { FaSync, FaGithub } from 'react-icons/fa';
 import AddRepositoryForm from '../../components/AddRepositoryForm';
+import LoginPrompt from '../../components/LoginPrompt';
 import RepositoryItem from '../../components/RepositoryItem';
 import { useApp } from '../../contexts/AppContext';
 import { useTranslation } from '../../hooks/useTranslation';
@@ -16,6 +17,17 @@ export default function RepositoriesPage() {
     removeRepository,
     authState,
   } = useApp();
+
+  if (!authState.isLoggedIn) {
+    return (
+      <div className="space-y-6">
+        <h2 className="text-xl font-bold text-gray-100">
+          {t('settings.trackedRepositories')}
+        </h2>
+        <LoginPrompt />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

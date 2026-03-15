@@ -157,6 +157,15 @@ export const clearAuthToken = (): void => {
   }
 };
 
+export const clearAllUserData = (): void => {
+  if (typeof window !== 'undefined') {
+    const appPrefix = 'willing-to-contribute-';
+    Object.keys(localStorage)
+      .filter(key => key.startsWith(appPrefix))
+      .forEach(key => localStorage.removeItem(key));
+  }
+};
+
 // Save cache timestamp
 export const saveCacheTimestamp = (timestamp: number): void => {
   try {

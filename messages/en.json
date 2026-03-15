@@ -17,7 +17,9 @@
     "viewRepo": "View Repository",
     "issues": "Issues",
     "adding": "Adding...",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "loginRequired": "Please log in with GitHub to use this feature.",
+    "loginToManage": "Log in to track repositories, customize settings, and get notifications."
   },
   "navigation": {
     "home": "Home",

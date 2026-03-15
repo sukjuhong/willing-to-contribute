@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { FaSync, FaGithub } from 'react-icons/fa';
+import LoginPrompt from '../../components/LoginPrompt';
 import RepositoryIssueList from '../../components/RepositoryIssueList';
 import RecommendedIssues from '../../components/RecommendedIssues';
 import { useApp } from '../../contexts/AppContext';
@@ -11,6 +12,7 @@ import type { Repository } from '../../types';
 export default function IssuesPage() {
   const { t } = useTranslation();
   const {
+    authState,
     settings,
     issues,
     issuesLoading,
@@ -88,51 +90,59 @@ export default function IssuesPage() {
           {t('settings.beginnerFriendlyIssues')}
         </h2>
 
-        <button
-          onClick={handleRefresh}
-          disabled={refreshing || issuesLoading}
-          className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-cyan-600 hover:bg-cyan-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 ${
-            refreshing || issuesLoading ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
-        >
-          <FaSync
-            className={`mr-2 ${refreshing || issuesLoading ? 'animate-spin' : ''}`}
-          />
-          {t('common.refresh')}
-        </button>
+        {authState.isLoggedIn && (
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing || issuesLoading}
+            className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-cyan-600 hover:bg-cyan-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 ${
+              refreshing || issuesLoading ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+          >
+            <FaSync
+              className={`mr-2 ${refreshing || issuesLoading ? 'animate-spin' : ''}`}
+            />
+            {t('common.refresh')}
+          </button>
+        )}
       </div>
 
-      {issuesError && (
-        <div className="bg-red-500/10 text-red-400 border border-red-500/20 rounded-md p-4">
-          {issuesError}
-        </div>
-      )}
-
-      {issuesLoading && !refreshing ? (
-        <div className="flex justify-center items-center p-8">
-          <FaSync className="animate-spin text-cyan-400 mr-2" />
-          <span className="text-gray-400">{t('common.loadingIssues')}</span>
-        </div>
-      ) : settings.repositories.length === 0 ? (
-        <div className="text-center bg-[#161b22] border border-gray-700 rounded-lg p-8">
-          <FaGithub className="mx-auto h-12 w-12 text-gray-600" />
-          <h3 className="mt-2 text-lg font-medium text-gray-100">
-            {t('settings.noRepositories')}
-          </h3>
-          <p className="mt-1 text-sm text-gray-500">
-            {t('settings.addRepositoriesToStart')}
-          </p>
-        </div>
+      {!authState.isLoggedIn ? (
+        <LoginPrompt />
       ) : (
-        <div className="space-y-2">
-          {sortedRepositoryKeys.map(repoKey => (
-            <RepositoryIssueList
-              key={repoKey}
-              repository={repositoryMap[repoKey]}
-              issues={issuesByRepository[repoKey]}
-            />
-          ))}
-        </div>
+        <>
+          {issuesError && (
+            <div className="bg-red-500/10 text-red-400 border border-red-500/20 rounded-md p-4">
+              {issuesError}
+            </div>
+          )}
+
+          {issuesLoading && !refreshing ? (
+            <div className="flex justify-center items-center p-8">
+              <FaSync className="animate-spin text-cyan-400 mr-2" />
+              <span className="text-gray-400">{t('common.loadingIssues')}</span>
+            </div>
+          ) : settings.repositories.length === 0 ? (
+            <div className="text-center bg-[#161b22] border border-gray-700 rounded-lg p-8">
+              <FaGithub className="mx-auto h-12 w-12 text-gray-600" />
+              <h3 className="mt-2 text-lg font-medium text-gray-100">
+                {t('settings.noRepositories')}
+              </h3>
+              <p className="mt-1 text-sm text-gray-500">
+                {t('settings.addRepositoriesToStart')}
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {sortedRepositoryKeys.map(repoKey => (
+                <RepositoryIssueList
+                  key={repoKey}
+                  repository={repositoryMap[repoKey]}
+                  issues={issuesByRepository[repoKey]}
+                />
+              ))}
+            </div>
+          )}
+        </>
       )}
     </div>
   );
