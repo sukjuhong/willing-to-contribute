@@ -1,10 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { useTranslation } from '../hooks/useTranslation';
+import { useTranslations } from 'next-intl';
 
 export default function Footer() {
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   return (
     <footer className="bg-[#010409] border-t border-gray-800 py-8">

@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { FaPlus, FaSpinner, FaStar, FaSearch, FaLock } from 'react-icons/fa';
-import { useTranslation } from '../hooks/useTranslation';
+import { useTranslations } from 'next-intl';
 import { useApp } from '../contexts/AppContext';
 import { searchRepositories } from '../utils/github';
 import { Repository } from '../types';
@@ -18,7 +18,7 @@ const AddRepositoryForm: React.FC<AddRepositoryFormProps> = ({
   isLoggedIn,
   trackedRepositories,
 }) => {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const { login, authState } = useApp();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Repository[]>([]);

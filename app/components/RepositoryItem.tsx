@@ -1,7 +1,7 @@
 import React from 'react';
 import { Repository } from '../types';
 import { FaStar, FaTrash, FaGithub } from 'react-icons/fa';
-import { useTranslation } from '../hooks/useTranslation';
+import { useTranslations } from 'next-intl';
 
 interface RepositoryItemProps {
   repository: Repository;
@@ -9,7 +9,7 @@ interface RepositoryItemProps {
 }
 
 const RepositoryItem: React.FC<RepositoryItemProps> = ({ repository, onRemove }) => {
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   return (
     <div className="bg-[#161b22] rounded-lg border border-gray-700 p-4 hover:border-gray-600 transition-colors">

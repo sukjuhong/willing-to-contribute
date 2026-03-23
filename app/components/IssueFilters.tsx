@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
-import { useTranslation } from '../hooks/useTranslation';
+import { useTranslations } from 'next-intl';
 
 export interface FilterState {
   language: string;
@@ -35,30 +35,30 @@ const LANGUAGES = [
 const DIFFICULTIES = ['beginner', 'intermediate', 'advanced'] as const;
 const MAINTAINER_GRADES = ['A', 'B', 'C'] as const;
 
-const STARS_PRESETS: { label: string; value: number | null }[] = [
+const STARS_PRESETS = [
   { label: 'any', value: null },
   { label: '100+', value: 100 },
   { label: '500+', value: 500 },
   { label: '1k+', value: 1000 },
   { label: '5k+', value: 5000 },
   { label: '10k+', value: 10000 },
-];
+] as const;
 
-const FORKS_PRESETS: { label: string; value: number | null }[] = [
+const FORKS_PRESETS = [
   { label: 'any', value: null },
   { label: '50+', value: 50 },
   { label: '100+', value: 100 },
   { label: '500+', value: 500 },
   { label: '1k+', value: 1000 },
-];
+] as const;
 
-const FRESHNESS_PRESETS: { label: string; value: string | null }[] = [
+const FRESHNESS_PRESETS = [
   { label: 'any', value: null },
   { label: '1w', value: '1w' },
   { label: '1m', value: '1m' },
   { label: '3m', value: '3m' },
   { label: '6m', value: '6m' },
-];
+] as const;
 
 export const DEFAULT_FILTER_STATE: FilterState = {
   language: 'all',
@@ -71,7 +71,12 @@ export const DEFAULT_FILTER_STATE: FilterState = {
 };
 
 export default function IssueFilters({ filters, onFilterChange }: IssueFiltersProps) {
-  const { t } = useTranslation();
+  const t = useTranslations();
+  const tDifficulty = useTranslations('difficulty');
+  const tMaintainer = useTranslations('maintainer');
+  const tStarsPreset = useTranslations('filters.starsPreset');
+  const tForksPreset = useTranslations('filters.forksPreset');
+  const tFreshnessPreset = useTranslations('filters.freshnessPreset');
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   const toggleDifficulty = (d: (typeof DIFFICULTIES)[number]) => {
@@ -138,7 +143,7 @@ export default function IssueFilters({ filters, onFilterChange }: IssueFiltersPr
                 onClick={() => toggleDifficulty(d)}
                 className={`px-2.5 py-1 text-xs font-medium rounded-md border transition-colors ${chipClass(filters.difficulties.includes(d))}`}
               >
-                {t(`difficulty.${d}`)}
+                {tDifficulty(d)}
               </button>
             ))}
           </div>
@@ -172,7 +177,7 @@ export default function IssueFilters({ filters, onFilterChange }: IssueFiltersPr
                   onClick={() => toggleGrade(g)}
                   className={`px-2.5 py-1 text-xs font-medium rounded-md border transition-colors ${chipClass(filters.maintainerGrades.includes(g))}`}
                 >
-                  {t(`maintainer.grade${g}`)}
+                  {tMaintainer(`grade${g}`)}
                 </button>
               ))}
             </div>
@@ -190,7 +195,7 @@ export default function IssueFilters({ filters, onFilterChange }: IssueFiltersPr
                   onClick={() => onFilterChange({ ...filters, minStars: p.value })}
                   className={`px-2.5 py-1 text-xs font-medium rounded-md border transition-colors ${chipClass(filters.minStars === p.value)}`}
                 >
-                  {t(`filters.starsPreset.${p.label}`)}
+                  {tStarsPreset(p.label)}
                 </button>
               ))}
             </div>
@@ -208,7 +213,7 @@ export default function IssueFilters({ filters, onFilterChange }: IssueFiltersPr
                   onClick={() => onFilterChange({ ...filters, minForks: p.value })}
                   className={`px-2.5 py-1 text-xs font-medium rounded-md border transition-colors ${chipClass(filters.minForks === p.value)}`}
                 >
-                  {t(`filters.forksPreset.${p.label}`)}
+                  {tForksPreset(p.label)}
                 </button>
               ))}
             </div>
@@ -226,7 +231,7 @@ export default function IssueFilters({ filters, onFilterChange }: IssueFiltersPr
                   onClick={() => onFilterChange({ ...filters, freshness: p.value })}
                   className={`px-2.5 py-1 text-xs font-medium rounded-md border transition-colors ${chipClass(filters.freshness === p.value)}`}
                 >
-                  {t(`filters.freshnessPreset.${p.label}`)}
+                  {tFreshnessPreset(p.label)}
                 </button>
               ))}
             </div>

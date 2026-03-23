@@ -2,15 +2,15 @@
 
 import { useState, useCallback } from 'react';
 import { FaSync, FaGithub } from 'react-icons/fa';
-import LoginPrompt from '../../components/LoginPrompt';
-import RepositoryIssueList from '../../components/RepositoryIssueList';
-import RecommendedIssues from '../../components/RecommendedIssues';
-import { useApp } from '../../contexts/AppContext';
-import { useTranslation } from '../../hooks/useTranslation';
-import type { Repository } from '../../types';
+import LoginPrompt from '@/app/components/LoginPrompt';
+import RepositoryIssueList from '@/app/components/RepositoryIssueList';
+import RecommendedIssues from '@/app/components/RecommendedIssues';
+import { useApp } from '@/app/contexts/AppContext';
+import { useTranslations } from 'next-intl';
+import type { Repository } from '@/app/types';
 
 export default function IssuesPage() {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const {
     authState,
     settings,

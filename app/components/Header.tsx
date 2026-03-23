@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { GithubAuthState } from '../types';
 import { FaGithub, FaSignOutAlt, FaCode } from 'react-icons/fa';
 import LanguageSwitcher from './LanguageSwitcher';
-import { useTranslation } from '../hooks/useTranslation';
+import { useTranslations } from 'next-intl';
 
 interface HeaderProps {
   authState: GithubAuthState;
@@ -19,7 +19,7 @@ const Header: React.FC<HeaderProps> = ({
   showAppLogin = false,
 }) => {
   const repoUrl = 'https://github.com/sukjuhong/willing-to-contribute';
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   return (
     <header className="bg-[#161b22] border-b border-gray-700 py-4 px-6">
@@ -29,14 +29,14 @@ const Header: React.FC<HeaderProps> = ({
             <span className="text-gray-500">&gt;_</span> {t('common.welcome')}
           </h1>
           <span className="bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-mono text-xs px-2 py-0.5 rounded">
-            BETA
+            {t('common.beta')}
           </span>
           <a
             href={repoUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center space-x-1 bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-600 rounded-md px-3 py-1.5 transition-colors text-sm"
-            title="View on GitHub"
+            title={t('common.viewOnGithub')}
           >
             <FaCode className="text-lg" />
             <span className="hidden md:inline-block">Source</span>

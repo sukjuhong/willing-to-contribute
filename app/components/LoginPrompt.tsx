@@ -1,9 +1,9 @@
 import { FaGithub } from 'react-icons/fa';
-import { useTranslation } from '../hooks/useTranslation';
+import { useTranslations } from 'next-intl';
 import { useApp } from '../contexts/AppContext';
 
 export default function LoginPrompt() {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const { login } = useApp();
 
   return (

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Terms of Service',
@@ -39,9 +40,12 @@ export default function TermsOfService() {
               By accessing or using the Willing to Contribute service
               (&quot;Service&quot;), you agree to be bound by these Terms of Service and
               our{' '}
-              <a href="/privacy" className="text-cyan-400 hover:text-cyan-300 underline">
+              <Link
+                href="/privacy"
+                className="text-cyan-400 hover:text-cyan-300 underline"
+              >
                 Privacy Policy
-              </a>
+              </Link>
               , which is incorporated into these Terms by reference. If you do not agree
               to these Terms, you may not access or use the Service.
             </p>
