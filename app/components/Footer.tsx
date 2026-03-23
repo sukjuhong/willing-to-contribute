@@ -10,7 +10,9 @@ export default function Footer() {
     <footer className="bg-[#010409] border-t border-gray-800 py-8">
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center space-y-4 sm:flex-row sm:justify-between sm:space-y-0">
-          <p className="text-gray-500 text-sm">{t('footer.copyright')}</p>
+          <p className="text-gray-500 text-sm">
+            {t('footer.copyright', { year: new Date().getFullYear() })}
+          </p>
           <nav className="flex flex-col items-center space-y-2 sm:flex-row sm:space-y-0 sm:space-x-6">
             <Link
               href="/about"

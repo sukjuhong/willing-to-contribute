@@ -135,7 +135,7 @@
     "about": "소개",
     "privacy": "개인정보처리방침",
     "terms": "이용약관",
-    "copyright": "© 2025 Willing to Contribute. All rights reserved.",
+    "copyright": "© {year} Willing to Contribute. All rights reserved.",
     "description": "개발자들이 초보자 친화적인 오픈소스 이슈를 발견할 수 있도록 돕습니다"
   },
   "errors": {

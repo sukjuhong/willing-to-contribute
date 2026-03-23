@@ -140,7 +140,7 @@
     "about": "About",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
-    "copyright": "© 2025 Willing to Contribute. All rights reserved.",
+    "copyright": "© {year} Willing to Contribute. All rights reserved.",
     "description": "Helping developers discover beginner-friendly open source issues"
   },
   "errors": {
