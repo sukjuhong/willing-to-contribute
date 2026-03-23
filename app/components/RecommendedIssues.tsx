@@ -12,11 +12,11 @@ import {
 import IssueItem from './IssueItem';
 import IssueFilters, { DEFAULT_FILTER_STATE, type FilterState } from './IssueFilters';
 import { useApp } from '../contexts/AppContext';
-import { useTranslation } from '../hooks/useTranslation';
+import { useTranslations } from 'next-intl';
 import type { Issue } from '../types';
 
 export default function RecommendedIssues() {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const { settings, addRepository, authState } = useApp();
   const [collapsed, setCollapsed] = useState(false);
   const [addingRepos, setAddingRepos] = useState<Set<string>>(new Set());

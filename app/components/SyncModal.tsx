@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useTranslation } from '../hooks/useTranslation';
+import { useTranslations } from 'next-intl';
 import { Repository } from '../types';
 import { FaGithub, FaDesktop, FaCodeBranch } from 'react-icons/fa';
 
@@ -18,7 +18,7 @@ const SyncModal: React.FC<SyncModalProps> = ({
   localRepositories,
   gistRepositories,
 }) => {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const [hoveredOption, setHoveredOption] = useState<'local' | 'gist' | 'merge' | null>(
     null,
   );
@@ -48,15 +48,15 @@ const SyncModal: React.FC<SyncModalProps> = ({
     switch (hoveredOption) {
       case 'local':
         repositories = localRepositories;
-        title = 'Local Repositories';
+        title = t('sync.localRepositories');
         break;
       case 'gist':
         repositories = gistRepositories;
-        title = 'Gist Repositories';
+        title = t('sync.gistRepositories');
         break;
       case 'merge':
         repositories = getMergedRepositories();
-        title = 'Merged Repositories';
+        title = t('sync.mergedRepositories');
         break;
     }
 
@@ -73,7 +73,7 @@ const SyncModal: React.FC<SyncModalProps> = ({
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-gray-500">No repositories</p>
+            <p className="text-sm text-gray-500">{t('sync.noRepositories')}</p>
           )}
         </div>
       </div>
@@ -103,9 +103,7 @@ const SyncModal: React.FC<SyncModalProps> = ({
                 <h3 className="text-lg font-medium text-gray-100">
                   {t('settings.keepLocal', { count: localRepositories.length })}
                 </h3>
-                <p className="text-sm text-gray-500">
-                  Keep your current local repository list
-                </p>
+                <p className="text-sm text-gray-500">{t('sync.keepLocalDesc')}</p>
               </div>
             </button>
             {hoveredOption === 'local' && getTooltipContent()}
@@ -125,9 +123,7 @@ const SyncModal: React.FC<SyncModalProps> = ({
                 <h3 className="text-lg font-medium text-gray-100">
                   {t('settings.keepGist', { count: gistRepositories.length })}
                 </h3>
-                <p className="text-sm text-gray-500">
-                  Use the repository list from your GitHub Gist
-                </p>
+                <p className="text-sm text-gray-500">{t('sync.useGistDesc')}</p>
               </div>
             </button>
             {hoveredOption === 'gist' && getTooltipContent()}
@@ -147,7 +143,7 @@ const SyncModal: React.FC<SyncModalProps> = ({
                 <h3 className="text-lg font-medium text-gray-100">
                   {t('settings.mergeRepositories')}
                 </h3>
-                <p className="text-sm text-gray-500">Combine both repository lists</p>
+                <p className="text-sm text-gray-500">{t('sync.combineDesc')}</p>
               </div>
             </button>
             {hoveredOption === 'merge' && getTooltipContent()}

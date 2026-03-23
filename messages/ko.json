@@ -1,6 +1,7 @@
 {
   "common": {
     "welcome": "Willing to Contribute",
+    "pageTitle": "Willing to Contribute - 초보자 친화적 GitHub 이슈 찾기",
     "description": "당신의 관심사와 일치하는 오픈 소스 프로젝트를 찾고 기여하세요",
     "search": "검색",
     "language": "언어",
@@ -19,7 +20,18 @@
     "adding": "추가 중...",
     "cancel": "취소",
     "loginRequired": "이 기능을 사용하려면 GitHub로 로그인해주세요.",
-    "loginToManage": "저장소 추적, 설정 변경, 알림 수신을 위해 로그인해주세요."
+    "loginToManage": "저장소 추적, 설정 변경, 알림 수신을 위해 로그인해주세요.",
+    "beta": "BETA",
+    "source": "소스",
+    "justNow": "방금 전",
+    "minutesAgo": "{minutes}분 전",
+    "hoursAgo": "{hours}시간 전",
+    "daysAgo": "{days}일 전"
+  },
+  "navigation": {
+    "home": "홈",
+    "projects": "프로젝트",
+    "about": "소개"
   },
   "tabs": {
     "issues": "이슈",
@@ -42,7 +54,7 @@
     "notificationFrequency": "알림 빈도",
     "frequency": {
       "hourly": "매시간",
-      "every6Hours": "6시간마다",
+      "6hours": "6시간마다",
       "daily": "매일",
       "never": "알림 끄기"
     },
@@ -50,7 +62,12 @@
     "customLabels": "사용자 정의 라벨",
     "removeLabel": "{label} 라벨 제거",
     "addCustomLabel": "사용자 정의 라벨 추가...",
-    "customLabelsDescription": "이슈를 필터링할 사용자 정의 라벨을 추가하세요 (예: \"help wanted\", \"easy\", \"beginner\")"
+    "customLabelsDescription": "이슈를 필터링할 사용자 정의 라벨을 추가하세요 (예: \"help wanted\", \"easy\", \"beginner\")",
+    "syncTitle": "설정 동기화",
+    "syncDescription": "로컬 설정이 GitHub Gist와 다릅니다. 어떻게 처리할지 선택해주세요.",
+    "keepLocal": "로컬 유지 ({count})",
+    "keepGist": "Gist 유지 ({count})",
+    "mergeRepositories": "양쪽 병합"
   },
   "repository": {
     "addRepository": "저장소 추가",
@@ -206,5 +223,14 @@
     "failedToRemoveCustomLabel": "사용자 정의 라벨 제거에 실패했습니다",
     "rateLimitExceeded": "GitHub API 요청 한도에 도달했습니다. 잠시 후 다시 시도하거나 로그인하여 한도를 늘려보세요.",
     "rateLimitExceededLoggedIn": "GitHub API 요청 한도에 도달했습니다. 잠시 후 다시 시도해주세요."
+  },
+  "sync": {
+    "localRepositories": "로컬 저장소",
+    "gistRepositories": "Gist 저장소",
+    "mergedRepositories": "병합된 저장소",
+    "noRepositories": "저장소 없음",
+    "keepLocalDesc": "현재 로컬 저장소 목록을 유지합니다",
+    "useGistDesc": "GitHub Gist의 저장소 목록을 사용합니다",
+    "combineDesc": "두 저장소 목록을 합칩니다"
   }
 }

@@ -1,10 +1,10 @@
 'use client';
 
-import { AppProvider, useApp } from '../contexts/AppContext';
-import Header from '../components/Header';
-import Navigation from '../components/Navigation';
-import AdSidebar from '../components/AdSidebar';
-import Footer from '../components/Footer';
+import { AppProvider, useApp } from '@/app/contexts/AppContext';
+import Header from '@/app/components/Header';
+import Navigation from '@/app/components/Navigation';
+import AdSidebar from '@/app/components/AdSidebar';
+import Footer from '@/app/components/Footer';
 
 function MainLayoutContent({ children }: { children: React.ReactNode }) {
   const { authState, login, logout } = useApp();

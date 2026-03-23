@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import Footer from '../components/Footer';
-import AdSidebar from '../components/AdSidebar';
+import Footer from '@/app/components/Footer';
+import AdSidebar from '@/app/components/AdSidebar';
 
 export default function StaticLayout({ children }: { children: React.ReactNode }) {
   return (

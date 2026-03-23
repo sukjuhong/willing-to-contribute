@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Issue, Repository } from '../types';
 import IssueItem from './IssueItem';
 import { FaChevronDown, FaChevronRight, FaExternalLinkAlt } from 'react-icons/fa';
-import { useTranslation } from '../hooks/useTranslation';
+import { useTranslations } from 'next-intl';
 
 interface RepositoryIssueListProps {
   repository: Repository;
@@ -13,7 +13,7 @@ const RepositoryIssueList: React.FC<RepositoryIssueListProps> = ({
   repository,
   issues,
 }) => {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const [isExpanded, setIsExpanded] = useState(true);
 
   const newIssuesCount = issues.filter(issue => issue.isNew).length;

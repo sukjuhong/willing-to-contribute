@@ -4,114 +4,75 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://willing-to-contribute.vercel.app';
   const staticPageDate = '2026-03-23';
 
-  return [
+  const locales = ['en', 'ko'];
+  const pages = [
     {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
+      path: '',
+      changeFrequency: 'daily' as const,
       priority: 1,
-      alternates: {
-        languages: {
-          en: baseUrl,
-          ko: `${baseUrl}?lang=ko`,
-        },
-      },
+      lastModified: new Date(),
     },
     {
-      url: `${baseUrl}/issues`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
+      path: '/issues',
+      changeFrequency: 'daily' as const,
       priority: 0.8,
-      alternates: {
-        languages: {
-          en: `${baseUrl}/issues`,
-          ko: `${baseUrl}/issues?lang=ko`,
-        },
-      },
+      lastModified: new Date(),
     },
     {
-      url: `${baseUrl}/repositories`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
+      path: '/repositories',
+      changeFrequency: 'weekly' as const,
       priority: 0.7,
-      alternates: {
-        languages: {
-          en: `${baseUrl}/repositories`,
-          ko: `${baseUrl}/repositories?lang=ko`,
-        },
-      },
-    },
-    {
-      url: `${baseUrl}/settings`,
       lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
-      alternates: {
-        languages: {
-          en: `${baseUrl}/settings`,
-          ko: `${baseUrl}/settings?lang=ko`,
-        },
-      },
     },
     {
-      url: `${baseUrl}/about`,
-      lastModified: staticPageDate,
-      changeFrequency: 'monthly',
+      path: '/settings',
+      changeFrequency: 'monthly' as const,
+      priority: 0.5,
+      lastModified: new Date(),
+    },
+    {
+      path: '/about',
+      changeFrequency: 'monthly' as const,
       priority: 0.6,
-      alternates: {
-        languages: {
-          en: `${baseUrl}/about`,
-          ko: `${baseUrl}/about?lang=ko`,
-        },
-      },
+      lastModified: staticPageDate,
     },
     {
-      url: `${baseUrl}/privacy`,
-      lastModified: staticPageDate,
-      changeFrequency: 'monthly',
+      path: '/privacy',
+      changeFrequency: 'monthly' as const,
       priority: 0.4,
-      alternates: {
-        languages: {
-          en: `${baseUrl}/privacy`,
-          ko: `${baseUrl}/privacy?lang=ko`,
-        },
-      },
+      lastModified: staticPageDate,
     },
     {
-      url: `${baseUrl}/terms`,
-      lastModified: staticPageDate,
-      changeFrequency: 'monthly',
+      path: '/terms',
+      changeFrequency: 'monthly' as const,
       priority: 0.4,
-      alternates: {
-        languages: {
-          en: `${baseUrl}/terms`,
-          ko: `${baseUrl}/terms?lang=ko`,
-        },
-      },
+      lastModified: staticPageDate,
     },
     {
-      url: `${baseUrl}/guide`,
-      lastModified: staticPageDate,
-      changeFrequency: 'monthly',
+      path: '/guide',
+      changeFrequency: 'monthly' as const,
       priority: 0.7,
-      alternates: {
-        languages: {
-          en: `${baseUrl}/guide`,
-          ko: `${baseUrl}/guide?lang=ko`,
-        },
-      },
+      lastModified: staticPageDate,
     },
     {
-      url: `${baseUrl}/faq`,
-      lastModified: staticPageDate,
-      changeFrequency: 'monthly',
+      path: '/faq',
+      changeFrequency: 'monthly' as const,
       priority: 0.5,
-      alternates: {
-        languages: {
-          en: `${baseUrl}/faq`,
-          ko: `${baseUrl}/faq?lang=ko`,
-        },
-      },
+      lastModified: staticPageDate,
     },
   ];
+
+  return pages.flatMap(page =>
+    locales.map(locale => ({
+      url: `${baseUrl}/${locale}${page.path}`,
+      lastModified: page.lastModified,
+      changeFrequency: page.changeFrequency,
+      priority: page.priority,
+      alternates: {
+        languages: Object.fromEntries(
+          locales.map(l => [l, `${baseUrl}/${l}${page.path}`]),
+        ),
+      },
+    })),
+  );
 }

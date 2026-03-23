@@ -1,17 +1,16 @@
 'use client';
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useTranslation } from '../hooks/useTranslation';
+import { useTranslations } from 'next-intl';
+import { Link, usePathname } from '@/i18n/routing';
 
 export default function Navigation() {
   const pathname = usePathname();
-  const { t } = useTranslation();
+  const tTabs = useTranslations('tabs');
 
   const tabs = [
-    { name: 'issues', path: '/issues' },
-    { name: 'repositories', path: '/repositories' },
-    { name: 'settings', path: '/settings' },
+    { name: 'issues' as const, path: '/issues' as const },
+    { name: 'repositories' as const, path: '/repositories' as const },
+    { name: 'settings' as const, path: '/settings' as const },
   ];
 
   return (
@@ -26,7 +25,7 @@ export default function Navigation() {
         >
           {tabs.map(tab => (
             <option key={tab.path} value={tab.path}>
-              {t(`tabs.${tab.name}`)}
+              {tTabs(tab.name)}
             </option>
           ))}
         </select>
@@ -45,7 +44,7 @@ export default function Navigation() {
               } px-3 py-2 font-medium text-sm rounded-md transition-colors`}
               aria-current={pathname === tab.path ? 'page' : undefined}
             >
-              {t(`tabs.${tab.name}`)}
+              {tTabs(tab.name)}
             </Link>
           ))}
         </nav>

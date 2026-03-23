@@ -1,11 +1,11 @@
 'use client';
 
 import { FaSync, FaGithub } from 'react-icons/fa';
-import AddRepositoryForm from '../../components/AddRepositoryForm';
-import LoginPrompt from '../../components/LoginPrompt';
-import RepositoryItem from '../../components/RepositoryItem';
-import { useApp } from '../../contexts/AppContext';
-import { useTranslation } from '../../hooks/useTranslation';
+import AddRepositoryForm from '@/app/components/AddRepositoryForm';
+import LoginPrompt from '@/app/components/LoginPrompt';
+import RepositoryItem from '@/app/components/RepositoryItem';
+import { useApp } from '@/app/contexts/AppContext';
+import { useTranslations } from 'next-intl';
 
 const FEATURES = [
   {
@@ -81,7 +81,7 @@ const HOW_IT_WORKS_STEPS = [
 ] as const;
 
 export default function RepositoriesPage() {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const {
     settings,
     settingsLoading,

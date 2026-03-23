@@ -1,6 +1,7 @@
 {
   "common": {
     "welcome": "Willing to Contribute",
+    "pageTitle": "Willing to Contribute - Find Beginner-Friendly GitHub Issues",
     "description": "Find and contribute to open source projects that match your interests",
     "search": "Search",
     "language": "Language",
@@ -19,7 +20,13 @@
     "adding": "Adding...",
     "cancel": "Cancel",
     "loginRequired": "Please log in with GitHub to use this feature.",
-    "loginToManage": "Log in to track repositories, customize settings, and get notifications."
+    "loginToManage": "Log in to track repositories, customize settings, and get notifications.",
+    "beta": "BETA",
+    "source": "Source",
+    "justNow": "just now",
+    "minutesAgo": "{minutes}m ago",
+    "hoursAgo": "{hours}h ago",
+    "daysAgo": "{days}d ago"
   },
   "navigation": {
     "home": "Home",
@@ -55,7 +62,12 @@
     "customLabels": "Custom Labels",
     "removeLabel": "Remove {label} label",
     "addCustomLabel": "Add custom label...",
-    "customLabelsDescription": "Add custom labels to filter issues (e.g., \"help wanted\", \"easy\", \"beginner\")"
+    "customLabelsDescription": "Add custom labels to filter issues (e.g., \"help wanted\", \"easy\", \"beginner\")",
+    "syncTitle": "Sync Settings",
+    "syncDescription": "Your local settings differ from your GitHub Gist. Choose how to resolve this.",
+    "keepLocal": "Keep Local ({count})",
+    "keepGist": "Keep Gist ({count})",
+    "mergeRepositories": "Merge Both"
   },
   "repository": {
     "addRepository": "Add Repository",
@@ -211,5 +223,14 @@
     "failedToRemoveCustomLabel": "Failed to remove custom label",
     "rateLimitExceeded": "GitHub API rate limit reached. Please try again later or log in for higher limits.",
     "rateLimitExceededLoggedIn": "GitHub API rate limit reached. Please try again later."
+  },
+  "sync": {
+    "localRepositories": "Local Repositories",
+    "gistRepositories": "Gist Repositories",
+    "mergedRepositories": "Merged Repositories",
+    "noRepositories": "No repositories",
+    "keepLocalDesc": "Keep your current local repository list",
+    "useGistDesc": "Use the repository list from your GitHub Gist",
+    "combineDesc": "Combine both repository lists"
   }
 }

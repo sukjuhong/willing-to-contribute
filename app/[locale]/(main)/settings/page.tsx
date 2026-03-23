@@ -1,9 +1,9 @@
 'use client';
 
-import LoginPrompt from '../../components/LoginPrompt';
-import SettingsPanel from '../../components/SettingsPanel';
-import { useApp } from '../../contexts/AppContext';
-import { useTranslation } from '../../hooks/useTranslation';
+import LoginPrompt from '@/app/components/LoginPrompt';
+import SettingsPanel from '@/app/components/SettingsPanel';
+import { useApp } from '@/app/contexts/AppContext';
+import { useTranslations } from 'next-intl';
 
 const SETTINGS_FEATURES = [
   {
@@ -40,7 +40,7 @@ const SYNC_STEPS = [
 ] as const;
 
 export default function SettingsPage() {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const {
     authState,
     settings,

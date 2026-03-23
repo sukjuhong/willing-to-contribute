@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { UserSettings } from '../types';
 import { FaCog, FaRegBell, FaSave, FaSpinner } from 'react-icons/fa';
-import { useTranslation } from '../hooks/useTranslation';
+import { useTranslations } from 'next-intl';
 
 interface SettingsPanelProps {
   settings: UserSettings;
@@ -20,7 +20,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
   onToggleCustomLabel,
   disabled = false,
 }) => {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const [loading, setLoading] = useState(false);
   const [newLabel, setNewLabel] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -109,7 +109,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
               className="block w-full px-3 py-2 bg-[#0d1117] border border-gray-700 rounded-md text-gray-100 focus:outline-none focus:ring-cyan-500 focus:border-cyan-500"
             >
               <option value="hourly">{t('settings.frequency.hourly')}</option>
-              <option value="6hours">{t('settings.frequency.every6Hours')}</option>
+              <option value="6hours">{t('settings.frequency.6hours')}</option>
               <option value="daily">{t('settings.frequency.daily')}</option>
               <option value="never">{t('settings.frequency.never')}</option>
             </select>
