@@ -136,6 +136,13 @@
     "mergeTime": "Avg. merge: {hours}h",
     "mergeRate": "Merge rate: {rate}%"
   },
+  "footer": {
+    "about": "About",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "copyright": "© {year} Willing to Contribute. All rights reserved.",
+    "description": "Helping developers discover beginner-friendly open source issues"
+  },
   "errors": {
     "enterRepositoryUrl": "Please enter a repository URL",
     "failedToAddRepository": "Failed to add repository",
