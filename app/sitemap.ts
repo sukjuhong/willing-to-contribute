@@ -2,6 +2,7 @@ import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://willing-to-contribute.vercel.app';
+  const staticPageDate = '2026-03-23';
 
   return [
     {
@@ -54,7 +55,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/about`,
-      lastModified: new Date(),
+      lastModified: staticPageDate,
       changeFrequency: 'monthly',
       priority: 0.6,
       alternates: {
@@ -66,7 +67,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/privacy`,
-      lastModified: new Date(),
+      lastModified: staticPageDate,
       changeFrequency: 'monthly',
       priority: 0.4,
       alternates: {
@@ -78,13 +79,37 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/terms`,
-      lastModified: new Date(),
+      lastModified: staticPageDate,
       changeFrequency: 'monthly',
       priority: 0.4,
       alternates: {
         languages: {
           en: `${baseUrl}/terms`,
           ko: `${baseUrl}/terms?lang=ko`,
+        },
+      },
+    },
+    {
+      url: `${baseUrl}/guide`,
+      lastModified: staticPageDate,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+      alternates: {
+        languages: {
+          en: `${baseUrl}/guide`,
+          ko: `${baseUrl}/guide?lang=ko`,
+        },
+      },
+    },
+    {
+      url: `${baseUrl}/faq`,
+      lastModified: staticPageDate,
+      changeFrequency: 'monthly',
+      priority: 0.5,
+      alternates: {
+        languages: {
+          en: `${baseUrl}/faq`,
+          ko: `${baseUrl}/faq?lang=ko`,
         },
       },
     },
