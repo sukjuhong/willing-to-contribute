@@ -210,17 +210,139 @@ export default function PrivacyPolicy() {
             </div>
           </section>
 
+          {/* Chrome Extension */}
+          <section>
+            <h2 className="text-xl font-semibold text-gray-100 mb-4 border-b border-gray-700 pb-2">
+              4. Chrome Extension
+            </h2>
+            <p className="text-gray-300 leading-relaxed mb-4">
+              The Willing to Contribute Chrome Extension stores and manages data locally
+              within your browser using Chrome&apos;s built-in storage APIs. No data is
+              transmitted to any external server operated by us.
+            </p>
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-lg font-medium text-gray-200 mb-2">
+                  4.1 Data Stored by the Extension
+                </h3>
+                <p className="text-gray-300 leading-relaxed">
+                  The extension stores the following data on your device:
+                </p>
+                <ul className="list-disc list-inside text-gray-300 leading-relaxed mt-2 space-y-1 ml-4">
+                  <li>
+                    <strong className="text-gray-200">GitHub API Token</strong> — stored
+                    in{' '}
+                    <code className="bg-[#161b22] px-1 rounded text-cyan-300">
+                      chrome.storage.local
+                    </code>{' '}
+                    on your device only
+                  </li>
+                  <li>
+                    <strong className="text-gray-200">Settings &amp; Preferences</strong>{' '}
+                    — stored in{' '}
+                    <code className="bg-[#161b22] px-1 rounded text-cyan-300">
+                      chrome.storage.sync
+                    </code>{' '}
+                    and synced across your Google account-linked Chrome instances
+                  </li>
+                  <li>
+                    <strong className="text-gray-200">Issue Cache</strong> — stored in{' '}
+                    <code className="bg-[#161b22] px-1 rounded text-cyan-300">
+                      chrome.storage.local
+                    </code>{' '}
+                    to reduce redundant GitHub API calls
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-medium text-gray-200 mb-2">
+                  4.2 Cross-Device Settings Sync
+                </h3>
+                <p className="text-gray-300 leading-relaxed">
+                  Extension settings (tracked repositories, label filters, notification
+                  preferences) are stored using{' '}
+                  <code className="bg-[#161b22] px-1 rounded text-cyan-300">
+                    chrome.storage.sync
+                  </code>
+                  . Chrome automatically synchronizes this data across devices where you
+                  are signed in to the same Google account. This sync is handled entirely
+                  by Google Chrome and is subject to{' '}
+                  <a
+                    href="https://policies.google.com/privacy"
+                    className="text-cyan-400 hover:text-cyan-300 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Google&apos;s Privacy Policy
+                  </a>
+                  .
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-medium text-gray-200 mb-2">
+                  4.3 GitHub API Calls
+                </h3>
+                <p className="text-gray-300 leading-relaxed">
+                  All GitHub API requests made by the extension use only the API token you
+                  provide directly. The extension calls the GitHub API on your behalf to
+                  fetch repository and issue data. No requests pass through our servers —
+                  all API calls are made directly from your browser to{' '}
+                  <code className="bg-[#161b22] px-1 rounded text-cyan-300">
+                    api.github.com
+                  </code>
+                  .
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-medium text-gray-200 mb-2">
+                  4.4 No External Data Transmission
+                </h3>
+                <p className="text-gray-300 leading-relaxed">
+                  The extension does not send any data to our servers or any third-party
+                  services other than GitHub (via direct API calls). Your GitHub token,
+                  repository list, and issue cache remain on your device.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-medium text-gray-200 mb-2">
+                  4.5 Deleting Extension Data
+                </h3>
+                <p className="text-gray-300 leading-relaxed">
+                  You can remove all data stored by the extension at any time:
+                </p>
+                <ul className="list-disc list-inside text-gray-300 leading-relaxed mt-2 space-y-1 ml-4">
+                  <li>
+                    Uninstalling the extension automatically clears all locally stored
+                    data
+                  </li>
+                  <li>
+                    You can clear individual data items through the extension&apos;s
+                    Settings panel
+                  </li>
+                  <li>
+                    Chrome&apos;s &quot;Clear browsing data&quot; settings can also remove
+                    extension storage
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
           {/* Third-Party Services */}
           <section>
             <h2 className="text-xl font-semibold text-gray-100 mb-4 border-b border-gray-700 pb-2">
-              4. Third-Party Services
+              5. Third-Party Services
             </h2>
             <p className="text-gray-300 leading-relaxed mb-4">
               We use several third-party services that may collect information about you:
             </p>
             <div className="space-y-4">
               <div className="bg-[#161b22] border border-gray-700 rounded-lg p-4">
-                <h3 className="text-lg font-medium text-gray-200 mb-2">4.1 GitHub</h3>
+                <h3 className="text-lg font-medium text-gray-200 mb-2">5.1 GitHub</h3>
                 <p className="text-gray-300 leading-relaxed">
                   We use the GitHub API to fetch repository and issue data, and GitHub
                   OAuth for authentication. Your use of GitHub features is subject to{' '}
@@ -238,7 +360,7 @@ export default function PrivacyPolicy() {
 
               <div className="bg-[#161b22] border border-gray-700 rounded-lg p-4">
                 <h3 className="text-lg font-medium text-gray-200 mb-2">
-                  4.2 Google AdSense
+                  5.2 Google AdSense
                 </h3>
                 <p className="text-gray-300 leading-relaxed">
                   We use Google AdSense to display advertisements on our service. Google
@@ -273,7 +395,7 @@ export default function PrivacyPolicy() {
               </div>
 
               <div className="bg-[#161b22] border border-gray-700 rounded-lg p-4">
-                <h3 className="text-lg font-medium text-gray-200 mb-2">4.3 Vercel</h3>
+                <h3 className="text-lg font-medium text-gray-200 mb-2">5.3 Vercel</h3>
                 <p className="text-gray-300 leading-relaxed">
                   Our service is hosted on Vercel, which may collect standard web server
                   logs including IP addresses and request information. This is subject to{' '}
@@ -294,12 +416,12 @@ export default function PrivacyPolicy() {
           {/* Cookies & Tracking */}
           <section>
             <h2 className="text-xl font-semibold text-gray-100 mb-4 border-b border-gray-700 pb-2">
-              5. Cookies and Tracking Technologies
+              6. Cookies and Tracking Technologies
             </h2>
             <div className="space-y-4">
               <div>
                 <h3 className="text-lg font-medium text-gray-200 mb-2">
-                  5.1 localStorage (Not Cookies)
+                  6.1 localStorage (Not Cookies)
                 </h3>
                 <p className="text-gray-300 leading-relaxed">
                   We use browser localStorage (not traditional cookies) to store your
@@ -313,7 +435,7 @@ export default function PrivacyPolicy() {
 
               <div>
                 <h3 className="text-lg font-medium text-gray-200 mb-2">
-                  5.2 Advertising Cookies
+                  6.2 Advertising Cookies
                 </h3>
                 <p className="text-gray-300 leading-relaxed">
                   Google AdSense sets cookies to serve personalized advertisements. These
@@ -328,7 +450,7 @@ export default function PrivacyPolicy() {
 
               <div>
                 <h3 className="text-lg font-medium text-gray-200 mb-2">
-                  5.3 Opting Out of Ad Personalization
+                  6.3 Opting Out of Ad Personalization
                 </h3>
                 <p className="text-gray-300 leading-relaxed">
                   You can opt out of personalized advertising in several ways:
@@ -366,7 +488,7 @@ export default function PrivacyPolicy() {
           {/* Data Security */}
           <section>
             <h2 className="text-xl font-semibold text-gray-100 mb-4 border-b border-gray-700 pb-2">
-              6. Data Security
+              7. Data Security
             </h2>
             <p className="text-gray-300 leading-relaxed mb-4">
               We take the security of your data seriously and implement appropriate
@@ -410,7 +532,7 @@ export default function PrivacyPolicy() {
           {/* User Rights */}
           <section>
             <h2 className="text-xl font-semibold text-gray-100 mb-4 border-b border-gray-700 pb-2">
-              7. Your Rights and Controls
+              8. Your Rights and Controls
             </h2>
             <p className="text-gray-300 leading-relaxed mb-4">
               You have full control over your data. Here is what you can do:
@@ -418,7 +540,7 @@ export default function PrivacyPolicy() {
             <div className="space-y-4">
               <div>
                 <h3 className="text-lg font-medium text-gray-200 mb-2">
-                  7.1 Delete Local Data
+                  8.1 Delete Local Data
                 </h3>
                 <p className="text-gray-300 leading-relaxed">
                   You can delete all locally stored data at any time by:
@@ -441,7 +563,7 @@ export default function PrivacyPolicy() {
 
               <div>
                 <h3 className="text-lg font-medium text-gray-200 mb-2">
-                  7.2 Revoke GitHub OAuth Access
+                  8.2 Revoke GitHub OAuth Access
                 </h3>
                 <p className="text-gray-300 leading-relaxed">
                   You can revoke our application&apos;s access to your GitHub account at
@@ -462,7 +584,7 @@ export default function PrivacyPolicy() {
 
               <div>
                 <h3 className="text-lg font-medium text-gray-200 mb-2">
-                  7.3 Delete Synced Settings (Gist)
+                  8.3 Delete Synced Settings (Gist)
                 </h3>
                 <p className="text-gray-300 leading-relaxed">
                   If you have enabled Gist sync, you can delete the settings Gist directly
@@ -482,7 +604,7 @@ export default function PrivacyPolicy() {
 
               <div>
                 <h3 className="text-lg font-medium text-gray-200 mb-2">
-                  7.4 Data Portability
+                  8.4 Data Portability
                 </h3>
                 <p className="text-gray-300 leading-relaxed">
                   Since your settings are stored in your own browser and optionally in
@@ -497,7 +619,7 @@ export default function PrivacyPolicy() {
           {/* Children's Privacy */}
           <section>
             <h2 className="text-xl font-semibold text-gray-100 mb-4 border-b border-gray-700 pb-2">
-              8. Children&apos;s Privacy (COPPA)
+              9. Children&apos;s Privacy (COPPA)
             </h2>
             <p className="text-gray-300 leading-relaxed">
               Our service is not directed to children under the age of 13 (or 16 in the
@@ -516,7 +638,7 @@ export default function PrivacyPolicy() {
           {/* Changes to Policy */}
           <section>
             <h2 className="text-xl font-semibold text-gray-100 mb-4 border-b border-gray-700 pb-2">
-              9. Changes to This Privacy Policy
+              10. Changes to This Privacy Policy
             </h2>
             <p className="text-gray-300 leading-relaxed">
               We may update this Privacy Policy from time to time to reflect changes in
@@ -535,7 +657,7 @@ export default function PrivacyPolicy() {
           {/* Contact Information */}
           <section>
             <h2 className="text-xl font-semibold text-gray-100 mb-4 border-b border-gray-700 pb-2">
-              10. Contact Information
+              11. Contact Information
             </h2>
             <p className="text-gray-300 leading-relaxed">
               If you have any questions, concerns, or requests regarding this Privacy
