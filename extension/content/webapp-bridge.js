@@ -78,7 +78,7 @@
         language: r.language || '',
         stars: r.stars || 0,
       })),
-      notificationFrequency: extSettings.notificationFrequency || 'daily',
+      notificationFrequency: extSettings.notificationFrequency || 'hourly',
       customLabels: extSettings.customLabels || [
         'good first issue',
         'help wanted',
@@ -102,7 +102,7 @@
     await chrome.storage.local.set({ [EXT_KEYS.AUTH]: token });
     setTimeout(() => {
       suppressChromeStorageSync = false;
-    }, 2000);
+    }, 100);
   }
 
   async function pushSettingsToExtension() {
@@ -117,7 +117,7 @@
       await chrome.storage.sync.set({ [EXT_KEYS.SETTINGS]: extSettings });
       setTimeout(() => {
         suppressChromeStorageSync = false;
-      }, 2000);
+      }, 100);
     } catch {
       // Invalid JSON in localStorage — skip
     }
@@ -140,7 +140,7 @@
     localStorage.setItem(WEB_APP_KEYS.AUTH, token);
     setTimeout(() => {
       suppressLocalStorageSync = false;
-    }, 2000);
+    }, 100);
 
     // Dispatch a custom event so the web app can react without a page reload
     window.dispatchEvent(
@@ -167,7 +167,7 @@
     localStorage.setItem(WEB_APP_KEYS.SETTINGS, JSON.stringify(merged));
     setTimeout(() => {
       suppressLocalStorageSync = false;
-    }, 2000);
+    }, 100);
 
     window.dispatchEvent(
       new CustomEvent('wtc-extension-sync', {

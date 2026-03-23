@@ -40,8 +40,8 @@ zip -r "$OUTPUT_FILE" . \
   --exclude "node_modules" \
   --exclude "dist/*" \
   --exclude "dist" \
-  --exclude "*.git/*" \
-  --exclude "*.git" \
+  --exclude ".git/*" \
+  --exclude ".git" \
   --exclude "*.sh" \
   --exclude "STORE_LISTING.md" \
   --exclude "*.map" \
