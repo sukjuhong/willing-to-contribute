@@ -7,7 +7,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
       url: baseUrl,
-      lastModified: staticPageDate,
+      lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 1,
       alternates: {
@@ -19,7 +19,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/issues`,
-      lastModified: staticPageDate,
+      lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.8,
       alternates: {
@@ -31,7 +31,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/repositories`,
-      lastModified: staticPageDate,
+      lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.7,
       alternates: {
@@ -43,7 +43,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/settings`,
-      lastModified: staticPageDate,
+      lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.5,
       alternates: {
