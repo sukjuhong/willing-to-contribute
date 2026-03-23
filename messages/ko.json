@@ -1,6 +1,7 @@
 {
   "common": {
     "welcome": "Willing to Contribute",
+    "pageTitle": "Willing to Contribute - 초보자 친화적 GitHub 이슈 찾기",
     "description": "당신의 관심사와 일치하는 오픈 소스 프로젝트를 찾고 기여하세요",
     "search": "검색",
     "language": "언어",

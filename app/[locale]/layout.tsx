@@ -11,14 +11,14 @@ type Props = {
 export async function generateMetadata({ params }: Props) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'common' });
-  const baseUrl = 'https://willing-to-contribute.vercel.app';
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL || 'https://willing-to-contribute.vercel.app';
+
+  const pageTitle = t('pageTitle');
 
   return {
     title: {
-      default:
-        locale === 'ko'
-          ? 'Willing to Contribute - 초보자 친화적 GitHub 이슈 찾기'
-          : 'Willing to Contribute - Find Beginner-Friendly GitHub Issues',
+      default: pageTitle,
       template: '%s | Willing to Contribute',
     },
     description: t('description'),
@@ -30,10 +30,7 @@ export async function generateMetadata({ params }: Props) {
       },
     },
     openGraph: {
-      title:
-        locale === 'ko'
-          ? 'Willing to Contribute - 초보자 친화적 GitHub 이슈 찾기'
-          : 'Willing to Contribute - Find Beginner-Friendly GitHub Issues',
+      title: pageTitle,
       description: t('description'),
       type: 'website',
       locale: locale === 'ko' ? 'ko_KR' : 'en_US',
@@ -51,10 +48,7 @@ export async function generateMetadata({ params }: Props) {
     },
     twitter: {
       card: 'summary_large_image' as const,
-      title:
-        locale === 'ko'
-          ? 'Willing to Contribute - 초보자 친화적 GitHub 이슈 찾기'
-          : 'Willing to Contribute - Find Beginner-Friendly GitHub Issues',
+      title: pageTitle,
       description: t('description'),
       images: ['/og-image.png'],
       creator: '@willing2contribute',

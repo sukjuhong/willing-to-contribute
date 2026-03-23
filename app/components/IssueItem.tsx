@@ -1,7 +1,7 @@
 import React from 'react';
 import { Issue } from '../types';
 import { FaGithub, FaClock, FaStar, FaCodeBranch } from 'react-icons/fa';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 interface IssueItemProps {
   issue: Issue;
@@ -11,6 +11,7 @@ interface IssueItemProps {
 const formatRelativeTime = (
   dateString: string,
   tCommon: ReturnType<typeof useTranslations<'common'>>,
+  locale: string,
 ): string => {
   const date = new Date(dateString);
   const now = new Date();
@@ -29,7 +30,7 @@ const formatRelativeTime = (
   } else if (diffInDays < 30) {
     return tCommon('daysAgo', { days: diffInDays });
   } else {
-    return date.toLocaleDateString();
+    return new Intl.DateTimeFormat(locale === 'ko' ? 'ko-KR' : 'en-US').format(date);
   }
 };
 
@@ -50,6 +51,7 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
   const tCommon = useTranslations('common');
   const tDifficulty = useTranslations('difficulty');
   const tMaintainer = useTranslations('maintainer');
+  const locale = useLocale();
 
   if (compact) {
     return (
@@ -134,7 +136,7 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
             </div>
             <div className="flex items-center gap-1">
               <span className="whitespace-nowrap">
-                {formatRelativeTime(issue.createdAt, tCommon)}
+                {formatRelativeTime(issue.createdAt, tCommon, locale)}
               </span>
               {issue.isNew && (
                 <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-mono px-1.5 py-0.5 rounded">
@@ -190,7 +192,7 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
             {issue.repository.maintainerScore && (
               <span
                 className={`text-xs px-2 py-0.5 rounded ${maintainerGradeStyles[issue.repository.maintainerScore.grade]}`}
-                title={`${tMaintainer(`grade${issue.repository.maintainerScore.grade}`)} · ${tMaintainer('responseTime', { hours: Math.round(issue.repository.maintainerScore.avgResponseTimeHours) })} · ${tMaintainer('mergeRate', { rate: Math.round(issue.repository.maintainerScore.mergeRate * 100) })}`}
+                title={`${tMaintainer('responseTime', { hours: Math.round(issue.repository.maintainerScore.avgResponseTimeHours) })} · ${tMaintainer('mergeRate', { rate: Math.round(issue.repository.maintainerScore.mergeRate * 100) })}`}
               >
                 {issue.repository.maintainerScore.grade} ·{' '}
                 {tMaintainer(`grade${issue.repository.maintainerScore.grade}`)}
@@ -242,7 +244,7 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
             {issue.repository.lastPushedAt && (
               <div className="flex items-center mr-4">
                 <span className="text-xs">
-                  {formatRelativeTime(issue.repository.lastPushedAt, tCommon)}
+                  {formatRelativeTime(issue.repository.lastPushedAt, tCommon, locale)}
                 </span>
               </div>
             )}
@@ -250,7 +252,7 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
             <div className="flex items-center mr-4">
               <FaClock className="mr-1 text-xs" />
               <span className="text-xs">
-                {formatRelativeTime(issue.createdAt, tCommon)}
+                {formatRelativeTime(issue.createdAt, tCommon, locale)}
               </span>
             </div>
 
