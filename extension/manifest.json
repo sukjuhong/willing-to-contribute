@@ -27,6 +27,14 @@
       "js": ["content/github.js"],
       "css": ["content/github.css"],
       "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://willing-to-contribute.vercel.app/*",
+        "http://localhost:3000/*"
+      ],
+      "js": ["content/webapp-bridge.js"],
+      "run_at": "document_idle"
     }
   ],
   "options_page": "popup/popup.html"
