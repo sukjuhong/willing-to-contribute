@@ -52,5 +52,41 @@ export default function sitemap(): MetadataRoute.Sitemap {
         },
       },
     },
+    {
+      url: `${baseUrl}/about`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.6,
+      alternates: {
+        languages: {
+          en: `${baseUrl}/about`,
+          ko: `${baseUrl}/about?lang=ko`,
+        },
+      },
+    },
+    {
+      url: `${baseUrl}/privacy`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.4,
+      alternates: {
+        languages: {
+          en: `${baseUrl}/privacy`,
+          ko: `${baseUrl}/privacy?lang=ko`,
+        },
+      },
+    },
+    {
+      url: `${baseUrl}/terms`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.4,
+      alternates: {
+        languages: {
+          en: `${baseUrl}/terms`,
+          ko: `${baseUrl}/terms?lang=ko`,
+        },
+      },
+    },
   ];
 }

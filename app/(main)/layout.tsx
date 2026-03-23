@@ -4,12 +4,13 @@ import { AppProvider, useApp } from '../contexts/AppContext';
 import Header from '../components/Header';
 import Navigation from '../components/Navigation';
 import AdSidebar from '../components/AdSidebar';
+import Footer from '../components/Footer';
 
 function MainLayoutContent({ children }: { children: React.ReactNode }) {
   const { authState, login, logout } = useApp();
 
   return (
-    <div className="min-h-screen bg-[#0d1117]">
+    <div className="min-h-screen bg-[#0d1117] flex flex-col">
       <Header
         authState={authState}
         onAppLogin={login}
@@ -17,7 +18,7 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
         showAppLogin={!authState.isLoggedIn}
       />
 
-      <div className="relative">
+      <div className="flex-1 relative">
         <AdSidebar position="left" />
         <main className="container mx-auto px-4 py-8">
           <Navigation />
@@ -25,6 +26,7 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
         </main>
         <AdSidebar position="right" />
       </div>
+      <Footer />
     </div>
   );
 }
