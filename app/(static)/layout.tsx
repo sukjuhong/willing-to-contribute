@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Footer from '../components/Footer';
+import AdSidebar from '../components/AdSidebar';
 
 export default function StaticLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -28,7 +29,11 @@ export default function StaticLayout({ children }: { children: React.ReactNode }
           </nav>
         </div>
       </header>
-      <main className="flex-1 container mx-auto px-4 py-12 max-w-4xl">{children}</main>
+      <div className="relative flex-1">
+        <AdSidebar position="left" />
+        <main className="container mx-auto px-4 py-12 max-w-4xl">{children}</main>
+        <AdSidebar position="right" />
+      </div>
       <Footer />
     </div>
   );
