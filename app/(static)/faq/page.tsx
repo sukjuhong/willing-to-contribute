@@ -128,8 +128,11 @@ function FAQSection({ title, items }: { title: string; items: FAQItem[] }) {
         {title}
       </h2>
       <div className="space-y-4">
-        {items.map((item, index) => (
-          <div key={index} className="bg-[#161b22] border border-gray-700 rounded-lg p-6">
+        {items.map(item => (
+          <div
+            key={item.question}
+            className="bg-[#161b22] border border-gray-700 rounded-lg p-6"
+          >
             <h3 className="text-lg font-semibold text-cyan-400 mb-3">{item.question}</h3>
             <p className="text-gray-300 leading-relaxed text-sm">{item.answer}</p>
           </div>

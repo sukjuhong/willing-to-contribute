@@ -143,6 +143,65 @@
     "copyright": "© {year} Willing to Contribute. All rights reserved.",
     "description": "Helping developers discover beginner-friendly open source issues"
   },
+  "repositoriesGuest": {
+    "whatIsTracking": "What is Repository Tracking?",
+    "trackingDesc1": "Repository Tracking is the core feature of Willing to Contribute. Once you sign in with GitHub, you can add any public GitHub repository to your personal tracking list. The app continuously monitors those repositories and surfaces open issues labeled as beginner-friendly — so you never have to manually browse dozens of issue trackers.",
+    "trackingDesc2": "You can track as many repositories as you like. Each repository is shown as a card with a direct link to its GitHub page. Removing a repository from your list takes a single click and never affects the upstream project in any way.",
+    "featuresTitle": "Everything You Can Do After Signing In",
+    "features": {
+      "addRepos": "Add Repositories by URL or owner/name",
+      "addReposDesc": "Paste a full GitHub URL like https://github.com/facebook/react or type the short form facebook/react — the app resolves it automatically.",
+      "monitorIssues": "Monitor Beginner-Friendly Issues in Real Time",
+      "monitorIssuesDesc": "Issues are fetched directly from the GitHub API and refreshed on demand. Filter by label, sort by date or comments, and hide issues that are already closed.",
+      "removeRepos": "Remove Repositories Anytime",
+      "removeReposDesc": "Keep your list focused. Remove repositories you no longer want to track with a single click — your other tracked repos are unaffected.",
+      "syncSettings": "Sync Settings Across Devices via GitHub Gist",
+      "syncSettingsDesc": "Your tracked repository list is saved to a private GitHub Gist. Sign in from any device and your entire list is restored automatically.",
+      "notifications": "Get Browser Notifications for New Issues",
+      "notificationsDesc": "Enable desktop notifications in Settings and be alerted whenever a new beginner-friendly issue appears in one of your tracked repositories."
+    },
+    "popularTitle": "Popular Beginner-Friendly Repositories to Get Started",
+    "popularDesc": "Not sure where to begin? These well-maintained open-source projects have active maintainers and regularly label issues for new contributors.",
+    "howItWorksTitle": "How It Works",
+    "steps": {
+      "step1Title": "Sign in with GitHub",
+      "step1Desc": "OAuth login grants read access to public repositories and write access to your private Gists for settings sync. No write access to your code is ever requested.",
+      "step2Title": "Add repositories",
+      "step2Desc": "Enter a GitHub repository URL or the short owner/name format. The app validates that the repository exists before adding it.",
+      "step3Title": "Browse open issues",
+      "step3Desc": "Switch to the Issues tab to see all beginner-friendly issues across your tracked repositories, sorted by newest first.",
+      "step4Title": "Pick an issue and contribute",
+      "step4Desc": "Click any issue to open it on GitHub. Read the discussion, ask questions, and submit your first pull request."
+    }
+  },
+  "settingsGuest": {
+    "customizeTitle": "Customize Your Experience",
+    "customizeDesc1": "The Settings page lets you tailor every aspect of how Willing to Contribute works for you. Once you sign in with GitHub you can configure notification frequency, define custom issue-label filters, decide whether to show or hide closed issues, and manage cross-device synchronization — all from a single panel.",
+    "customizeDesc2": "Every setting is persisted in your browser and optionally backed up to a private GitHub Gist so your preferences follow you across devices and browsers. Changes take effect immediately — no page reload required.",
+    "notificationFrequency": "Notification Frequency",
+    "notificationFrequencyDesc": "Choose how often the app checks for new beginner-friendly issues — every 15 minutes, 30 minutes, hourly, or on-demand. Browser notifications are delivered instantly when a matching issue appears so you can act on it before others.",
+    "customLabelFiltering": "Custom Label Filtering",
+    "customLabelFilteringDesc": "Beyond the built-in good first issue and help wanted filters, you can add any GitHub label you care about. Toggle individual labels on or off to show only the issue types that match your skills and interests.",
+    "hideClosedIssues": "Hide Closed Issues",
+    "hideClosedIssuesDesc": "GitHub occasionally keeps closed issues visible for historical reference. Toggle this option on to keep your feed clean and focused on actionable, open issues only — reducing noise when you are scanning for your next contribution opportunity.",
+    "gistSync": "Gist Synchronization",
+    "gistSyncDesc": "Save your entire settings — tracked repositories, label filters, and preferences — to a private GitHub Gist with one click. Load them back at any time or on any device. Conflict resolution is built in, so you always stay in control of which version wins.",
+    "crossDeviceTitle": "Cross-Device Sync via GitHub Gist",
+    "crossDeviceDesc1": "Willing to Contribute uses private GitHub Gists as a lightweight cloud storage layer — no separate account or third-party service required. When you trigger a sync, the app serializes your current settings into a JSON file and saves it to a Gist that only you can read.",
+    "crossDeviceDesc2": "On another device, sign in with the same GitHub account and load the Gist to restore everything instantly. If the remote Gist and your local settings have diverged, a conflict resolution dialog guides you through choosing which version to keep — local, remote, or a manual merge. Your Gist is never shared publicly and can be deleted from your GitHub account at any time.",
+    "syncSteps": {
+      "step1": "Save to Gist",
+      "step1Desc": "Click \"Save to Gist\" to upload your current settings to a private GitHub Gist.",
+      "step2": "Sign in Anywhere",
+      "step2Desc": "On any device, sign in with your GitHub account to access the sync feature.",
+      "step3": "Load from Gist",
+      "step3Desc": "Click \"Load from Gist\" to restore your tracked repositories and preferences."
+    },
+    "whyTitle": "Why These Settings Matter for Open-Source Contributors",
+    "whyDesc1": "Finding the right issue to work on is one of the biggest hurdles for new open-source contributors. The default GitHub interface shows every issue across a repository — bugs, feature requests, performance work, and refactors — without distinguishing which ones are suitable for beginners. Willing to Contribute solves this by letting you filter aggressively so you only see what is relevant to your current skill level.",
+    "whyDesc2": "Notification frequency matters too. Many beginner-friendly issues are claimed within hours of being labeled. Setting a shorter polling interval means you hear about new issues faster, giving you a better chance of being the first to comment and claim the work. Combined with custom label filters, you can build a highly targeted feed that surfaces exactly the kind of issues you are ready to tackle.",
+    "whyDesc3": "All settings are stored locally in your browser first, so the app works even without an internet connection after the initial load. The Gist sync layer is purely optional and additive — it adds persistence across devices without removing local control."
+  },
   "errors": {
     "enterRepositoryUrl": "Please enter a repository URL",
     "failedToAddRepository": "Failed to add repository",

@@ -2,11 +2,12 @@ import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://willing-to-contribute.vercel.app';
+  const staticPageDate = '2026-03-23';
 
   return [
     {
       url: baseUrl,
-      lastModified: new Date(),
+      lastModified: staticPageDate,
       changeFrequency: 'daily',
       priority: 1,
       alternates: {
@@ -18,7 +19,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/issues`,
-      lastModified: new Date(),
+      lastModified: staticPageDate,
       changeFrequency: 'daily',
       priority: 0.8,
       alternates: {
@@ -30,7 +31,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/repositories`,
-      lastModified: new Date(),
+      lastModified: staticPageDate,
       changeFrequency: 'weekly',
       priority: 0.7,
       alternates: {
@@ -42,7 +43,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/settings`,
-      lastModified: new Date(),
+      lastModified: staticPageDate,
       changeFrequency: 'monthly',
       priority: 0.5,
       alternates: {
@@ -54,7 +55,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/about`,
-      lastModified: new Date(),
+      lastModified: staticPageDate,
       changeFrequency: 'monthly',
       priority: 0.6,
       alternates: {
@@ -66,7 +67,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/privacy`,
-      lastModified: new Date(),
+      lastModified: staticPageDate,
       changeFrequency: 'monthly',
       priority: 0.4,
       alternates: {
@@ -78,7 +79,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/terms`,
-      lastModified: new Date(),
+      lastModified: staticPageDate,
       changeFrequency: 'monthly',
       priority: 0.4,
       alternates: {
@@ -90,7 +91,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/guide`,
-      lastModified: new Date(),
+      lastModified: staticPageDate,
       changeFrequency: 'monthly',
       priority: 0.7,
       alternates: {
@@ -102,7 +103,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/faq`,
-      lastModified: new Date(),
+      lastModified: staticPageDate,
       changeFrequency: 'monthly',
       priority: 0.5,
       alternates: {
