@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Willing to Contribute</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-logo">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 20 20"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle cx="10" cy="10" r="9" stroke="#06b6d4" stroke-width="1.5" />
+          <path
+            d="M6 10l3 3 5-5"
+            stroke="#06b6d4"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <span class="header-title">Willing to Contribute</span>
+      </div>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="issues">Issues</button>
+      <button class="tab-btn" data-tab="repos">Repositories</button>
+      <button class="tab-btn" data-tab="settings">Settings</button>
+    </nav>
+
+    <main class="main-content">
+      <!-- Issues Tab -->
+      <section id="issues-tab" class="tab-panel">
+        <div class="tab-toolbar">
+          <span class="issue-count" id="issue-count"></span>
+          <button class="btn btn-secondary btn-sm" id="refresh-btn">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 14 14"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 7A5 5 0 1 1 7 2a5 5 0 0 1 3.54 1.46L12 5V2"
+                stroke="currentColor"
+                stroke-width="1.4"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            Refresh
+          </button>
+        </div>
+        <div id="issues-list" class="issues-list"></div>
+      </section>
+
+      <!-- Repositories Tab -->
+      <section id="repos-tab" class="tab-panel" hidden>
+        <div class="add-repo-form">
+          <div class="input-row">
+            <input
+              type="text"
+              id="repo-input"
+              class="input"
+              placeholder="owner/name or GitHub URL"
+            />
+            <button class="btn btn-primary btn-sm" id="add-repo-btn">Add</button>
+          </div>
+          <div id="add-repo-error" class="error-msg" hidden></div>
+        </div>
+        <div id="repos-list" class="repos-list"></div>
+      </section>
+
+      <!-- Settings Tab -->
+      <section id="settings-tab" class="tab-panel" hidden>
+        <div class="settings-section">
+          <label class="settings-label">Notification Frequency</label>
+          <select class="select" id="frequency-select">
+            <option value="15min">Every 15 minutes</option>
+            <option value="30min">Every 30 minutes</option>
+            <option value="hourly" selected>Every hour</option>
+            <option value="6hours">Every 6 hours</option>
+            <option value="daily">Daily</option>
+          </select>
+        </div>
+
+        <div class="settings-section">
+          <label class="settings-label">GitHub Token</label>
+          <div class="token-display" id="token-display" hidden>
+            <span class="token-masked" id="token-masked"></span>
+            <button class="btn btn-danger btn-sm" id="clear-token-btn">Clear</button>
+          </div>
+          <div class="input-row" id="token-input-row">
+            <input
+              type="password"
+              id="token-input"
+              class="input"
+              placeholder="ghp_xxxxxxxxxxxx"
+            />
+            <button class="btn btn-primary btn-sm" id="save-token-btn">Save</button>
+          </div>
+          <p class="settings-hint">
+            Token increases API rate limit from 60 to 5000 req/hr.
+          </p>
+        </div>
+
+        <div class="settings-section">
+          <label class="settings-label">Tracked Labels</label>
+          <div id="labels-list" class="labels-list"></div>
+          <div class="input-row" style="margin-top: 8px">
+            <input
+              type="text"
+              id="label-input"
+              class="input"
+              placeholder="Add a label..."
+            />
+            <button class="btn btn-secondary btn-sm" id="add-label-btn">Add</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span id="last-checked-text" class="footer-text">Never checked</span>
+      <span id="rate-limit-text" class="footer-text footer-rate"></span>
+    </footer>
+
+    <div id="toast" class="toast" hidden></div>
+
+    <script src="../utils/storage.js"></script>
+    <script src="../utils/github-api.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>
