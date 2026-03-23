@@ -6,7 +6,7 @@ Willing to Contribute - Open Source Issue Finder
 
 ## Short Description (132자 이내)
 
-Discover beginner-friendly GitHub issues. Track repos, get notifications, and find your first open source contribution — right from your browser toolbar.
+Find beginner-friendly GitHub issues, track repos, and get notified — all from your browser toolbar.
 
 ## Detailed Description (English)
 

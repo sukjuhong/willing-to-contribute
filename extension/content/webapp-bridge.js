@@ -193,18 +193,22 @@
   });
 
   // Also catch same-tab writes via a patched setItem
-  const originalSetItem = localStorage.setItem.bind(localStorage);
-  localStorage.setItem = function (key, value) {
-    originalSetItem(key, value);
+  try {
+    const originalSetItem = localStorage.setItem.bind(localStorage);
+    localStorage.setItem = function (key, value) {
+      originalSetItem(key, value);
 
-    if (suppressLocalStorageSync) return;
+      if (suppressLocalStorageSync) return;
 
-    if (key === WEB_APP_KEYS.AUTH) {
-      pushAuthToExtension();
-    } else if (key === WEB_APP_KEYS.SETTINGS) {
-      pushSettingsToExtension();
-    }
-  };
+      if (key === WEB_APP_KEYS.AUTH) {
+        pushAuthToExtension();
+      } else if (key === WEB_APP_KEYS.SETTINGS) {
+        pushSettingsToExtension();
+      }
+    };
+  } catch {
+    // Patching failed (e.g. frozen localStorage) — fall back to storage event only
+  }
 
   // 3. Listen for chrome.storage changes (extension popup/background updates)
   chrome.storage.onChanged.addListener((changes, areaName) => {
