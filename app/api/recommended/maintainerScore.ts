@@ -1,14 +1,8 @@
 import { MaintainerScore } from '../../types';
 import { getServerOctokit } from './serverOctokit';
+import { cacheGet, cacheSet } from '../../lib/cache';
 
-interface CacheEntry {
-  score: MaintainerScore;
-  expiresAt: number;
-}
-
-export const maintainerScoreCache = new Map<string, CacheEntry>();
-
-const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 hours
+const CACHE_TTL_SECONDS = 21600; // 6 hours
 
 const FALLBACK_SCORE: MaintainerScore = {
   grade: 'C',
@@ -22,25 +16,19 @@ const hoursBetween = (start: string, end: string): number => {
   return diffMs / (1000 * 60 * 60);
 };
 
-export const getCachedMaintainerScore = (
+export const getCachedMaintainerScore = async (
   owner: string,
   repo: string,
-): MaintainerScore | null => {
-  const key = `${owner}/${repo}`;
-  const entry = maintainerScoreCache.get(key);
-  if (!entry) return null;
-  if (Date.now() > entry.expiresAt) {
-    maintainerScoreCache.delete(key);
-    return null;
-  }
-  return entry.score;
+): Promise<MaintainerScore | null> => {
+  const key = `maintainer:${owner}/${repo}`;
+  return cacheGet<MaintainerScore>(key);
 };
 
 export const calculateMaintainerScore = async (
   owner: string,
   repo: string,
 ): Promise<MaintainerScore> => {
-  const cached = getCachedMaintainerScore(owner, repo);
+  const cached = await getCachedMaintainerScore(owner, repo);
   if (cached) return cached;
 
   try {
@@ -82,24 +70,7 @@ export const calculateMaintainerScore = async (
     const avgResponseTimeHours =
       responseCount > 0 ? totalResponseHours / responseCount : 0;
 
-    // Fetch last 20 merged PRs for avg merge time
-    const { data: mergedPRs } = await octokit.pulls.list({
-      owner,
-      repo,
-      state: 'closed',
-      per_page: 20,
-      sort: 'updated',
-      direction: 'desc',
-    });
-
-    const merged = mergedPRs.filter(pr => pr.merged_at != null);
-    const totalMergeHours = merged.reduce(
-      (sum, pr) => sum + hoursBetween(pr.created_at, pr.merged_at!),
-      0,
-    );
-    const avgMergeTimeHours = merged.length > 0 ? totalMergeHours / merged.length : 0;
-
-    // Fetch last 50 closed PRs for merge rate
+    // Fetch last 50 closed PRs — use first 20 for merge time, all 50 for merge rate
     const { data: closedPRs } = await octokit.pulls.list({
       owner,
       repo,
@@ -108,6 +79,13 @@ export const calculateMaintainerScore = async (
       sort: 'updated',
       direction: 'desc',
     });
+
+    const merged = closedPRs.slice(0, 20).filter(pr => pr.merged_at != null);
+    const totalMergeHours = merged.reduce(
+      (sum, pr) => sum + hoursBetween(pr.created_at, pr.merged_at!),
+      0,
+    );
+    const avgMergeTimeHours = merged.length > 0 ? totalMergeHours / merged.length : 0;
 
     const mergedCount = closedPRs.filter(pr => pr.merged_at != null).length;
     const mergeRate = closedPRs.length > 0 ? mergedCount / closedPRs.length : 0;
@@ -129,10 +107,7 @@ export const calculateMaintainerScore = async (
       mergeRate,
     };
 
-    maintainerScoreCache.set(`${owner}/${repo}`, {
-      score,
-      expiresAt: Date.now() + CACHE_TTL_MS,
-    });
+    await cacheSet(`maintainer:${owner}/${repo}`, score, CACHE_TTL_SECONDS);
 
     return score;
   } catch (error) {
