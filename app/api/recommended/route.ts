@@ -3,15 +3,9 @@ import { Issue, Label, Repository } from '../../types';
 import { estimateDifficulty } from './difficulty';
 import { calculateMaintainerScore } from './maintainerScore';
 import { getServerOctokit } from './serverOctokit';
+import { cacheGet, cacheSet } from '../../lib/cache';
 
-interface CacheEntry {
-  data: { issues: Issue[]; total: number };
-  expiresAt: number;
-}
-
-const cache = new Map<string, CacheEntry>();
-const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes
-const MAX_CACHE_ENTRIES = 100;
+const CACHE_TTL_SECONDS = 900; // 15 minutes
 
 const getFreshnessDate = (freshness: string): string => {
   const now = new Date();
@@ -67,9 +61,9 @@ export async function GET(request: Request) {
       maxForks,
     });
 
-    const cached = cache.get(cacheKey);
-    if (cached && Date.now() < cached.expiresAt) {
-      return NextResponse.json(cached.data);
+    const cached = await cacheGet<{ issues: Issue[]; total: number }>(cacheKey);
+    if (cached) {
+      return NextResponse.json(cached);
     }
 
     const dateStr = getFreshnessDate(freshness);
@@ -211,11 +205,7 @@ export async function GET(request: Request) {
     const issues = filtered.map(({ issue }) => issue);
     const result = { issues, total: data.total_count };
 
-    if (cache.size >= MAX_CACHE_ENTRIES) {
-      const oldestKey = cache.keys().next().value;
-      if (oldestKey) cache.delete(oldestKey);
-    }
-    cache.set(cacheKey, { data: result, expiresAt: Date.now() + CACHE_TTL_MS });
+    await cacheSet(cacheKey, result, CACHE_TTL_SECONDS);
 
     return NextResponse.json(result);
   } catch (error) {
