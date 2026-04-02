@@ -23,6 +23,7 @@ interface MemEntry<T> {
   expiresAt: number;
 }
 const memCache = new Map<string, MemEntry<unknown>>();
+const MAX_CACHE_ENTRIES = 100;
 
 export async function cacheGet<T>(key: string): Promise<T | null> {
   const client = getRedis();
@@ -52,6 +53,10 @@ export async function cacheSet<T>(key: string, value: T, ttlSeconds: number): Pr
     } catch (err) {
       console.warn('[cache] Redis SET failed, falling back to memory:', err);
     }
+  }
+  if (memCache.size >= MAX_CACHE_ENTRIES) {
+    const oldestKey = memCache.keys().next().value;
+    if (oldestKey) memCache.delete(oldestKey);
   }
   memCache.set(key, { value, expiresAt: Date.now() + ttlSeconds * 1000 });
 }

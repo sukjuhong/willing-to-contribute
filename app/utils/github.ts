@@ -388,15 +388,11 @@ const GIST_CACHE_KEY = 'wtc-gist-id';
 
 // Find existing Gist ID using cache first, then fallback to listing
 async function findOrCreateGistId(octokit: OctokitType): Promise<string | null> {
+  if (typeof window === 'undefined') return null;
+
   const cachedId = localStorage.getItem(GIST_CACHE_KEY);
   if (cachedId) {
-    try {
-      await octokit.gists.get({ gist_id: cachedId });
-      return cachedId;
-    } catch {
-      // Gist was deleted, clear cache and fall through to search
-      localStorage.removeItem(GIST_CACHE_KEY);
-    }
+    return cachedId;
   }
 
   // Fallback: search the first page of gists (up to 100)
@@ -423,18 +419,25 @@ export const saveSettingsToGist = async (content: string): Promise<string | null
     const existingId = await findOrCreateGistId(octokit);
 
     if (existingId) {
-      // Update existing gist
-      const { data } = await octokit.gists.update({
-        gist_id: existingId,
-        files: {
-          'willing-to-contribute-settings.json': {
-            content,
+      try {
+        // Update existing gist
+        const { data } = await octokit.gists.update({
+          gist_id: existingId,
+          files: {
+            'willing-to-contribute-settings.json': {
+              content,
+            },
           },
-        },
-      });
-      return data.id ?? null;
-    } else {
-      // Create new gist and cache its ID
+        });
+        return data.id ?? null;
+      } catch {
+        // Cached ID is stale (gist deleted), clear and create new
+        localStorage.removeItem(GIST_CACHE_KEY);
+      }
+    }
+
+    // Create new gist and cache its ID
+    {
       const { data } = await octokit.gists.create({
         description: GIST_DESCRIPTION,
         public: false,
@@ -472,12 +475,18 @@ export const loadSettingsFromGist = async (): Promise<string | null> => {
     }
 
     // Get gist content directly using cached/found ID
-    const { data } = await octokit.gists.get({
-      gist_id: existingId,
-    });
+    try {
+      const { data } = await octokit.gists.get({
+        gist_id: existingId,
+      });
 
-    const file = data.files?.['willing-to-contribute-settings.json'];
-    return file?.content || null;
+      const file = data.files?.['willing-to-contribute-settings.json'];
+      return file?.content || null;
+    } catch {
+      // Cached ID is stale (gist deleted), clear cache
+      localStorage.removeItem(GIST_CACHE_KEY);
+      return null;
+    }
   } catch (error) {
     console.error('Error loading settings from GitHub Gist:', error);
     return null;

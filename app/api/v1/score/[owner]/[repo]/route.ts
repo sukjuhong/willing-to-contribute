@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { calculateMaintainerScore, getCachedMaintainerScore } from '../../../../recommended/maintainerScore';
+import { calculateMaintainerScore } from '../../../../recommended/maintainerScore';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -27,11 +27,7 @@ export async function GET(
   }
 
   try {
-    // Check cache first to surface cachedAt / ttl
-    const existing = await getCachedMaintainerScore(owner, repo);
-    const cachedAt = existing ? new Date().toISOString() : null;
-
-    const score = existing ?? (await calculateMaintainerScore(owner, repo));
+    const score = await calculateMaintainerScore(owner, repo);
 
     return NextResponse.json(
       {
@@ -41,7 +37,6 @@ export async function GET(
         avgResponseTimeHours: score.avgResponseTimeHours,
         avgMergeTimeHours: score.avgMergeTimeHours,
         mergeRate: score.mergeRate,
-        cachedAt,
         ttl: CACHE_TTL_SECONDS,
       },
       { headers: CORS_HEADERS },
