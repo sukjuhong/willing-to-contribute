@@ -17,6 +17,7 @@ export interface FilterState {
 export interface IssueFiltersProps {
   filters: FilterState;
   onFilterChange: (filters: FilterState) => void;
+  profileLanguage?: string | null;
 }
 
 const LANGUAGES = [
@@ -70,7 +71,11 @@ export const DEFAULT_FILTER_STATE: FilterState = {
   label: '',
 };
 
-export default function IssueFilters({ filters, onFilterChange }: IssueFiltersProps) {
+export default function IssueFilters({
+  filters,
+  onFilterChange,
+  profileLanguage,
+}: IssueFiltersProps) {
   const t = useTranslations();
   const tDifficulty = useTranslations('difficulty');
   const tMaintainer = useTranslations('maintainer');
@@ -130,6 +135,11 @@ export default function IssueFilters({ filters, onFilterChange }: IssueFiltersPr
               </option>
             ))}
           </select>
+          {profileLanguage && filters.language === 'all' && (
+            <span className="text-xs px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+              {t('filters.fromProfile')}: {profileLanguage}
+            </span>
+          )}
         </div>
 
         <div className="flex items-center gap-2">

@@ -99,7 +99,24 @@
     "loadMore": "Load More",
     "showingCount": "Showing {count} of {total} issues",
     "analyzeProfileCta": "Analyze your GitHub profile for personalized recommendations",
-    "analyzeNow": "Analyze Now"
+    "analyzeNow": "Analyze Now",
+    "resync": "Resync profile",
+    "lastSynced": "Last synced: {time}"
+  },
+  "profileAnalysis": {
+    "modalTitle": "Profile Analysis",
+    "step1": "GitHub profile connected",
+    "step2Pending": "Analyzing top languages...",
+    "step2Done": "Top languages analyzed",
+    "step3Pending": "Analyzing contributed repos...",
+    "step3Done": "Contributed repos analyzed",
+    "step4Pending": "Analyzing interests...",
+    "step4Done": "Interests analyzed",
+    "step5": "Personalization applied",
+    "errorRetry": "Analysis failed. Retry?",
+    "repoCount": "{count} repositories",
+    "categoryCount": "{count} categories",
+    "close": "Close"
   },
   "filters": {
     "title": "Filters",
@@ -113,6 +130,7 @@
     "freshness": "Last Updated",
     "label": "Label",
     "labelPlaceholder": "Filter by label...",
+    "fromProfile": "From profile",
     "clearAll": "Clear All",
     "apply": "Apply",
     "starsPreset": {
