@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { FaCheck, FaSpinner, FaTimes, FaRedo } from 'react-icons/fa';
+import { FaCheck, FaSpinner, FaRedo } from 'react-icons/fa';
 import { useTranslations } from 'next-intl';
 import type { UserProfileData } from '../hooks/useUserProfile';
 
@@ -14,7 +14,6 @@ interface ProfileAnalysisModalProps {
 }
 
 const STEP_DELAY = 800;
-const TOTAL_STEPS = 5;
 
 export default function ProfileAnalysisModal({
   isOpen,
@@ -24,11 +23,11 @@ export default function ProfileAnalysisModal({
   error,
 }: ProfileAnalysisModalProps) {
   const t = useTranslations('profileAnalysis');
-  const dialogRef = useRef<HTMLDialogElement>(null);
   const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [apiDone, setApiDone] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
+  const hasStarted = useRef(false);
 
   const clearTimeouts = useCallback(() => {
     timeoutsRef.current.forEach(clearTimeout);
@@ -75,16 +74,14 @@ export default function ProfileAnalysisModal({
     }
   }, [apiDone, completedSteps]);
 
-  // Dialog open/close
+  // Start analysis when modal opens
   useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-
-    if (isOpen) {
-      dialog.showModal();
+    if (isOpen && !hasStarted.current) {
+      hasStarted.current = true;
       startAnalysis();
-    } else {
-      dialog.close();
+    }
+    if (!isOpen) {
+      hasStarted.current = false;
       clearTimeouts();
     }
   }, [isOpen, startAnalysis, clearTimeouts]);
@@ -93,13 +90,6 @@ export default function ProfileAnalysisModal({
   useEffect(() => {
     return () => clearTimeouts();
   }, [clearTimeouts]);
-
-  // Handle backdrop click
-  const handleBackdropClick = (e: React.MouseEvent<HTMLDialogElement>) => {
-    if (e.target === dialogRef.current) {
-      onClose();
-    }
-  };
 
   const isStepDone = (step: number) => completedSteps.includes(step);
   const isAllDone = completedSteps.includes(5);
@@ -123,50 +113,41 @@ export default function ProfileAnalysisModal({
   };
 
   const steps = [
-    { step: 1, label: t('step1'), pending: null },
+    { step: 1, label: t('step1') },
     {
       step: 2,
       label: isStepDone(2) ? t('step2Done') : t('step2Pending'),
-      pending: t('step2Pending'),
     },
     {
       step: 3,
       label: isStepDone(3) ? t('step3Done') : t('step3Pending'),
-      pending: t('step3Pending'),
     },
     {
       step: 4,
       label: isStepDone(4) ? t('step4Done') : t('step4Pending'),
-      pending: t('step4Pending'),
     },
-    { step: 5, label: t('step5'), pending: null },
+    { step: 5, label: t('step5') },
   ];
 
+  if (!isOpen) return null;
+
   return (
-    <dialog
-      ref={dialogRef}
-      className="modal"
-      onClick={handleBackdropClick}
-      onCancel={onClose}
-    >
+    <div className="modal modal-open modal-bottom sm:modal-middle">
       <div className="modal-box bg-[#161b22] border border-gray-700 max-w-md">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-bold text-gray-100">{t('modalTitle')}</h3>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-200 transition-colors"
-          >
-            <FaTimes />
-          </button>
-        </div>
+        <button
+          className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-gray-400 hover:text-gray-200"
+          onClick={onClose}
+        >
+          ✕
+        </button>
+        <h3 className="text-lg font-bold text-gray-100 mb-6">{t('modalTitle')}</h3>
 
         {/* Steps */}
         <div className="space-y-4">
           {steps.map(({ step, label }) => {
             const done = isStepDone(step);
-            const isActive =
-              !done && step <= Math.max(...completedSteps, 0) + 1 && step <= TOTAL_STEPS;
+            const isActive = !done && step <= Math.max(...completedSteps, 0) + 1;
             const data = getStepData(step);
 
             return (
@@ -220,16 +201,18 @@ export default function ProfileAnalysisModal({
 
         {/* Close button */}
         {isAllDone && !error && (
-          <div className="mt-6 flex justify-end">
+          <div className="modal-action">
             <button
-              onClick={onClose}
               className="px-4 py-2 text-sm font-medium text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 rounded-md hover:bg-cyan-500/20 transition-colors"
+              onClick={onClose}
             >
               {t('close')}
             </button>
           </div>
         )}
       </div>
-    </dialog>
+      {/* Backdrop */}
+      <div className="modal-backdrop" onClick={onClose} />
+    </div>
   );
 }
