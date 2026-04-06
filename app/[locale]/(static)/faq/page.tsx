@@ -17,9 +17,9 @@ const serviceQuestions: FAQItem[] = [
     question: 'What is contrifit?',
     answer: (
       <>
-        contrifit is a free tool that helps developers discover
-        beginner-friendly GitHub issues across multiple repositories in one place. You add
-        the repositories you care about, and the platform surfaces open issues labeled{' '}
+        contrifit is a free tool that helps developers discover beginner-friendly GitHub
+        issues across multiple repositories in one place. You add the repositories you
+        care about, and the platform surfaces open issues labeled{' '}
         <code className="bg-gray-900 text-cyan-400 px-1.5 py-0.5 rounded text-sm font-mono">
           good first issue
         </code>
@@ -56,12 +56,12 @@ const serviceQuestions: FAQItem[] = [
   {
     question: 'What data does contrifit collect?',
     answer:
-      "contrifit does not operate a database of user data. When you sign in with GitHub, your access token is stored only in your browser's localStorage. Your repository list and preferences are saved either in localStorage (anonymous mode) or in a private GitHub Gist under your own account (authenticated mode). The server never stores your personal information.",
+      "When you sign in with GitHub, contrifit stores your repository list and preferences in a secure cloud database tied to your account. Your GitHub profile (languages, starred repos, contribution history) is analyzed to provide personalized recommendations and stored in the database. In anonymous mode, settings are saved only in your browser's localStorage. We do not share your data with third parties.",
   },
   {
     question: 'How does cross-device settings sync work?',
     answer:
-      'When you are signed in with GitHub, your repository list and preferences are automatically saved to a private GitHub Gist. This means your settings are stored in your own GitHub account, not on our servers. When you open the app on another device and sign in, your settings are loaded from that Gist. If there is a conflict between local and remote settings, the app will prompt you to choose which version to keep.',
+      'When you are signed in with GitHub, your repository list and preferences are automatically saved to a secure cloud database. When you open the app on another device and sign in with the same account, your settings are restored automatically.',
   },
   {
     question: 'How do browser notifications work?',

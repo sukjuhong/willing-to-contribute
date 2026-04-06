@@ -3,6 +3,7 @@ import { UserSettings } from '@/app/types';
 import { Database } from '@/app/types/supabase';
 
 type UserSettingsRow = Database['public']['Tables']['user_settings']['Row'];
+type UserSettingsInsert = Database['public']['Tables']['user_settings']['Insert'];
 
 export async function loadUserSettings(userId: string): Promise<UserSettings | null> {
   const supabase = createClient();
@@ -28,13 +29,15 @@ export async function saveUserSettings(
   settings: UserSettings,
 ): Promise<void> {
   const supabase = createClient();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  await (supabase as any).from('user_settings').upsert({
+  const row: UserSettingsInsert = {
     user_id: userId,
-    repositories: settings.repositories,
-    custom_labels: settings.customLabels,
+    repositories: settings.repositories as unknown as UserSettingsInsert['repositories'],
+    custom_labels:
+      settings.customLabels as unknown as UserSettingsInsert['custom_labels'],
     notification_frequency: settings.notificationFrequency,
     hide_closed_issues: settings.hideClosedIssues,
     updated_at: new Date().toISOString(),
-  });
+  };
+  // @supabase/ssr upsert() overload resolution fails with custom Database types
+  await supabase.from('user_settings').upsert(row as never);
 }

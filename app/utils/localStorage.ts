@@ -4,6 +4,64 @@ const SETTINGS_KEY = 'contrifit-settings';
 const ISSUES_KEY = 'contrifit-issues';
 const CACHE_TIMESTAMP_KEY = 'contrifit-cache-timestamp';
 
+// Legacy keys for migration from willing-to-contribute → contrifit
+const LEGACY_PREFIX = 'willing-to-contribute-';
+const LEGACY_KEY_MAP: Record<string, string> = {
+  [`${LEGACY_PREFIX}settings`]: SETTINGS_KEY,
+  [`${LEGACY_PREFIX}issues`]: ISSUES_KEY,
+  [`${LEGACY_PREFIX}cache-timestamp`]: CACHE_TIMESTAMP_KEY,
+};
+
+// Migrate localStorage data from old keys to new keys (runs once)
+export const migrateLocalStorageKeys = (): void => {
+  if (typeof window === 'undefined') return;
+
+  for (const [oldKey, newKey] of Object.entries(LEGACY_KEY_MAP)) {
+    const oldValue = localStorage.getItem(oldKey);
+    if (oldValue && !localStorage.getItem(newKey)) {
+      localStorage.setItem(newKey, oldValue);
+    }
+    if (oldValue) {
+      localStorage.removeItem(oldKey);
+    }
+  }
+
+  // Also migrate recommended-issues cache keys (they have language suffix)
+  const keysToMigrate: string[] = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key?.startsWith(`${LEGACY_PREFIX}recommended-issues`)) {
+      keysToMigrate.push(key);
+    }
+  }
+  for (const oldKey of keysToMigrate) {
+    const newKey = oldKey.replace(LEGACY_PREFIX, 'contrifit-');
+    const oldValue = localStorage.getItem(oldKey);
+    if (oldValue && !localStorage.getItem(newKey)) {
+      localStorage.setItem(newKey, oldValue);
+    }
+    localStorage.removeItem(oldKey);
+  }
+
+  // Clean up legacy auth key (no longer needed with Supabase)
+  localStorage.removeItem(`${LEGACY_PREFIX}auth`);
+};
+
+// Clear all user data from localStorage on logout
+export const clearAllUserData = (): void => {
+  if (typeof window === 'undefined') return;
+
+  const prefix = 'contrifit-';
+  const keysToRemove: string[] = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key?.startsWith(prefix)) {
+      keysToRemove.push(key);
+    }
+  }
+  keysToRemove.forEach(key => localStorage.removeItem(key));
+};
+
 // Default settings
 export const defaultSettings: UserSettings = {
   repositories: [],

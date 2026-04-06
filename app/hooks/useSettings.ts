@@ -14,6 +14,13 @@ const useSettings = (isLoggedIn: boolean, userId?: string) => {
   const [error, setError] = useState<string | null>(null);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Cleanup debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    };
+  }, []);
+
   // Load settings on mount and when auth state changes
   useEffect(() => {
     const loadUserSettings = async () => {

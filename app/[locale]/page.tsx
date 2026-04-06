@@ -144,8 +144,8 @@ export default function LandingPage() {
                 Everything You Need to Start Contributing
               </h2>
               <p className="text-gray-400 max-w-xl mx-auto leading-relaxed">
-                contrifit bundles the tools that remove the friction between
-                wanting to contribute and actually opening your first pull request.
+                contrifit bundles the tools that remove the friction between wanting to
+                contribute and actually opening your first pull request.
               </p>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -249,7 +249,7 @@ export default function LandingPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-2">
               <a
-                href="https://github.com/sukjuhong/contrifit"
+                href="https://github.com/sukjuhong/willing-to-contribute"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-600 text-gray-100 px-6 py-2.5 rounded-lg transition-colors text-sm font-medium"

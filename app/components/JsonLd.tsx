@@ -36,7 +36,7 @@ export default function JsonLd() {
     name: 'contrifit',
     url: baseUrl,
     logo: `${baseUrl}/og-image.png`,
-    sameAs: ['https://github.com/sukjuhong/contrifit'],
+    sameAs: ['https://github.com/sukjuhong/willing-to-contribute'],
   };
 
   const breadcrumbList = {

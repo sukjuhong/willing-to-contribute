@@ -2,8 +2,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
-  description:
-    'Privacy Policy for contrifit - Learn how we handle your data.',
+  description: 'Privacy Policy for contrifit - Learn how we handle your data.',
 };
 
 export default function PrivacyPolicy() {
@@ -17,8 +16,7 @@ export default function PrivacyPolicy() {
           {/* Introduction */}
           <section>
             <p className="text-gray-300 leading-relaxed">
-              Welcome to <strong className="text-gray-100">contrifit</strong>{' '}
-              (
+              Welcome to <strong className="text-gray-100">contrifit</strong> (
               <a
                 href="https://contrifit.vercel.app"
                 className="text-cyan-400 hover:text-cyan-300 underline"
@@ -61,8 +59,8 @@ export default function PrivacyPolicy() {
                 </ul>
                 <p className="text-gray-300 leading-relaxed mt-2">
                   We only request the minimum permissions necessary to provide the
-                  service, specifically the ability to read and write GitHub Gists for
-                  settings synchronization.
+                  service, specifically the ability to read your public profile for
+                  authentication and to sync settings via cloud storage.
                 </p>
               </div>
 
@@ -82,8 +80,8 @@ export default function PrivacyPolicy() {
                 </ul>
                 <p className="text-gray-300 leading-relaxed mt-2">
                   This data is stored in your browser&apos;s localStorage. If you are
-                  logged in with GitHub, you may optionally sync these preferences to a
-                  private GitHub Gist stored in your own GitHub account.
+                  logged in with GitHub, your preferences are automatically synced to a
+                  secure cloud database tied to your account.
                 </p>
               </div>
 
@@ -133,11 +131,10 @@ export default function PrivacyPolicy() {
                   2.2 Cross-Device Synchronization
                 </h3>
                 <p className="text-gray-300 leading-relaxed">
-                  If you choose to enable Gist sync, we use your GitHub OAuth token to
-                  save and retrieve your settings from a private Gist in your own GitHub
-                  account. This allows your preferences to be available across multiple
-                  devices. The Gist is created under your GitHub account and is under your
-                  full control.
+                  When you sign in, your settings are automatically synced to a secure
+                  cloud database. This allows your preferences to be available across
+                  multiple devices. The data is tied to your authenticated account and
+                  accessible only by you.
                 </p>
               </div>
 
@@ -175,7 +172,7 @@ export default function PrivacyPolicy() {
                 </ul>
                 <p className="text-gray-300 leading-relaxed mt-2">
                   This data is stored only on your device and is never transmitted to our
-                  servers except when syncing via GitHub Gist.
+                  servers except when syncing via cloud storage.
                 </p>
               </div>
 
@@ -193,18 +190,15 @@ export default function PrivacyPolicy() {
               </div>
 
               <div>
-                <h3 className="text-lg font-medium text-gray-200 mb-2">
-                  3.3 GitHub Gist Sync
-                </h3>
+                <h3 className="text-lg font-medium text-gray-200 mb-2">3.3 Cloud Sync</h3>
                 <p className="text-gray-300 leading-relaxed">
-                  If you enable settings synchronization, your preferences are stored in a
-                  private GitHub Gist associated with your GitHub account. This Gist is:
+                  If you are signed in, your preferences are stored in a secure cloud
+                  database associated with your account. This data is:
                 </p>
                 <ul className="list-disc list-inside text-gray-300 leading-relaxed mt-2 space-y-1 ml-4">
-                  <li>Set to private by default (not publicly accessible)</li>
-                  <li>Stored under your GitHub account, not ours</li>
-                  <li>Deletable by you at any time from your GitHub settings</li>
-                  <li>Subject to GitHub&apos;s own Privacy Policy</li>
+                  <li>Not publicly accessible</li>
+                  <li>Tied to your authenticated account</li>
+                  <li>Deletable upon request through our GitHub Issues page</li>
                 </ul>
               </div>
             </div>
@@ -216,9 +210,9 @@ export default function PrivacyPolicy() {
               4. Chrome Extension
             </h2>
             <p className="text-gray-300 leading-relaxed mb-4">
-              The contrifit Chrome Extension stores and manages data locally
-              within your browser using Chrome&apos;s built-in storage APIs. No data is
-              transmitted to any external server operated by us.
+              The contrifit Chrome Extension stores and manages data locally within your
+              browser using Chrome&apos;s built-in storage APIs. No data is transmitted to
+              any external server operated by us.
             </p>
             <div className="space-y-4">
               <div>
@@ -518,7 +512,7 @@ export default function PrivacyPolicy() {
               <li>
                 <strong className="text-gray-200">Minimal Permissions:</strong> We request
                 only the minimum GitHub OAuth scopes required for the service to function
-                (Gist read/write access).
+                (public profile read access).
               </li>
             </ul>
             <p className="text-gray-300 leading-relaxed mt-4">
@@ -576,29 +570,20 @@ export default function PrivacyPolicy() {
                   >
                     GitHub OAuth Application Settings
                   </a>{' '}
-                  and revoking access for &quot;contrifit&quot;. After
-                  revocation, you will be logged out and no further API calls will be made
-                  on your behalf.
+                  and revoking access for &quot;contrifit&quot;. After revocation, you
+                  will be logged out and no further API calls will be made on your behalf.
                 </p>
               </div>
 
               <div>
                 <h3 className="text-lg font-medium text-gray-200 mb-2">
-                  8.3 Delete Synced Settings (Gist)
+                  8.3 Delete Synced Settings
                 </h3>
                 <p className="text-gray-300 leading-relaxed">
-                  If you have enabled Gist sync, you can delete the settings Gist directly
-                  from your{' '}
-                  <a
-                    href="https://gist.github.com"
-                    className="text-cyan-400 hover:text-cyan-300 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    GitHub Gists page
-                  </a>
-                  . The Gist is titled &quot;contrifit Settings&quot; and can
-                  be identified and deleted from your GitHub account at any time.
+                  Your settings are stored in a secure cloud database tied to your
+                  account. When you log out, your local data is cleared. To request
+                  deletion of your cloud-stored settings, please contact us through our
+                  GitHub Issues page.
                 </p>
               </div>
 
@@ -608,9 +593,9 @@ export default function PrivacyPolicy() {
                 </h3>
                 <p className="text-gray-300 leading-relaxed">
                   Since your settings are stored in your own browser and optionally in
-                  your own GitHub Gist, you already have full access to and ownership of
-                  your data. You can view, export, or delete it directly without needing
-                  to request it from us.
+                  cloud storage, you already have full access to and ownership of your
+                  data. You can view, export, or delete it directly without needing to
+                  request it from us.
                 </p>
               </div>
             </div>
@@ -669,12 +654,12 @@ export default function PrivacyPolicy() {
                 <br />
                 GitHub Issues:{' '}
                 <a
-                  href="https://github.com/sukjuhong/contrifit/issues"
+                  href="https://github.com/sukjuhong/willing-to-contribute/issues"
                   className="text-cyan-400 hover:text-cyan-300 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  https://github.com/sukjuhong/contrifit/issues
+                  https://github.com/sukjuhong/willing-to-contribute/issues
                 </a>
               </p>
             </div>

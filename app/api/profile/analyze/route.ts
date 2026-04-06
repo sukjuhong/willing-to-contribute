@@ -2,6 +2,9 @@ import { createClient } from '@/app/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import { Octokit } from '@octokit/rest';
 import { analyzeUserProfile } from '@/app/lib/github/profileAnalyzer';
+import type { Database } from '@/app/types/supabase';
+
+type UserProfileInsert = Database['public']['Tables']['user_profiles']['Insert'];
 
 export async function POST() {
   try {
@@ -27,15 +30,16 @@ export async function POST() {
     const octokit = new Octokit({ auth: providerToken });
     const profile = await analyzeUserProfile(octokit, username);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (supabase as any).from('user_profiles').upsert({
+    const row: UserProfileInsert = {
       id: session.user.id,
       username: profile.username,
       top_languages: profile.top_languages,
       starred_categories: profile.starred_categories,
       contributed_repos: profile.contributed_repos,
       last_synced_at: new Date().toISOString(),
-    });
+    };
+    // @supabase/ssr upsert() overload resolution fails with custom Database types
+    const { error } = await supabase.from('user_profiles').upsert(row as never);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });

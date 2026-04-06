@@ -1,6 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { createClient } from '@/app/lib/supabase/client';
 import { GithubAuthState } from '../types';
+import { clearAllUserData } from '../utils/localStorage';
+
+const PROVIDER_TOKEN_KEY = 'contrifit-provider-token';
 
 const useSupabaseAuth = (): {
   authState: GithubAuthState;
@@ -8,20 +11,41 @@ const useSupabaseAuth = (): {
   logout: () => Promise<void>;
 } => {
   const [authState, setAuthState] = useState<GithubAuthState>({ isLoggedIn: false });
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
+    const buildAuthState = (
+      userId: string,
+      userMeta: Record<string, unknown>,
+      providerToken: string | null | undefined,
+    ): GithubAuthState => {
+      // Persist provider_token when available (only present on initial login)
+      if (providerToken) {
+        sessionStorage.setItem(PROVIDER_TOKEN_KEY, providerToken);
+      }
+      const storedToken =
+        providerToken || sessionStorage.getItem(PROVIDER_TOKEN_KEY) || undefined;
+
+      return {
+        isLoggedIn: true,
+        userId,
+        user: {
+          login: (userMeta?.user_name as string) ?? '',
+          avatarUrl: (userMeta?.avatar_url as string) ?? '',
+        },
+        accessToken: storedToken,
+      };
+    };
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        setAuthState({
-          isLoggedIn: true,
-          userId: session.user.id,
-          user: {
-            login: session.user.user_metadata?.user_name ?? '',
-            avatarUrl: session.user.user_metadata?.avatar_url ?? '',
-          },
-          accessToken: session.provider_token ?? undefined,
-        });
+        setAuthState(
+          buildAuthState(
+            session.user.id,
+            session.user.user_metadata,
+            session.provider_token,
+          ),
+        );
       }
     });
 
@@ -29,16 +53,15 @@ const useSupabaseAuth = (): {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
-        setAuthState({
-          isLoggedIn: true,
-          userId: session.user.id,
-          user: {
-            login: session.user.user_metadata?.user_name ?? '',
-            avatarUrl: session.user.user_metadata?.avatar_url ?? '',
-          },
-          accessToken: session.provider_token ?? undefined,
-        });
+        setAuthState(
+          buildAuthState(
+            session.user.id,
+            session.user.user_metadata,
+            session.provider_token,
+          ),
+        );
       } else {
+        sessionStorage.removeItem(PROVIDER_TOKEN_KEY);
         setAuthState({ isLoggedIn: false });
       }
     });
@@ -57,6 +80,8 @@ const useSupabaseAuth = (): {
   }, [supabase]);
 
   const logout = useCallback(async () => {
+    sessionStorage.removeItem(PROVIDER_TOKEN_KEY);
+    clearAllUserData();
     await supabase.auth.signOut();
   }, [supabase]);
 

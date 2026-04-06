@@ -7,6 +7,7 @@ import useIssues from '../hooks/useIssues';
 import useRecommendedIssues from '../hooks/useRecommendedIssues';
 import useUserProfile from '../hooks/useUserProfile';
 import { checkNotificationPermission } from '../utils/notifications';
+import { migrateLocalStorageKeys } from '../utils/localStorage';
 
 interface AppContextType {
   // Auth
@@ -92,8 +93,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     authState.isLoggedIn,
   );
 
-  // Request notification permission on mount
+  // Migrate legacy localStorage keys and request notification permission on mount
   useEffect(() => {
+    migrateLocalStorageKeys();
     checkNotificationPermission();
   }, []);
 

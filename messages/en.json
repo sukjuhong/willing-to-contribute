@@ -216,7 +216,7 @@
     "whyTitle": "Why These Settings Matter for Open-Source Contributors",
     "whyDesc1": "Finding the right issue to work on is one of the biggest hurdles for new open-source contributors. The default GitHub interface shows every issue across a repository — bugs, feature requests, performance work, and refactors — without distinguishing which ones are suitable for beginners. contrifit solves this by analyzing your GitHub activity and recommending issues that match your skills and interests.",
     "whyDesc2": "Notification frequency matters too. Many beginner-friendly issues are claimed within hours of being labeled. Setting a shorter polling interval means you hear about new issues faster, giving you a better chance of being the first to comment and claim the work. Combined with custom label filters, you can build a highly targeted feed that surfaces exactly the kind of issues you are ready to tackle.",
-    "whyDesc3": "All settings are stored locally in your browser first, so the app works even without an internet connection after the initial load. The Gist sync layer is purely optional and additive — it adds persistence across devices without removing local control."
+    "whyDesc3": "All settings are stored locally in your browser first, so the app works even without an internet connection after the initial load. The cloud sync layer is purely optional and additive — it adds persistence across devices without removing local control."
   },
   "profile": {
     "title": "Your Profile",

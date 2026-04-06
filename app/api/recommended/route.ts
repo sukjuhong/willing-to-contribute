@@ -37,23 +37,25 @@ export async function GET(request: Request) {
     let userTopLanguages: string[] = [];
     let userContributedRepos: Set<string> = new Set();
     let isPersonalized = false;
+    let sessionUserId: string | null = null;
     try {
       const supabase = await createClient();
       const {
         data: { session },
       } = await supabase.auth.getSession();
       if (session) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const { data: profile } = await (supabase as any)
+        sessionUserId = session.user.id;
+        const { data: profile } = await supabase
           .from('user_profiles')
           .select('top_languages, contributed_repos')
           .eq('id', session.user.id)
-          .single();
+          .single<{
+            top_languages: string[] | null;
+            contributed_repos: string[] | null;
+          }>();
         if (profile) {
-          userTopLanguages = (profile.top_languages as string[] | null) ?? [];
-          userContributedRepos = new Set(
-            (profile.contributed_repos as string[] | null) ?? [],
-          );
+          userTopLanguages = profile.top_languages ?? [];
+          userContributedRepos = new Set(profile.contributed_repos ?? []);
           isPersonalized = true;
         }
       }
@@ -80,6 +82,7 @@ export async function GET(request: Request) {
     const maxForks = isNaN(maxForksRaw) ? null : maxForksRaw;
 
     const cacheKey = JSON.stringify({
+      userId: sessionUserId,
       language,
       difficulties,
       minStars,
@@ -239,7 +242,8 @@ export async function GET(request: Request) {
     // Exclude issues from repos the user has already contributed to
     if (userContributedRepos.size > 0) {
       issues = issues.filter(
-        issue => !userContributedRepos.has(`${issue.repository.owner}/${issue.repository.name}`),
+        issue =>
+          !userContributedRepos.has(`${issue.repository.owner}/${issue.repository.name}`),
       );
     }
 

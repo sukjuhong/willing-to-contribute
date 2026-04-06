@@ -37,9 +37,8 @@ export default function TermsOfService() {
               1. Acceptance of Terms
             </h2>
             <p className="text-gray-300 leading-relaxed">
-              By accessing or using the contrifit service
-              (&quot;Service&quot;), you agree to be bound by these Terms of Service and
-              our{' '}
+              By accessing or using the contrifit service (&quot;Service&quot;), you agree
+              to be bound by these Terms of Service and our{' '}
               <Link
                 href="/privacy"
                 className="text-cyan-400 hover:text-cyan-300 underline"
@@ -51,8 +50,8 @@ export default function TermsOfService() {
             </p>
             <p className="text-gray-300 leading-relaxed mt-4">
               These Terms constitute a legally binding agreement between you and the
-              operators of contrifit. If you are using the Service on behalf
-              of an organization, you represent that you have the authority to bind that
+              operators of contrifit. If you are using the Service on behalf of an
+              organization, you represent that you have the authority to bind that
               organization to these Terms.
             </p>
           </section>
@@ -63,8 +62,7 @@ export default function TermsOfService() {
               2. Description of Service
             </h2>
             <p className="text-gray-300 leading-relaxed">
-              contrifit is a web application that provides the following
-              functionality:
+              contrifit is a web application that provides the following functionality:
             </p>
             <ul className="list-disc list-inside text-gray-300 leading-relaxed mt-3 space-y-2 ml-4">
               <li>
@@ -75,8 +73,8 @@ export default function TermsOfService() {
               <li>Filtering and sorting issues based on custom criteria</li>
               <li>Browser notifications for new issues in tracked repositories</li>
               <li>
-                Cross-device synchronization of settings via GitHub Gists (requires GitHub
-                authentication)
+                Cross-device synchronization of settings via cloud storage (requires
+                GitHub authentication)
               </li>
               <li>Support for multiple languages (English and Korean)</li>
             </ul>
@@ -101,9 +99,9 @@ export default function TermsOfService() {
                 <p className="text-gray-300 leading-relaxed">
                   To use the full features of the Service, you may authenticate using your
                   GitHub account. By doing so, you authorize us to access your GitHub
-                  profile information and to create/read private Gists on your behalf, as
-                  described in our Privacy Policy. You remain fully responsible for your
-                  GitHub account and all activity conducted through it.
+                  profile information and to sync your settings via cloud storage on your
+                  behalf, as described in our Privacy Policy. You remain fully responsible
+                  for your GitHub account and all activity conducted through it.
                 </p>
               </div>
 
@@ -220,10 +218,10 @@ export default function TermsOfService() {
                 </h3>
                 <p className="text-gray-300 leading-relaxed">
                   The Service, including its original content, features, and
-                  functionality, is owned by the operators of contrifit and is
-                  protected by applicable intellectual property laws. You may not copy,
-                  modify, distribute, sell, or lease any part of our Service without our
-                  express written permission.
+                  functionality, is owned by the operators of contrifit and is protected
+                  by applicable intellectual property laws. You may not copy, modify,
+                  distribute, sell, or lease any part of our Service without our express
+                  written permission.
                 </p>
               </div>
 
@@ -232,10 +230,10 @@ export default function TermsOfService() {
                   5.2 Open Source
                 </h3>
                 <p className="text-gray-300 leading-relaxed">
-                  The source code of contrifit may be made available under an
-                  open source license. Where source code is provided under an open source
-                  license, the terms of that license govern your use of the source code.
-                  Please refer to our GitHub repository for the applicable license terms.
+                  The source code of contrifit may be made available under an open source
+                  license. Where source code is provided under an open source license, the
+                  terms of that license govern your use of the source code. Please refer
+                  to our GitHub repository for the applicable license terms.
                 </p>
               </div>
 
@@ -483,12 +481,12 @@ export default function TermsOfService() {
                 <br />
                 GitHub Issues:{' '}
                 <a
-                  href="https://github.com/sukjuhong/contrifit/issues"
+                  href="https://github.com/sukjuhong/willing-to-contribute/issues"
                   className="text-cyan-400 hover:text-cyan-300 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  https://github.com/sukjuhong/contrifit/issues
+                  https://github.com/sukjuhong/willing-to-contribute/issues
                 </a>
               </p>
             </div>
