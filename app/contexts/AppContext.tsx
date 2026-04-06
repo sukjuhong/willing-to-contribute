@@ -1,17 +1,19 @@
 'use client';
 
 import React, { createContext, useContext, useEffect } from 'react';
-import useGithubAuth from '../hooks/useGithubAuth';
+import useSupabaseAuth from '../hooks/useSupabaseAuth';
 import useSettings from '../hooks/useSettings';
 import useIssues from '../hooks/useIssues';
 import useRecommendedIssues from '../hooks/useRecommendedIssues';
+import useUserProfile from '../hooks/useUserProfile';
 import { checkNotificationPermission } from '../utils/notifications';
+import { migrateLocalStorageKeys } from '../utils/localStorage';
 
 interface AppContextType {
   // Auth
-  authState: ReturnType<typeof useGithubAuth>['authState'];
-  login: ReturnType<typeof useGithubAuth>['login'];
-  logout: ReturnType<typeof useGithubAuth>['logout'];
+  authState: ReturnType<typeof useSupabaseAuth>['authState'];
+  login: ReturnType<typeof useSupabaseAuth>['login'];
+  logout: ReturnType<typeof useSupabaseAuth>['logout'];
 
   // Settings
   settings: ReturnType<typeof useSettings>['settings'];
@@ -41,13 +43,19 @@ interface AppContextType {
   fetchRecommendedIssues: ReturnType<
     typeof useRecommendedIssues
   >['fetchRecommendedIssues'];
+
+  // User Profile
+  profile: ReturnType<typeof useUserProfile>['profile'];
+  profileLoading: boolean;
+  profileError: string | null;
+  syncProfile: ReturnType<typeof useUserProfile>['syncProfile'];
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  // GitHub authentication state
-  const { authState, login, logout, handleCallback } = useGithubAuth();
+  // Auth state via Supabase
+  const { authState, login, logout } = useSupabaseAuth();
 
   // Settings state
   const {
@@ -60,7 +68,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     toggleCustomLabel,
     updateLastCheckedAt,
     toggleHideClosedIssues,
-  } = useSettings(authState.isLoggedIn);
+  } = useSettings(authState.isLoggedIn, authState.userId);
 
   // Issues state
   const {
@@ -80,28 +88,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     fetchRecommendedIssues,
   } = useRecommendedIssues();
 
-  // Handle OAuth callback
+  // User profile state
+  const { profile, profileLoading, profileError, syncProfile } = useUserProfile(
+    authState.isLoggedIn,
+  );
+
+  // Migrate legacy localStorage keys and request notification permission on mount
   useEffect(() => {
-    const url = new URL(window.location.href);
-    const code = url.searchParams.get('code');
-    const installationId = url.searchParams.get('installation_id');
-
-    if (code) {
-      // Remove code from URL
-      url.searchParams.delete('code');
-      if (installationId) {
-        url.searchParams.delete('installation_id');
-        window.history.replaceState({}, document.title, url.toString());
-      } else {
-        window.history.replaceState({}, document.title, url.toString());
-      }
-
-      handleCallback(code, installationId ?? undefined);
-    }
-  }, [handleCallback]);
-
-  // Request notification permission on mount
-  useEffect(() => {
+    migrateLocalStorageKeys();
     checkNotificationPermission();
   }, []);
 
@@ -171,6 +165,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     languageFilter,
     changeLanguageFilter,
     fetchRecommendedIssues,
+    profile,
+    profileLoading,
+    profileError,
+    syncProfile,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

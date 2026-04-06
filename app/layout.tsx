@@ -52,11 +52,11 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://willing-to-contribute.vercel.app'),
-  keywords: 'GitHub, open source, beginner friendly, contribution, issues, programming',
-  authors: [{ name: 'Willing to Contribute Team' }],
-  creator: 'Willing to Contribute Team',
-  publisher: 'Willing to Contribute Team',
+  metadataBase: new URL('https://contrifit.vercel.app'),
+  keywords: 'GitHub, open source, beginner friendly, contribution, issues, programming, personalized, recommendation',
+  authors: [{ name: 'contrifit Team' }],
+  creator: 'contrifit Team',
+  publisher: 'contrifit Team',
   formatDetection: {
     email: false,
     address: false,

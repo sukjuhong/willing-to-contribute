@@ -12,14 +12,14 @@ export async function generateMetadata({ params }: Props) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'common' });
   const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL || 'https://willing-to-contribute.vercel.app';
+    process.env.NEXT_PUBLIC_BASE_URL || 'https://contrifit.vercel.app';
 
   const pageTitle = t('pageTitle');
 
   return {
     title: {
       default: pageTitle,
-      template: '%s | Willing to Contribute',
+      template: '%s | contrifit',
     },
     description: t('description'),
     alternates: {
@@ -35,14 +35,14 @@ export async function generateMetadata({ params }: Props) {
       type: 'website',
       locale: locale === 'ko' ? 'ko_KR' : 'en_US',
       alternateLocale: [locale === 'ko' ? 'en_US' : 'ko_KR'],
-      siteName: 'Willing to Contribute',
+      siteName: 'contrifit',
       url: `${baseUrl}/${locale}`,
       images: [
         {
           url: '/og-image.png',
           width: 1200,
           height: 630,
-          alt: 'Willing to Contribute',
+          alt: 'contrifit',
         },
       ],
     },

@@ -4,7 +4,7 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'About',
   description:
-    'Learn about Willing to Contribute - a platform that helps developers discover beginner-friendly GitHub issues and start their open source journey.',
+    'Learn about contrifit - a platform that helps developers discover beginner-friendly GitHub issues and start their open source journey.',
 };
 
 export default function AboutPage() {
@@ -13,7 +13,7 @@ export default function AboutPage() {
       {/* Hero Section */}
       <section className="text-center mb-16">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-100 mb-6 font-[family-name:var(--font-mono)]">
-          <span className="text-cyan-400">&gt;_</span> Willing to Contribute
+          <span className="text-cyan-400">&gt;_</span> contrifit
         </h1>
         <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
           Your gateway to meaningful open source contributions. Discover beginner-friendly
@@ -30,16 +30,16 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* What is Willing to Contribute */}
+      {/* What is contrifit */}
       <section className="mb-16">
         <h2 className="text-2xl font-bold text-gray-100 mb-6 border-b border-gray-700 pb-3">
-          What is Willing to Contribute?
+          What is contrifit?
         </h2>
         <div className="space-y-4 text-gray-300 leading-relaxed">
           <p>
-            Willing to Contribute is a free, open source tool designed to bridge the gap
-            between developers who want to contribute to open source and the projects that
-            need their help. Whether you are a student writing your first lines of code, a
+            contrifit is a free, open source tool designed to bridge the gap between
+            developers who want to contribute to open source and the projects that need
+            their help. Whether you are a student writing your first lines of code, a
             self-taught developer looking to build your portfolio, or an experienced
             engineer wanting to give back to the community, this platform is built for
             you.
@@ -58,8 +58,8 @@ export default function AboutPage() {
               beginner friendly
             </code>{' '}
             — but finding those issues across dozens of repositories is time-consuming and
-            frustrating. Willing to Contribute aggregates those opportunities in one
-            place, so you can spend less time searching and more time building.
+            frustrating. contrifit aggregates those opportunities in one place, so you can
+            spend less time searching and more time building.
           </p>
           <p>
             The platform is entirely free to use. Sign in with your GitHub account to
@@ -114,13 +114,13 @@ export default function AboutPage() {
 
           <div className="bg-[#161b22] border border-gray-700 rounded-lg p-6">
             <h3 className="text-lg font-semibold text-cyan-400 mb-2">
-              Cross-Device Sync via GitHub Gists
+              Cross-Device Cloud Sync
             </h3>
             <p className="text-gray-400 text-sm leading-relaxed">
               Your repository list and preferences automatically sync across all your
-              devices using private GitHub Gists. Start tracking a repository on your
+              devices via secure cloud storage. Start tracking a repository on your
               laptop, and it instantly appears on your phone or work computer. No separate
-              account or database — your GitHub account is everything you need.
+              account needed — your GitHub login is everything you need.
             </p>
           </div>
 
@@ -269,14 +269,14 @@ export default function AboutPage() {
       {/* Open Source Project */}
       <section className="mb-16">
         <h2 className="text-2xl font-bold text-gray-100 mb-6 border-b border-gray-700 pb-3">
-          Willing to Contribute is Open Source
+          contrifit is Open Source
         </h2>
         <div className="bg-[#161b22] border border-gray-700 rounded-lg p-6 space-y-4">
           <p className="text-gray-300 leading-relaxed">
-            We practice what we preach. Willing to Contribute is itself an open source
-            project, built with Next.js 15, React 19, TypeScript, and TailwindCSS. The
-            full source code is available on GitHub, and we actively welcome contributions
-            from developers of all skill levels.
+            We practice what we preach. contrifit is itself an open source project, built
+            with Next.js 15, React 19, TypeScript, and TailwindCSS. The full source code
+            is available on GitHub, and we actively welcome contributions from developers
+            of all skill levels.
           </p>
           <p className="text-gray-300 leading-relaxed">
             If you find a bug, have a feature request, or want to improve the platform,

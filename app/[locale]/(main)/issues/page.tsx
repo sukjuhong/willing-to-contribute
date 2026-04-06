@@ -111,11 +111,11 @@ export default function IssuesPage() {
           <LoginPrompt />
           <div className="mt-8 bg-[#161b22] border border-gray-700 rounded-lg p-8">
             <h3 className="text-lg font-semibold text-gray-100 mb-2">
-              What is Willing to Contribute?
+              What is contrifit?
             </h3>
             <p className="text-gray-400 text-sm mb-4">
-              Willing to Contribute helps developers find beginner-friendly open source
-              issues across GitHub repositories — all in one place.
+              contrifit helps developers find beginner-friendly open source issues across
+              GitHub repositories — all in one place.
             </p>
             <ul className="space-y-2 text-sm text-gray-400">
               <li className="flex items-start gap-2">
@@ -141,7 +141,7 @@ export default function IssuesPage() {
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-cyan-400 mt-0.5">&#10003;</span>
-                <span>Sync your settings across devices with GitHub Gist</span>
+                <span>Sync your settings across devices via cloud</span>
               </li>
             </ul>
           </div>
