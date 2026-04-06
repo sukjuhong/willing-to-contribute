@@ -53,19 +53,19 @@ export default function SettingsPage() {
   if (!authState.isLoggedIn) {
     return (
       <div className="space-y-6">
-        <h2 className="text-xl font-bold text-gray-100">{t('settings.preferences')}</h2>
+        <h2 className="text-xl font-bold text-foreground">{t('settings.preferences')}</h2>
         <LoginPrompt />
 
         {/* Feature overview for unauthenticated users / SEO content */}
         <div className="space-y-6 mt-4">
-          <div className="bg-[#161b22] border border-gray-700 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-cyan-400 mb-3">
+          <div className="bg-card border border-border rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-primary mb-3">
               {t('settingsGuest.customizeTitle')}
             </h3>
-            <p className="text-gray-300 leading-relaxed">
+            <p className="text-foreground leading-relaxed">
               {t('settingsGuest.customizeDesc1')}
             </p>
-            <p className="text-gray-400 mt-3 leading-relaxed">
+            <p className="text-muted-foreground mt-3 leading-relaxed">
               {t('settingsGuest.customizeDesc2')}
             </p>
           </div>
@@ -74,41 +74,43 @@ export default function SettingsPage() {
             {SETTINGS_FEATURES.map(item => (
               <div
                 key={item.titleKey}
-                className="bg-[#161b22] border border-gray-700 rounded-lg p-5"
+                className="bg-card border border-border rounded-lg p-5"
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="h-2 w-2 rounded-full bg-cyan-500" />
-                  <h4 className="text-gray-100 font-semibold">{t(item.titleKey)}</h4>
+                  <span className="h-2 w-2 rounded-full bg-primary" />
+                  <h4 className="text-foreground font-semibold">{t(item.titleKey)}</h4>
                 </div>
-                <p className="text-gray-400 text-sm leading-relaxed">{t(item.descKey)}</p>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  {t(item.descKey)}
+                </p>
               </div>
             ))}
           </div>
 
-          <div className="bg-[#161b22] border border-gray-700 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-cyan-400 mb-3">
+          <div className="bg-card border border-border rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-primary mb-3">
               {t('settingsGuest.crossDeviceTitle')}
             </h3>
-            <p className="text-gray-300 leading-relaxed">
+            <p className="text-foreground leading-relaxed">
               {t('settingsGuest.crossDeviceDesc1')}
             </p>
-            <p className="text-gray-400 mt-3 leading-relaxed">
+            <p className="text-muted-foreground mt-3 leading-relaxed">
               {t('settingsGuest.crossDeviceDesc2')}
             </p>
             <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
               {SYNC_STEPS.map(item => (
                 <div
                   key={item.step}
-                  className="flex gap-3 bg-[#0d1117] border border-gray-700 rounded-md p-3"
+                  className="flex gap-3 bg-background border border-border rounded-md p-3"
                 >
-                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 text-xs font-bold flex items-center justify-center">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center">
                     {item.step}
                   </span>
                   <div>
-                    <p className="text-gray-100 text-sm font-medium">
+                    <p className="text-foreground text-sm font-medium">
                       {t(item.labelKey)}
                     </p>
-                    <p className="text-gray-400 text-xs mt-0.5 leading-relaxed">
+                    <p className="text-muted-foreground text-xs mt-0.5 leading-relaxed">
                       {t(item.descKey)}
                     </p>
                   </div>
@@ -117,15 +119,17 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          <div className="bg-[#161b22] border border-gray-700 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-cyan-400 mb-3">
+          <div className="bg-card border border-border rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-primary mb-3">
               {t('settingsGuest.whyTitle')}
             </h3>
-            <p className="text-gray-300 leading-relaxed">{t('settingsGuest.whyDesc1')}</p>
-            <p className="text-gray-400 mt-3 leading-relaxed">
+            <p className="text-foreground leading-relaxed">
+              {t('settingsGuest.whyDesc1')}
+            </p>
+            <p className="text-muted-foreground mt-3 leading-relaxed">
               {t('settingsGuest.whyDesc2')}
             </p>
-            <p className="text-gray-400 mt-3 leading-relaxed">
+            <p className="text-muted-foreground mt-3 leading-relaxed">
               {t('settingsGuest.whyDesc3')}
             </p>
           </div>
@@ -136,7 +140,7 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-bold text-gray-100">{t('settings.preferences')}</h2>
+      <h2 className="text-xl font-bold text-foreground">{t('settings.preferences')}</h2>
 
       <SettingsPanel
         settings={settings}

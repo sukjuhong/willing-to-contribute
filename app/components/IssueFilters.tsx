@@ -3,6 +3,21 @@
 import React, { useState } from 'react';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { useTranslations } from 'next-intl';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import { cn } from '@/lib/utils';
 
 export interface FilterState {
   language: string;
@@ -99,9 +114,12 @@ export default function IssueFilters({
   };
 
   const chipClass = (active: boolean) =>
-    active
-      ? 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30'
-      : 'bg-gray-800 text-gray-400 border-gray-700 hover:bg-gray-700';
+    cn(
+      'h-11 min-w-11 px-2.5 text-xs font-medium rounded-md border transition-colors',
+      active
+        ? 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30 hover:bg-cyan-500/30'
+        : 'bg-muted text-muted-foreground border-border hover:bg-accent',
+    );
 
   const clearAll = () => {
     onFilterChange({ ...DEFAULT_FILTER_STATE });
@@ -121,20 +139,24 @@ export default function IssueFilters({
       {/* Always visible: Language + Difficulty */}
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-2">
-          <label className="text-xs text-gray-400 whitespace-nowrap">
+          <label className="text-xs text-muted-foreground whitespace-nowrap">
             {t('filters.language')}
           </label>
-          <select
+          <Select
             value={filters.language}
-            onChange={e => onFilterChange({ ...filters, language: e.target.value })}
-            className="text-sm bg-[#0d1117] border border-gray-700 rounded-md px-2 py-1 text-gray-200 focus:outline-none focus:ring-1 focus:ring-cyan-500"
+            onValueChange={value => onFilterChange({ ...filters, language: value })}
           >
-            {LANGUAGES.map(lang => (
-              <option key={lang} value={lang}>
-                {lang === 'all' ? t('filters.allLanguages') : lang}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="text-sm h-9 w-auto min-w-[120px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {LANGUAGES.map(lang => (
+                <SelectItem key={lang} value={lang}>
+                  {lang === 'all' ? t('filters.allLanguages') : lang}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           {profileLanguage && filters.language === 'all' && (
             <span className="text-xs px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
               {t('filters.fromProfile')}: {profileLanguage}
@@ -143,137 +165,146 @@ export default function IssueFilters({
         </div>
 
         <div className="flex items-center gap-2">
-          <label className="text-xs text-gray-400 whitespace-nowrap">
+          <label className="text-xs text-muted-foreground whitespace-nowrap">
             {t('filters.difficulty')}
           </label>
           <div className="flex gap-1.5">
             {DIFFICULTIES.map(d => (
-              <button
+              <Button
                 key={d}
+                variant="ghost"
                 onClick={() => toggleDifficulty(d)}
-                className={`px-2.5 py-1 text-xs font-medium rounded-md border transition-colors ${chipClass(filters.difficulties.includes(d))}`}
+                className={chipClass(filters.difficulties.includes(d))}
               >
                 {tDifficulty(d)}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
 
-        <button
-          onClick={() => setShowAdvanced(!showAdvanced)}
-          className="ml-auto flex items-center gap-1 text-xs text-gray-400 hover:text-gray-200 transition-colors"
+        <Collapsible
+          open={showAdvanced}
+          onOpenChange={setShowAdvanced}
+          className="ml-auto"
         >
-          {t('filters.advanced')}
-          {showAdvanced ? (
-            <FaChevronUp className="text-[10px]" />
-          ) : (
-            <FaChevronDown className="text-[10px]" />
-          )}
-        </button>
+          <CollapsibleTrigger asChild>
+            <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
+              {t('filters.advanced')}
+              {showAdvanced ? (
+                <FaChevronUp className="text-[10px]" />
+              ) : (
+                <FaChevronDown className="text-[10px]" />
+              )}
+            </button>
+          </CollapsibleTrigger>
+
+          <CollapsibleContent className="mt-3">
+            <div className="bg-background border border-border rounded-lg p-4 space-y-4">
+              {/* Maintainer Score */}
+              <div className="flex items-center gap-2">
+                <label className="text-xs text-muted-foreground whitespace-nowrap min-w-[100px]">
+                  {t('filters.maintainerScore')}
+                </label>
+                <div className="flex gap-1.5">
+                  {MAINTAINER_GRADES.map(g => (
+                    <Button
+                      key={g}
+                      variant="ghost"
+                      onClick={() => toggleGrade(g)}
+                      className={chipClass(filters.maintainerGrades.includes(g))}
+                    >
+                      {tMaintainer(`grade${g}`)}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Stars Range */}
+              <div className="flex items-center gap-2">
+                <label className="text-xs text-muted-foreground whitespace-nowrap min-w-[100px]">
+                  {t('filters.starsRange')}
+                </label>
+                <div className="flex gap-1.5 flex-wrap">
+                  {STARS_PRESETS.map(p => (
+                    <Button
+                      key={p.label}
+                      variant="ghost"
+                      onClick={() => onFilterChange({ ...filters, minStars: p.value })}
+                      className={chipClass(filters.minStars === p.value)}
+                    >
+                      {tStarsPreset(p.label)}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Forks Range */}
+              <div className="flex items-center gap-2">
+                <label className="text-xs text-muted-foreground whitespace-nowrap min-w-[100px]">
+                  {t('filters.forksRange')}
+                </label>
+                <div className="flex gap-1.5 flex-wrap">
+                  {FORKS_PRESETS.map(p => (
+                    <Button
+                      key={p.label}
+                      variant="ghost"
+                      onClick={() => onFilterChange({ ...filters, minForks: p.value })}
+                      className={chipClass(filters.minForks === p.value)}
+                    >
+                      {tForksPreset(p.label)}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Freshness */}
+              <div className="flex items-center gap-2">
+                <label className="text-xs text-muted-foreground whitespace-nowrap min-w-[100px]">
+                  {t('filters.freshness')}
+                </label>
+                <div className="flex gap-1.5 flex-wrap">
+                  {FRESHNESS_PRESETS.map(p => (
+                    <Button
+                      key={p.label}
+                      variant="ghost"
+                      onClick={() => onFilterChange({ ...filters, freshness: p.value })}
+                      className={chipClass(filters.freshness === p.value)}
+                    >
+                      {tFreshnessPreset(p.label)}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Label */}
+              <div className="flex items-center gap-2">
+                <label className="text-xs text-muted-foreground whitespace-nowrap min-w-[100px]">
+                  {t('filters.label')}
+                </label>
+                <Input
+                  type="text"
+                  value={filters.label}
+                  onChange={e => onFilterChange({ ...filters, label: e.target.value })}
+                  placeholder={t('filters.labelPlaceholder')}
+                  className="text-sm h-9 w-48"
+                />
+              </div>
+
+              {/* Clear All */}
+              {hasActiveFilters && (
+                <div className="flex justify-end">
+                  <button
+                    onClick={clearAll}
+                    className="text-xs text-destructive hover:text-destructive/80 transition-colors"
+                  >
+                    {t('filters.clearAll')}
+                  </button>
+                </div>
+              )}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
       </div>
-
-      {/* Advanced Filters */}
-      {showAdvanced && (
-        <div className="bg-[#0d1117] border border-gray-700 rounded-lg p-4 space-y-4">
-          {/* Maintainer Score */}
-          <div className="flex items-center gap-2">
-            <label className="text-xs text-gray-400 whitespace-nowrap min-w-[100px]">
-              {t('filters.maintainerScore')}
-            </label>
-            <div className="flex gap-1.5">
-              {MAINTAINER_GRADES.map(g => (
-                <button
-                  key={g}
-                  onClick={() => toggleGrade(g)}
-                  className={`px-2.5 py-1 text-xs font-medium rounded-md border transition-colors ${chipClass(filters.maintainerGrades.includes(g))}`}
-                >
-                  {tMaintainer(`grade${g}`)}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Stars Range */}
-          <div className="flex items-center gap-2">
-            <label className="text-xs text-gray-400 whitespace-nowrap min-w-[100px]">
-              {t('filters.starsRange')}
-            </label>
-            <div className="flex gap-1.5 flex-wrap">
-              {STARS_PRESETS.map(p => (
-                <button
-                  key={p.label}
-                  onClick={() => onFilterChange({ ...filters, minStars: p.value })}
-                  className={`px-2.5 py-1 text-xs font-medium rounded-md border transition-colors ${chipClass(filters.minStars === p.value)}`}
-                >
-                  {tStarsPreset(p.label)}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Forks Range */}
-          <div className="flex items-center gap-2">
-            <label className="text-xs text-gray-400 whitespace-nowrap min-w-[100px]">
-              {t('filters.forksRange')}
-            </label>
-            <div className="flex gap-1.5 flex-wrap">
-              {FORKS_PRESETS.map(p => (
-                <button
-                  key={p.label}
-                  onClick={() => onFilterChange({ ...filters, minForks: p.value })}
-                  className={`px-2.5 py-1 text-xs font-medium rounded-md border transition-colors ${chipClass(filters.minForks === p.value)}`}
-                >
-                  {tForksPreset(p.label)}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Freshness */}
-          <div className="flex items-center gap-2">
-            <label className="text-xs text-gray-400 whitespace-nowrap min-w-[100px]">
-              {t('filters.freshness')}
-            </label>
-            <div className="flex gap-1.5 flex-wrap">
-              {FRESHNESS_PRESETS.map(p => (
-                <button
-                  key={p.label}
-                  onClick={() => onFilterChange({ ...filters, freshness: p.value })}
-                  className={`px-2.5 py-1 text-xs font-medium rounded-md border transition-colors ${chipClass(filters.freshness === p.value)}`}
-                >
-                  {tFreshnessPreset(p.label)}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Label */}
-          <div className="flex items-center gap-2">
-            <label className="text-xs text-gray-400 whitespace-nowrap min-w-[100px]">
-              {t('filters.label')}
-            </label>
-            <input
-              type="text"
-              value={filters.label}
-              onChange={e => onFilterChange({ ...filters, label: e.target.value })}
-              placeholder={t('filters.labelPlaceholder')}
-              className="text-sm bg-[#161b22] border border-gray-700 rounded-md px-2.5 py-1 text-gray-200 placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-cyan-500 w-48"
-            />
-          </div>
-
-          {/* Clear All */}
-          {hasActiveFilters && (
-            <div className="flex justify-end">
-              <button
-                onClick={clearAll}
-                className="text-xs text-red-400 hover:text-red-300 transition-colors"
-              >
-                {t('filters.clearAll')}
-              </button>
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 }

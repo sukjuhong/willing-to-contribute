@@ -4,25 +4,25 @@ import AdSidebar from '@/app/components/AdSidebar';
 
 export default function StaticLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-[#0d1117] flex flex-col">
-      <header className="bg-[#161b22] border-b border-gray-700 py-4 px-6">
+    <div className="min-h-screen bg-background flex flex-col">
+      <header className="bg-card border-b border-border py-4 px-6">
         <div className="container mx-auto flex justify-between items-center">
           <Link
             href="/issues"
-            className="text-2xl font-bold text-gray-100 font-[family-name:var(--font-mono)] hover:text-cyan-400 transition-colors"
+            className="text-2xl font-bold text-foreground font-[family-name:var(--font-mono)] hover:text-primary transition-colors"
           >
-            <span className="text-gray-500">&gt;_</span> contrifit
+            <span className="text-muted-foreground">&gt;_</span> contrifit
           </Link>
           <nav className="flex items-center space-x-4">
             <Link
               href="/issues"
-              className="text-gray-300 hover:text-cyan-400 transition-colors text-sm"
+              className="text-foreground hover:text-primary transition-colors text-sm"
             >
               Issues
             </Link>
             <Link
               href="/repositories"
-              className="text-gray-300 hover:text-cyan-400 transition-colors text-sm"
+              className="text-foreground hover:text-primary transition-colors text-sm"
             >
               Repositories
             </Link>

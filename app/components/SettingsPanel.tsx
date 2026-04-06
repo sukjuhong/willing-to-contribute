@@ -2,6 +2,17 @@ import React, { useState } from 'react';
 import { UserSettings } from '../types';
 import { FaCog, FaRegBell, FaSave, FaSpinner } from 'react-icons/fa';
 import { useTranslations } from 'next-intl';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface SettingsPanelProps {
   settings: UserSettings;
@@ -25,12 +36,11 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
   const [newLabel, setNewLabel] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  const handleFrequencyChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleFrequencyChange = async (value: string) => {
     setLoading(true);
     setError(null);
     try {
-      const value = e.target.value as 'hourly' | '6hours' | 'daily' | 'never';
-      await onUpdateFrequency(value);
+      await onUpdateFrequency(value as 'hourly' | '6hours' | 'daily' | 'never');
     } catch {
       setError(t('errors.failedToUpdateNotificationFrequency'));
     } finally {
@@ -38,11 +48,11 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
     }
   };
 
-  const handleHideClosedToggle = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleHideClosedToggle = async (checked: boolean) => {
     setLoading(true);
     setError(null);
     try {
-      await onToggleHideClosedIssues(e.target.checked);
+      await onToggleHideClosedIssues(checked);
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(t('errors.failedToUpdateHideClosedIssues'));
@@ -83,52 +93,57 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
   };
 
   return (
-    <div className="bg-[#161b22] rounded-lg border border-gray-700 p-4">
+    <Card className="bg-card border-border p-4">
       <div className="flex items-center mb-4">
         <FaCog className="text-cyan-400 mr-2" />
-        <h3 className="text-lg font-semibold text-gray-100">{t('settings.title')}</h3>
+        <h3 className="text-lg font-semibold text-foreground">{t('settings.title')}</h3>
       </div>
 
       {error && (
-        <div className="mb-4 bg-red-500/10 text-red-400 border border-red-500/20 rounded-md text-sm p-2">
+        <div
+          role="alert"
+          className="mb-4 bg-destructive/10 text-destructive border border-destructive/20 rounded-md text-sm p-2"
+        >
           {error}
         </div>
       )}
 
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">
+          <label className="block text-sm font-medium text-foreground mb-1">
             {t('settings.notificationFrequency')}
           </label>
-          <div className="flex items-center">
-            <FaRegBell className="text-gray-400 mr-2" />
-            <select
+          <div className="flex items-center gap-2">
+            <FaRegBell className="text-muted-foreground shrink-0" />
+            <Select
               value={settings.notificationFrequency}
-              onChange={handleFrequencyChange}
+              onValueChange={handleFrequencyChange}
               disabled={disabled || loading}
-              className="block w-full px-3 py-2 bg-[#0d1117] border border-gray-700 rounded-md text-gray-100 focus:outline-none focus:ring-cyan-500 focus:border-cyan-500"
             >
-              <option value="hourly">{t('settings.frequency.hourly')}</option>
-              <option value="6hours">{t('settings.frequency.6hours')}</option>
-              <option value="daily">{t('settings.frequency.daily')}</option>
-              <option value="never">{t('settings.frequency.never')}</option>
-            </select>
+              <SelectTrigger className="w-full bg-background border-border text-foreground">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="hourly">{t('settings.frequency.hourly')}</SelectItem>
+                <SelectItem value="6hours">{t('settings.frequency.6hours')}</SelectItem>
+                <SelectItem value="daily">{t('settings.frequency.daily')}</SelectItem>
+                <SelectItem value="never">{t('settings.frequency.never')}</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
         <div>
-          <div className="flex items-center">
-            <input
+          <div className="flex items-center gap-2">
+            <Checkbox
               id="hideClosedIssues"
-              type="checkbox"
               checked={settings.hideClosedIssues}
-              onChange={handleHideClosedToggle}
+              onCheckedChange={handleHideClosedToggle}
               disabled={disabled || loading}
-              className="h-4 w-4 text-cyan-600 focus:ring-cyan-500 bg-[#0d1117] border-gray-600 rounded"
             />
             <label
               htmlFor="hideClosedIssues"
-              className="ml-2 block text-sm text-gray-300"
+              className="text-sm text-foreground cursor-pointer"
             >
               {t('settings.hideClosedIssues')}
             </label>
@@ -136,7 +151,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">
+          <label className="block text-sm font-medium text-foreground mb-1">
             {t('settings.customLabels')}
           </label>
           <div className="flex flex-wrap gap-2 mb-2">
@@ -158,32 +173,29 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             ))}
           </div>
           <form onSubmit={handleAddCustomLabel} className="flex">
-            <input
+            <Input
               type="text"
               value={newLabel}
               onChange={e => setNewLabel(e.target.value)}
               placeholder={t('settings.addCustomLabel')}
               disabled={disabled || loading}
-              className="block w-full px-3 py-2 bg-[#0d1117] border border-gray-700 text-gray-100 placeholder-gray-600 focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 rounded-l-md"
+              className="bg-background border-border text-foreground placeholder:text-muted-foreground rounded-r-none border-r-0"
             />
-            <button
+            <Button
               type="submit"
               disabled={disabled || loading || !newLabel.trim()}
-              className={`inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-r-md text-white bg-cyan-600 hover:bg-cyan-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 ${
-                disabled || loading || !newLabel.trim()
-                  ? 'opacity-50 cursor-not-allowed'
-                  : ''
-              }`}
+              aria-label={t('settings.addCustomLabel')}
+              className="rounded-l-none"
             >
               {loading ? <FaSpinner className="animate-spin" /> : <FaSave />}
-            </button>
+            </Button>
           </form>
-          <p className="mt-1 text-gray-500 text-xs">
+          <p className="mt-1 text-muted-foreground text-xs">
             {t('settings.customLabelsDescription')}
           </p>
         </div>
       </div>
-    </div>
+    </Card>
   );
 };
 

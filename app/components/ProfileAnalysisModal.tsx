@@ -4,6 +4,14 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { FaCheck, FaSpinner, FaRedo } from 'react-icons/fa';
 import { useTranslations } from 'next-intl';
 import type { UserProfileData } from '../hooks/useUserProfile';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 
 interface ProfileAnalysisModalProps {
   isOpen: boolean;
@@ -86,28 +94,6 @@ export default function ProfileAnalysisModal({
     }
   }, [isOpen, startAnalysis, clearTimeouts]);
 
-  // Prevent body scroll when modal is open
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isOpen]);
-
-  // Close on Escape key
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
-
   // Cleanup
   useEffect(() => {
     return () => clearTimeouts();
@@ -151,31 +137,12 @@ export default function ProfileAnalysisModal({
     { step: 5, label: t('step5') },
   ];
 
-  if (!isOpen) return null;
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="profile-analysis-title"
-    >
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-
-      {/* Modal content */}
-      <div className="relative z-10 bg-[#161b22] border border-gray-700 rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
-        {/* Header */}
-        <button
-          className="absolute right-3 top-3 text-gray-400 hover:text-gray-200 transition-colors text-lg"
-          onClick={onClose}
-          aria-label={t('close')}
-        >
-          ✕
-        </button>
-        <h3 id="profile-analysis-title" className="text-lg font-bold text-gray-100 mb-6">
-          {t('modalTitle')}
-        </h3>
+    <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
+      <DialogContent className="bg-card border-border max-w-md" showCloseButton>
+        <DialogHeader>
+          <DialogTitle className="text-foreground">{t('modalTitle')}</DialogTitle>
+        </DialogHeader>
 
         {/* Steps */}
         <div className="space-y-4">
@@ -197,10 +164,10 @@ export default function ProfileAnalysisModal({
                     </div>
                   ) : isActive ? (
                     <div className="w-5 h-5 flex items-center justify-center">
-                      <FaSpinner className="text-gray-500 text-sm animate-spin" />
+                      <FaSpinner className="text-muted-foreground text-sm animate-spin" />
                     </div>
                   ) : (
-                    <div className="w-5 h-5 rounded-full border border-gray-700" />
+                    <div className="w-5 h-5 rounded-full border border-border" />
                   )}
                 </div>
 
@@ -208,7 +175,7 @@ export default function ProfileAnalysisModal({
                 <div className="flex-1 min-w-0">
                   <p
                     className={`text-sm transition-colors duration-300 ${
-                      done ? 'text-gray-100' : 'text-gray-500'
+                      done ? 'text-foreground' : 'text-muted-foreground'
                     }`}
                   >
                     {label}
@@ -222,30 +189,36 @@ export default function ProfileAnalysisModal({
 
         {/* Error */}
         {error && isAllDone && (
-          <div className="mt-4 bg-red-500/10 border border-red-500/20 rounded-md p-3 flex items-center justify-between">
-            <span className="text-sm text-red-400">{t('errorRetry')}</span>
-            <button
+          <div
+            role="alert"
+            className="mt-4 bg-destructive/10 border border-destructive/20 rounded-md p-3 flex items-center justify-between"
+          >
+            <span className="text-sm text-destructive">{t('errorRetry')}</span>
+            <Button
               onClick={startAnalysis}
               aria-label={t('errorRetry')}
-              className="flex items-center gap-1 px-3 py-1 text-xs font-medium bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-md border border-red-500/30 transition-colors"
+              variant="ghost"
+              size="sm"
+              className="gap-1 text-destructive hover:text-destructive hover:bg-destructive/10 border border-destructive/30"
             >
               <FaRedo className="text-xs" />
-            </button>
+            </Button>
           </div>
         )}
 
-        {/* Close button */}
+        {/* Footer close button */}
         {isAllDone && !error && (
-          <div className="mt-6 flex justify-end">
-            <button
-              className="px-4 py-2 text-sm font-medium text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 rounded-md hover:bg-cyan-500/20 transition-colors"
+          <DialogFooter>
+            <Button
+              variant="outline"
               onClick={onClose}
+              className="text-cyan-400 border-cyan-500/20 bg-cyan-500/10 hover:bg-cyan-500/20"
             >
               {t('close')}
-            </button>
-          </div>
+            </Button>
+          </DialogFooter>
         )}
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

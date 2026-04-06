@@ -86,7 +86,7 @@ export default function IssuesPage() {
       <RecommendedIssues />
 
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold text-gray-100">
+        <h2 className="text-xl font-bold text-foreground">
           {t('settings.beginnerFriendlyIssues')}
         </h2>
 
@@ -109,38 +109,38 @@ export default function IssuesPage() {
       {!authState.isLoggedIn ? (
         <>
           <LoginPrompt />
-          <div className="mt-8 bg-[#161b22] border border-gray-700 rounded-lg p-8">
-            <h3 className="text-lg font-semibold text-gray-100 mb-2">
+          <div className="mt-8 bg-card border border-border rounded-lg p-8">
+            <h3 className="text-lg font-semibold text-foreground mb-2">
               What is contrifit?
             </h3>
-            <p className="text-gray-400 text-sm mb-4">
+            <p className="text-muted-foreground text-sm mb-4">
               contrifit helps developers find beginner-friendly open source issues across
               GitHub repositories — all in one place.
             </p>
-            <ul className="space-y-2 text-sm text-gray-400">
+            <ul className="space-y-2 text-sm text-muted-foreground">
               <li className="flex items-start gap-2">
-                <span className="text-cyan-400 mt-0.5">&#10003;</span>
+                <span className="text-primary mt-0.5">&#10003;</span>
                 <span>
                   Browse curated &quot;good first issue&quot; and &quot;help wanted&quot;
                   issues from popular repos
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-cyan-400 mt-0.5">&#10003;</span>
+                <span className="text-primary mt-0.5">&#10003;</span>
                 <span>
                   Track multiple repositories and get notified when new beginner-friendly
                   issues appear
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-cyan-400 mt-0.5">&#10003;</span>
+                <span className="text-primary mt-0.5">&#10003;</span>
                 <span>
                   Filter by programming language, difficulty, and maintainer
                   responsiveness
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-cyan-400 mt-0.5">&#10003;</span>
+                <span className="text-primary mt-0.5">&#10003;</span>
                 <span>Sync your settings across devices via cloud</span>
               </li>
             </ul>
@@ -156,16 +156,16 @@ export default function IssuesPage() {
 
           {issuesLoading && !refreshing ? (
             <div className="flex justify-center items-center p-8">
-              <FaSync className="animate-spin text-cyan-400 mr-2" />
-              <span className="text-gray-400">{t('common.loadingIssues')}</span>
+              <FaSync className="animate-spin text-primary mr-2" />
+              <span className="text-muted-foreground">{t('common.loadingIssues')}</span>
             </div>
           ) : settings.repositories.length === 0 ? (
-            <div className="text-center bg-[#161b22] border border-gray-700 rounded-lg p-8">
-              <FaGithub className="mx-auto h-12 w-12 text-gray-600" />
-              <h3 className="mt-2 text-lg font-medium text-gray-100">
+            <div className="text-center bg-card border border-border rounded-lg p-8">
+              <FaGithub className="mx-auto h-12 w-12 text-muted-foreground" />
+              <h3 className="mt-2 text-lg font-medium text-foreground">
                 {t('settings.noRepositories')}
               </h3>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-muted-foreground">
                 {t('settings.addRepositoriesToStart')}
               </p>
             </div>

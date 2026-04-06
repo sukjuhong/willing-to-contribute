@@ -15,6 +15,14 @@ import ProfileAnalysisModal from './ProfileAnalysisModal';
 import { useApp } from '../contexts/AppContext';
 import { useTranslations } from 'next-intl';
 import type { Issue } from '../types';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent,
+} from '@/components/ui/collapsible';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function formatRelativeTime(isoString: string | null, t: any): string {
@@ -166,210 +174,231 @@ export default function RecommendedIssues() {
   };
 
   return (
-    <div className="bg-[#161b22] rounded-lg border border-gray-700">
-      {/* Header */}
-      <div
-        className="flex items-center justify-between p-4 cursor-pointer"
-        onClick={() => setCollapsed(!collapsed)}
-      >
-        <div className="flex items-center gap-2 flex-wrap">
-          <FaStar className="text-amber-400" />
-          <h3 className="text-lg font-bold text-gray-100">{t('recommended.title')}</h3>
-          {isPersonalized && (
-            <>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-400 border border-cyan-500/25">
-                {t('recommended.personalized')}
+    <Collapsible open={!collapsed} onOpenChange={open => setCollapsed(!open)}>
+      <Card className="bg-card border border-border gap-0 py-0">
+        {/* Header */}
+        <CollapsibleTrigger asChild>
+          <button className="w-full flex items-center justify-between p-4 cursor-pointer">
+            <div className="flex items-center gap-2 flex-wrap">
+              <FaStar className="text-amber-400" />
+              <h3 className="text-lg font-bold text-foreground">
+                {t('recommended.title')}
+              </h3>
+              {isPersonalized && (
+                <>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-400 border border-cyan-500/25">
+                    {t('recommended.personalized')}
+                  </span>
+                  {profile && (
+                    <button
+                      onClick={e => {
+                        e.stopPropagation();
+                        setShowAnalysisModal(true);
+                      }}
+                      disabled={profileLoading}
+                      aria-label={t('recommended.resync')}
+                      className="text-muted-foreground hover:text-cyan-400 transition-colors p-1 disabled:opacity-50"
+                      title={t('recommended.lastSynced', {
+                        time: formatRelativeTime(profile.last_synced_at, t),
+                      })}
+                    >
+                      <FaSync
+                        className={`text-xs ${profileLoading ? 'animate-spin' : ''}`}
+                      />
+                    </button>
+                  )}
+                </>
+              )}
+              <span className="text-xs text-muted-foreground">
+                {t('recommended.description')}
               </span>
-              {profile && (
-                <button
+            </div>
+            <div className="flex items-center gap-3">
+              {collapsed ? (
+                <FaChevronDown className="text-muted-foreground" />
+              ) : (
+                <FaChevronUp className="text-muted-foreground" />
+              )}
+            </div>
+          </button>
+        </CollapsibleTrigger>
+
+        {/* Content */}
+        <CollapsibleContent>
+          <div className="px-4 pb-4 space-y-3">
+            {/* Filters */}
+            <IssueFilters
+              filters={filters}
+              onFilterChange={newFilters => {
+                if (newFilters.language !== filters.language) {
+                  setUserOverrodeLanguage(true);
+                }
+                // Reset override when clearing all filters
+                if (
+                  newFilters.language === DEFAULT_FILTER_STATE.language &&
+                  newFilters.difficulties.length === 0 &&
+                  newFilters.maintainerGrades.length === 0 &&
+                  newFilters.minStars === null &&
+                  newFilters.minForks === null &&
+                  newFilters.freshness === null &&
+                  newFilters.label === ''
+                ) {
+                  setUserOverrodeLanguage(false);
+                }
+                setFilters(newFilters);
+              }}
+              profileLanguage={
+                !userOverrodeLanguage ? (profile?.top_languages?.[0] ?? null) : null
+              }
+            />
+
+            {/* Profile CTA: logged in but no profile analyzed yet */}
+            {authState.isLoggedIn && !profile && !profileLoading && (
+              <div className="flex items-center justify-between bg-cyan-500/10 border border-cyan-500/20 rounded-md px-3 py-2 text-sm">
+                <span className="text-cyan-300">
+                  {t('recommended.analyzeProfileCta')}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={e => {
                     e.stopPropagation();
                     setShowAnalysisModal(true);
                   }}
-                  disabled={profileLoading}
-                  aria-label={t('recommended.resync')}
-                  className="text-gray-400 hover:text-cyan-400 transition-colors p-1 disabled:opacity-50"
-                  title={t('recommended.lastSynced', {
-                    time: formatRelativeTime(profile.last_synced_at, t),
-                  })}
+                  className="ml-3 flex-shrink-0 text-xs bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 border-cyan-500/30"
                 >
-                  <FaSync className={`text-xs ${profileLoading ? 'animate-spin' : ''}`} />
-                </button>
-              )}
-            </>
-          )}
-          <span className="text-xs text-gray-500">{t('recommended.description')}</span>
-        </div>
-        <div className="flex items-center gap-3">
-          {collapsed ? (
-            <FaChevronDown className="text-gray-500" />
-          ) : (
-            <FaChevronUp className="text-gray-500" />
-          )}
-        </div>
-      </div>
+                  {t('recommended.analyzeNow')}
+                </Button>
+              </div>
+            )}
 
-      {/* Content */}
-      {!collapsed && (
-        <div className="px-4 pb-4 space-y-3">
-          {/* Filters */}
-          <IssueFilters
-            filters={filters}
-            onFilterChange={newFilters => {
-              if (newFilters.language !== filters.language) {
-                setUserOverrodeLanguage(true);
-              }
-              // Reset override when clearing all filters
-              if (
-                newFilters.language === DEFAULT_FILTER_STATE.language &&
-                newFilters.difficulties.length === 0 &&
-                newFilters.maintainerGrades.length === 0 &&
-                newFilters.minStars === null &&
-                newFilters.minForks === null &&
-                newFilters.freshness === null &&
-                newFilters.label === ''
-              ) {
-                setUserOverrodeLanguage(false);
-              }
-              setFilters(newFilters);
-            }}
-            profileLanguage={
-              !userOverrodeLanguage ? (profile?.top_languages?.[0] ?? null) : null
-            }
-          />
-
-          {/* Profile CTA: logged in but no profile analyzed yet */}
-          {authState.isLoggedIn && !profile && !profileLoading && (
-            <div className="flex items-center justify-between bg-cyan-500/10 border border-cyan-500/20 rounded-md px-3 py-2 text-sm">
-              <span className="text-cyan-300">{t('recommended.analyzeProfileCta')}</span>
-              <button
-                onClick={e => {
-                  e.stopPropagation();
-                  setShowAnalysisModal(true);
-                }}
-                className="ml-3 flex-shrink-0 px-3 py-1 text-xs font-medium bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 rounded-md border border-cyan-500/30 transition-colors"
+            {/* Error */}
+            {error && (
+              <div
+                role="alert"
+                className="bg-destructive/10 text-destructive border border-destructive/20 rounded-md text-sm p-3"
               >
-                {t('recommended.analyzeNow')}
-              </button>
-            </div>
-          )}
-
-          {/* Error */}
-          {error && (
-            <div className="bg-red-500/10 text-red-400 border border-red-500/20 rounded-md text-sm p-3">
-              {error}
-            </div>
-          )}
-
-          {/* Issue list */}
-          {loading && issues.length === 0 ? (
-            <div className="flex justify-center items-center p-6">
-              <FaSync className="animate-spin text-cyan-400 mr-2" />
-              <span className="text-gray-400 text-sm">{t('recommended.loading')}</span>
-            </div>
-          ) : loading && issues.length > 0 ? (
-            <div className="relative">
-              <div className="absolute inset-0 bg-[#161b22]/70 flex justify-center items-center z-10 rounded-md">
-                <FaSync className="animate-spin text-cyan-400 mr-2" />
-                <span className="text-gray-400 text-sm">{t('recommended.loading')}</span>
+                {error}
               </div>
-              <div className="opacity-40 pointer-events-none space-y-2">
-                {filteredIssues.slice(0, 3).map(issue => (
-                  <div key={issue.id} className="flex items-center gap-2">
-                    <div className="flex-1 min-w-0">
-                      <IssueItem issue={issue} compact />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : filteredIssues.length === 0 ? (
-            <div className="text-center p-6 text-gray-500 text-sm">
-              {t('recommended.noIssues')}
-            </div>
-          ) : (
-            <>
-              <div className="space-y-2">
-                {filteredIssues.map(issue => {
-                  const repoKey = `${issue.repository.owner}/${issue.repository.name}`;
-                  const isTracked = trackedRepoKeys.has(repoKey);
-                  const isAdding = addingRepos.has(repoKey);
+            )}
 
-                  return (
+            {/* Issue list */}
+            {loading && issues.length === 0 ? (
+              <div className="space-y-2 p-2">
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-12 w-full" />
+              </div>
+            ) : loading && issues.length > 0 ? (
+              <div className="relative">
+                <div className="absolute inset-0 bg-card/70 flex justify-center items-center z-10 rounded-md">
+                  <FaSync className="animate-spin text-cyan-400 mr-2" />
+                  <span className="text-muted-foreground text-sm">
+                    {t('recommended.loading')}
+                  </span>
+                </div>
+                <div className="opacity-40 pointer-events-none space-y-2">
+                  {filteredIssues.slice(0, 3).map(issue => (
                     <div key={issue.id} className="flex items-center gap-2">
                       <div className="flex-1 min-w-0">
                         <IssueItem issue={issue} compact />
                       </div>
-                      <button
-                        onClick={() =>
-                          authState.isLoggedIn ? handleAddRepo(issue) : undefined
-                        }
-                        disabled={isTracked || isAdding || !authState.isLoggedIn}
-                        className={`flex-shrink-0 flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md transition-colors border ${
-                          isTracked
-                            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 cursor-default'
-                            : !authState.isLoggedIn
-                              ? 'bg-gray-800 text-gray-500 border-gray-700 cursor-not-allowed'
-                              : isAdding
-                                ? 'bg-gray-800 text-gray-500 border-transparent cursor-not-allowed'
-                                : 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20 hover:bg-cyan-500/20'
-                        }`}
-                        title={
-                          isTracked
-                            ? t('recommended.alreadyTracked')
-                            : !authState.isLoggedIn
-                              ? t('recommended.loginToTrack')
-                              : t('recommended.addRepo')
-                        }
-                      >
-                        {isTracked ? (
-                          <>
-                            <FaCheck className="text-xs" />
-                            {t('recommended.alreadyTracked')}
-                          </>
-                        ) : isAdding ? (
-                          <FaSync className="animate-spin text-xs" />
-                        ) : (
-                          <>
-                            <FaPlus className="text-xs" />
-                            {authState.isLoggedIn
-                              ? t('recommended.addRepo')
-                              : t('recommended.loginToTrack')}
-                          </>
-                        )}
-                      </button>
                     </div>
-                  );
-                })}
-              </div>
-
-              {/* Load More */}
-              {hasMore && (
-                <div className="flex justify-center pt-2">
-                  <button
-                    onClick={handleLoadMore}
-                    disabled={loading}
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 rounded-md hover:bg-cyan-500/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {loading ? <FaSync className="animate-spin text-xs" /> : null}
-                    {t('recommended.loadMore')}
-                  </button>
+                  ))}
                 </div>
-              )}
+              </div>
+            ) : filteredIssues.length === 0 ? (
+              <div className="text-center p-6 text-muted-foreground text-sm">
+                {t('recommended.noIssues')}
+              </div>
+            ) : (
+              <>
+                <div className="space-y-2">
+                  {filteredIssues.map(issue => {
+                    const repoKey = `${issue.repository.owner}/${issue.repository.name}`;
+                    const isTracked = trackedRepoKeys.has(repoKey);
+                    const isAdding = addingRepos.has(repoKey);
 
-              {/* Showing count */}
-              {totalCount > 0 && (
-                <div className="text-center text-xs text-gray-500">
-                  {t('recommended.showingCount', {
-                    count: filteredIssues.length,
-                    total: totalCount,
+                    return (
+                      <div key={issue.id} className="flex items-center gap-2">
+                        <div className="flex-1 min-w-0">
+                          <IssueItem issue={issue} compact />
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            authState.isLoggedIn ? handleAddRepo(issue) : undefined
+                          }
+                          disabled={isTracked || isAdding || !authState.isLoggedIn}
+                          className={
+                            isTracked
+                              ? 'flex-shrink-0 text-xs bg-[color:var(--color-success)]/10 text-[color:var(--color-success)] border-[color:var(--color-success)]/20 cursor-default'
+                              : !authState.isLoggedIn
+                                ? 'flex-shrink-0 text-xs bg-muted text-muted-foreground border-border cursor-not-allowed'
+                                : isAdding
+                                  ? 'flex-shrink-0 text-xs bg-muted text-muted-foreground border-transparent cursor-not-allowed'
+                                  : 'flex-shrink-0 text-xs bg-cyan-500/10 text-cyan-400 border-cyan-500/20 hover:bg-cyan-500/20'
+                          }
+                          title={
+                            isTracked
+                              ? t('recommended.alreadyTracked')
+                              : !authState.isLoggedIn
+                                ? t('recommended.loginToTrack')
+                                : t('recommended.addRepo')
+                          }
+                        >
+                          {isTracked ? (
+                            <>
+                              <FaCheck className="text-xs" />
+                              {t('recommended.alreadyTracked')}
+                            </>
+                          ) : isAdding ? (
+                            <FaSync className="animate-spin text-xs" />
+                          ) : (
+                            <>
+                              <FaPlus className="text-xs" />
+                              {authState.isLoggedIn
+                                ? t('recommended.addRepo')
+                                : t('recommended.loginToTrack')}
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    );
                   })}
                 </div>
-              )}
-            </>
-          )}
-        </div>
-      )}
+
+                {/* Load More */}
+                {hasMore && (
+                  <div className="flex justify-center pt-2">
+                    <Button
+                      variant="outline"
+                      onClick={handleLoadMore}
+                      disabled={loading}
+                      className="flex items-center gap-2 text-sm font-medium text-cyan-400 bg-cyan-500/10 border-cyan-500/20 hover:bg-cyan-500/20 disabled:opacity-50"
+                    >
+                      {loading ? <FaSync className="animate-spin text-xs" /> : null}
+                      {t('recommended.loadMore')}
+                    </Button>
+                  </div>
+                )}
+
+                {/* Showing count */}
+                {totalCount > 0 && (
+                  <div className="text-center text-xs text-muted-foreground">
+                    {t('recommended.showingCount', {
+                      count: filteredIssues.length,
+                      total: totalCount,
+                    })}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </CollapsibleContent>
+      </Card>
+
       {/* Profile Analysis Modal */}
       <ProfileAnalysisModal
         isOpen={showAnalysisModal}
@@ -378,6 +407,6 @@ export default function RecommendedIssues() {
         profileData={profile}
         error={profileError}
       />
-    </div>
+    </Collapsible>
   );
 }

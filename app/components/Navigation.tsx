@@ -1,10 +1,12 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Link, usePathname } from '@/i18n/routing';
+import { Link, usePathname, useRouter } from '@/i18n/routing';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function Navigation() {
   const pathname = usePathname();
+  const router = useRouter();
   const tTabs = useTranslations('tabs');
 
   const tabs = [
@@ -19,9 +21,9 @@ export default function Navigation() {
         <select
           value={pathname}
           onChange={e => {
-            window.location.href = e.target.value;
+            router.push(e.target.value as '/issues' | '/repositories' | '/settings');
           }}
-          className="block w-full rounded-md bg-[#161b22] border border-gray-700 text-gray-100"
+          className="block w-full rounded-md bg-card border border-border text-foreground"
         >
           {tabs.map(tab => (
             <option key={tab.path} value={tab.path}>
@@ -32,22 +34,20 @@ export default function Navigation() {
       </div>
 
       <div className="hidden sm:block">
-        <nav className="flex space-x-4" aria-label="Tabs">
-          {tabs.map(tab => (
-            <Link
-              key={tab.path}
-              href={tab.path}
-              className={`${
-                pathname === tab.path
-                  ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-[family-name:var(--font-mono)]'
-                  : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800/50'
-              } px-3 py-2 font-medium text-sm rounded-md transition-colors`}
-              aria-current={pathname === tab.path ? 'page' : undefined}
-            >
-              {tTabs(tab.name)}
-            </Link>
-          ))}
-        </nav>
+        <Tabs value={pathname}>
+          <TabsList>
+            {tabs.map(tab => (
+              <TabsTrigger key={tab.path} value={tab.path} asChild>
+                <Link
+                  href={tab.path}
+                  aria-current={pathname === tab.path ? 'page' : undefined}
+                >
+                  {tTabs(tab.name)}
+                </Link>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
       </div>
     </div>
   );

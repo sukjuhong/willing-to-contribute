@@ -20,15 +20,15 @@ const serviceQuestions: FAQItem[] = [
         contrifit is a free tool that helps developers discover beginner-friendly GitHub
         issues across multiple repositories in one place. You add the repositories you
         care about, and the platform surfaces open issues labeled{' '}
-        <code className="bg-gray-900 text-cyan-400 px-1.5 py-0.5 rounded text-sm font-mono">
+        <code className="bg-background text-primary px-1.5 py-0.5 rounded text-sm font-mono">
           good first issue
         </code>
         ,{' '}
-        <code className="bg-gray-900 text-cyan-400 px-1.5 py-0.5 rounded text-sm font-mono">
+        <code className="bg-background text-primary px-1.5 py-0.5 rounded text-sm font-mono">
           help wanted
         </code>
         , and similar tags — so you spend time contributing, not searching.{' '}
-        <Link href="/about" className="text-cyan-400 hover:text-cyan-300 underline">
+        <Link href="/about" className="text-primary hover:text-primary/80 underline">
           Learn more on the About page.
         </Link>
       </>
@@ -46,7 +46,7 @@ const serviceQuestions: FAQItem[] = [
         No. You can browse issues without signing in. Anonymous usage is fully supported,
         though you will be subject to GitHub API rate limits, which means the number of
         repositories you can track at once is lower. Signing in with GitHub unlocks{' '}
-        <Link href="/about" className="text-cyan-400 hover:text-cyan-300 underline">
+        <Link href="/about" className="text-primary hover:text-primary/80 underline">
           additional features
         </Link>{' '}
         including cross-device sync, browser notifications, and a higher API rate limit.
@@ -79,7 +79,7 @@ const contributionQuestions: FAQItem[] = [
         contributors who are just learning to code. A first contribution does not need to
         be a complex new feature — fixing a typo in documentation, improving an error
         message, or adding a test case are all genuinely valuable. Read our{' '}
-        <Link href="/guide" className="text-cyan-400 hover:text-cyan-300 underline">
+        <Link href="/guide" className="text-primary hover:text-primary/80 underline">
           beginner&apos;s guide
         </Link>{' '}
         to learn the full process step by step.
@@ -124,17 +124,17 @@ const contributionQuestions: FAQItem[] = [
 function FAQSection({ title, items }: { title: string; items: FAQItem[] }) {
   return (
     <section className="mb-16">
-      <h2 className="text-2xl font-bold text-gray-100 mb-6 border-b border-gray-700 pb-3">
+      <h2 className="text-2xl font-bold text-foreground mb-6 border-b border-border pb-3">
         {title}
       </h2>
       <div className="space-y-4">
         {items.map(item => (
           <div
             key={item.question}
-            className="bg-[#161b22] border border-gray-700 rounded-lg p-6"
+            className="bg-card border border-border rounded-lg p-6"
           >
-            <h3 className="text-lg font-semibold text-cyan-400 mb-3">{item.question}</h3>
-            <p className="text-gray-300 leading-relaxed text-sm">{item.answer}</p>
+            <h3 className="text-lg font-semibold text-primary mb-3">{item.question}</h3>
+            <p className="text-foreground leading-relaxed text-sm">{item.answer}</p>
           </div>
         ))}
       </div>
@@ -144,13 +144,13 @@ function FAQSection({ title, items }: { title: string; items: FAQItem[] }) {
 
 export default function FAQPage() {
   return (
-    <article className="text-gray-300">
+    <article className="text-foreground">
       {/* Hero Section */}
       <section className="text-center mb-16">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-100 mb-6 font-[family-name:var(--font-mono)]">
-          <span className="text-cyan-400">&gt;_</span> FAQ
+        <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 font-[family-name:var(--font-mono)]">
+          <span className="text-primary">&gt;_</span> FAQ
         </h1>
-        <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-xl text-foreground max-w-2xl mx-auto leading-relaxed">
           Answers to the most common questions about contrifit and open source
           contribution in general.
         </p>
@@ -161,22 +161,22 @@ export default function FAQPage() {
       <FAQSection title="About Open Source Contribution" items={contributionQuestions} />
 
       {/* CTA */}
-      <section className="text-center bg-[#161b22] border border-cyan-500/20 rounded-xl p-12">
-        <h2 className="text-3xl font-bold text-gray-100 mb-4">Still Have Questions?</h2>
-        <p className="text-gray-400 mb-8 max-w-xl mx-auto leading-relaxed">
+      <section className="text-center bg-card border border-primary/20 rounded-xl p-12">
+        <h2 className="text-3xl font-bold text-foreground mb-4">Still Have Questions?</h2>
+        <p className="text-muted-foreground mb-8 max-w-xl mx-auto leading-relaxed">
           Check out the full beginner&apos;s guide for a step-by-step walkthrough, or head
           straight to the issues page to start exploring open source opportunities.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/guide"
-            className="inline-flex items-center justify-center gap-2 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold px-10 py-4 rounded-lg transition-colors text-lg"
+            className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-10 py-4 rounded-lg transition-colors text-lg"
           >
             Read the Guide
           </Link>
           <Link
             href="/issues"
-            className="inline-flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-600 text-gray-100 font-semibold px-10 py-4 rounded-lg transition-colors text-lg"
+            className="inline-flex items-center justify-center gap-2 bg-accent hover:bg-accent/80 text-foreground font-semibold px-10 py-4 rounded-lg transition-colors text-lg"
           >
             Browse Issues
           </Link>
