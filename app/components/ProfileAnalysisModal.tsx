@@ -86,6 +86,28 @@ export default function ProfileAnalysisModal({
     }
   }, [isOpen, startAnalysis, clearTimeouts]);
 
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
+  // Close on Escape key
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   // Cleanup
   useEffect(() => {
     return () => clearTimeouts();
@@ -132,11 +154,15 @@ export default function ProfileAnalysisModal({
   if (!isOpen) return null;
 
   return (
-    <div className="modal modal-open modal-bottom sm:modal-middle">
-      <div className="modal-box bg-[#161b22] border border-gray-700 max-w-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/60" onClick={onClose} />
+
+      {/* Modal content */}
+      <div className="relative z-10 bg-[#161b22] border border-gray-700 rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
         {/* Header */}
         <button
-          className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-gray-400 hover:text-gray-200"
+          className="absolute right-3 top-3 text-gray-400 hover:text-gray-200 transition-colors text-lg"
           onClick={onClose}
         >
           ✕
@@ -201,7 +227,7 @@ export default function ProfileAnalysisModal({
 
         {/* Close button */}
         {isAllDone && !error && (
-          <div className="modal-action">
+          <div className="mt-6 flex justify-end">
             <button
               className="px-4 py-2 text-sm font-medium text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 rounded-md hover:bg-cyan-500/20 transition-colors"
               onClick={onClose}
@@ -211,8 +237,6 @@ export default function ProfileAnalysisModal({
           </div>
         )}
       </div>
-      {/* Backdrop */}
-      <div className="modal-backdrop" onClick={onClose} />
     </div>
   );
 }
