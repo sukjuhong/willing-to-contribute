@@ -49,7 +49,7 @@ export async function GET(request: Request) {
           .from('user_profiles')
           .select('top_languages, contributed_repos')
           .eq('id', session.user.id)
-          .single<{
+          .maybeSingle<{
             top_languages: string[] | null;
             contributed_repos: string[] | null;
           }>();

@@ -67,7 +67,7 @@ export async function GET() {
       .from('user_profiles')
       .select('*')
       .eq('id', session.user.id)
-      .single();
+      .maybeSingle();
 
     if (error) {
       return NextResponse.json(null);

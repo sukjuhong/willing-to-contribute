@@ -11,7 +11,7 @@ export async function loadUserSettings(userId: string): Promise<UserSettings | n
     .from('user_settings')
     .select('*')
     .eq('user_id', userId)
-    .single<UserSettingsRow>();
+    .maybeSingle<UserSettingsRow>();
 
   if (error || !data) return null;
 
