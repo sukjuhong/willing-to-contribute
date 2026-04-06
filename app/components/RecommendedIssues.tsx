@@ -11,16 +11,36 @@ import {
 } from 'react-icons/fa';
 import IssueItem from './IssueItem';
 import IssueFilters, { DEFAULT_FILTER_STATE, type FilterState } from './IssueFilters';
+import ProfileAnalysisModal from './ProfileAnalysisModal';
 import { useApp } from '../contexts/AppContext';
 import { useTranslations } from 'next-intl';
 import type { Issue } from '../types';
 
+function formatRelativeTime(isoString: string | null): string {
+  if (!isoString) return '';
+  const diffMs = Date.now() - new Date(isoString).getTime();
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffHours / 24);
+  if (diffDays > 0) return `${diffDays}d`;
+  if (diffHours > 0) return `${diffHours}h`;
+  return '<1h';
+}
+
 export default function RecommendedIssues() {
   const t = useTranslations();
-  const { settings, addRepository, authState, profile, syncProfile, profileLoading } =
-    useApp();
+  const {
+    settings,
+    addRepository,
+    authState,
+    profile,
+    syncProfile,
+    profileLoading,
+    profileError,
+  } = useApp();
   const [collapsed, setCollapsed] = useState(false);
   const [addingRepos, setAddingRepos] = useState<Set<string>>(new Set());
+  const [showAnalysisModal, setShowAnalysisModal] = useState(false);
+  const [userOverrodeLanguage, setUserOverrodeLanguage] = useState(false);
 
   // Filter state
   const [filters, setFilters] = useState<FilterState>({
@@ -152,9 +172,26 @@ export default function RecommendedIssues() {
           <FaStar className="text-amber-400" />
           <h3 className="text-lg font-bold text-gray-100">{t('recommended.title')}</h3>
           {isPersonalized && (
-            <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-400 border border-cyan-500/25">
-              {t('recommended.personalized')}
-            </span>
+            <>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-400 border border-cyan-500/25">
+                {t('recommended.personalized')}
+              </span>
+              {profile && (
+                <button
+                  onClick={e => {
+                    e.stopPropagation();
+                    setShowAnalysisModal(true);
+                  }}
+                  disabled={profileLoading}
+                  className="text-gray-400 hover:text-cyan-400 transition-colors p-1 disabled:opacity-50"
+                  title={t('recommended.lastSynced', {
+                    time: formatRelativeTime(profile.last_synced_at),
+                  })}
+                >
+                  <FaSync className={`text-xs ${profileLoading ? 'animate-spin' : ''}`} />
+                </button>
+              )}
+            </>
           )}
           <span className="text-xs text-gray-500">{t('recommended.description')}</span>
         </div>
@@ -171,7 +208,30 @@ export default function RecommendedIssues() {
       {!collapsed && (
         <div className="px-4 pb-4 space-y-3">
           {/* Filters */}
-          <IssueFilters filters={filters} onFilterChange={setFilters} />
+          <IssueFilters
+            filters={filters}
+            onFilterChange={newFilters => {
+              if (newFilters.language !== filters.language) {
+                setUserOverrodeLanguage(true);
+              }
+              // Reset override when clearing all filters
+              if (
+                newFilters.language === DEFAULT_FILTER_STATE.language &&
+                newFilters.difficulties.length === 0 &&
+                newFilters.maintainerGrades.length === 0 &&
+                newFilters.minStars === null &&
+                newFilters.minForks === null &&
+                newFilters.freshness === null &&
+                newFilters.label === ''
+              ) {
+                setUserOverrodeLanguage(false);
+              }
+              setFilters(newFilters);
+            }}
+            profileLanguage={
+              !userOverrodeLanguage ? (profile?.top_languages?.[0] ?? null) : null
+            }
+          />
 
           {/* Profile CTA: logged in but no profile analyzed yet */}
           {authState.isLoggedIn && !profile && !profileLoading && (
@@ -180,7 +240,7 @@ export default function RecommendedIssues() {
               <button
                 onClick={e => {
                   e.stopPropagation();
-                  syncProfile();
+                  setShowAnalysisModal(true);
                 }}
                 className="ml-3 flex-shrink-0 px-3 py-1 text-xs font-medium bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 rounded-md border border-cyan-500/30 transition-colors"
               >
@@ -305,6 +365,14 @@ export default function RecommendedIssues() {
           )}
         </div>
       )}
+      {/* Profile Analysis Modal */}
+      <ProfileAnalysisModal
+        isOpen={showAnalysisModal}
+        onClose={() => setShowAnalysisModal(false)}
+        onAnalyze={syncProfile}
+        profileData={profile}
+        error={profileError}
+      />
     </div>
   );
 }

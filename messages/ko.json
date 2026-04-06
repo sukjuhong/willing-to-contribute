@@ -99,7 +99,22 @@
     "loadMore": "더 보기",
     "showingCount": "{total}개 중 {count}개 표시",
     "analyzeProfileCta": "GitHub 프로필을 분석하여 맞춤 추천을 받아보세요",
-    "analyzeNow": "지금 분석하기"
+    "analyzeNow": "지금 분석하기",
+    "resync": "프로필 재동기화",
+    "lastSynced": "마지막 동기화: {time}"
+  },
+  "profileAnalysis": {
+    "modalTitle": "프로필 분석",
+    "step1": "GitHub 프로필 연결",
+    "step2Pending": "주요 언어 분석 중...",
+    "step2Done": "주요 언어 분석 완료",
+    "step3Pending": "기여 레포 분석 중...",
+    "step3Done": "기여 레포 분석 완료",
+    "step4Pending": "관심 분야 분석 중...",
+    "step4Done": "관심 분야 분석 완료",
+    "step5": "개인화 적용 완료",
+    "errorRetry": "분석 실패. 다시 시도할까요?",
+    "close": "닫기"
   },
   "filters": {
     "title": "필터",
@@ -113,6 +128,7 @@
     "freshness": "최근 업데이트",
     "label": "라벨",
     "labelPlaceholder": "라벨로 필터...",
+    "fromProfile": "프로필 기반",
     "clearAll": "전체 초기화",
     "apply": "적용",
     "starsPreset": {
