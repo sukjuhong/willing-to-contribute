@@ -26,7 +26,7 @@ export default function ProfileAnalysisModal({
   const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [apiDone, setApiDone] = useState(false);
-  const [analyzing, setAnalyzing] = useState(false);
+  const [isRetrying, setIsRetrying] = useState(false);
   const hasStarted = useRef(false);
 
   const clearTimeouts = useCallback(() => {
@@ -37,7 +37,7 @@ export default function ProfileAnalysisModal({
   const startAnalysis = useCallback(async () => {
     setCompletedSteps([]);
     setApiDone(false);
-    setAnalyzing(true);
+    setIsRetrying(true);
 
     // Step 1: immediate
     setCompletedSteps([1]);
@@ -60,7 +60,7 @@ export default function ProfileAnalysisModal({
     } catch {
       setApiDone(true);
     } finally {
-      setAnalyzing(false);
+      setIsRetrying(false);
     }
   }, [onAnalyze]);
 
@@ -117,7 +117,7 @@ export default function ProfileAnalysisModal({
   const isAllDone = completedSteps.includes(5);
 
   const getStepData = (step: number): string | null => {
-    if (!profileData || !isStepDone(step)) return null;
+    if (isRetrying || !profileData || !isStepDone(step)) return null;
     switch (step) {
       case 2:
         return profileData.top_languages?.join(', ') || null;
@@ -154,7 +154,12 @@ export default function ProfileAnalysisModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="profile-analysis-title"
+    >
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
 
@@ -164,10 +169,13 @@ export default function ProfileAnalysisModal({
         <button
           className="absolute right-3 top-3 text-gray-400 hover:text-gray-200 transition-colors text-lg"
           onClick={onClose}
+          aria-label={t('close')}
         >
           ✕
         </button>
-        <h3 className="text-lg font-bold text-gray-100 mb-6">{t('modalTitle')}</h3>
+        <h3 id="profile-analysis-title" className="text-lg font-bold text-gray-100 mb-6">
+          {t('modalTitle')}
+        </h3>
 
         {/* Steps */}
         <div className="space-y-4">
@@ -218,6 +226,7 @@ export default function ProfileAnalysisModal({
             <span className="text-sm text-red-400">{t('errorRetry')}</span>
             <button
               onClick={startAnalysis}
+              aria-label={t('errorRetry')}
               className="flex items-center gap-1 px-3 py-1 text-xs font-medium bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-md border border-red-500/30 transition-colors"
             >
               <FaRedo className="text-xs" />

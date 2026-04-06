@@ -22,6 +22,7 @@ function formatRelativeTime(isoString: string | null, t: any): string {
   const time = new Date(isoString).getTime();
   if (isNaN(time)) return '';
   const diffMs = Date.now() - time;
+  if (diffMs < 0) return t('common.justNow');
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
   const diffDays = Math.floor(diffHours / 24);
   if (diffDays > 0) return t('common.daysAgo', { days: diffDays });
@@ -186,6 +187,7 @@ export default function RecommendedIssues() {
                     setShowAnalysisModal(true);
                   }}
                   disabled={profileLoading}
+                  aria-label={t('recommended.resync')}
                   className="text-gray-400 hover:text-cyan-400 transition-colors p-1 disabled:opacity-50"
                   title={t('recommended.lastSynced', {
                     time: formatRelativeTime(profile.last_synced_at, t),
