@@ -16,14 +16,17 @@ import { useApp } from '../contexts/AppContext';
 import { useTranslations } from 'next-intl';
 import type { Issue } from '../types';
 
-function formatRelativeTime(isoString: string | null): string {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function formatRelativeTime(isoString: string | null, t: any): string {
   if (!isoString) return '';
-  const diffMs = Date.now() - new Date(isoString).getTime();
+  const time = new Date(isoString).getTime();
+  if (isNaN(time)) return '';
+  const diffMs = Date.now() - time;
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
   const diffDays = Math.floor(diffHours / 24);
-  if (diffDays > 0) return `${diffDays}d`;
-  if (diffHours > 0) return `${diffHours}h`;
-  return '<1h';
+  if (diffDays > 0) return t('common.daysAgo', { days: diffDays });
+  if (diffHours > 0) return t('common.hoursAgo', { hours: diffHours });
+  return t('common.justNow');
 }
 
 export default function RecommendedIssues() {
@@ -185,7 +188,7 @@ export default function RecommendedIssues() {
                   disabled={profileLoading}
                   className="text-gray-400 hover:text-cyan-400 transition-colors p-1 disabled:opacity-50"
                   title={t('recommended.lastSynced', {
-                    time: formatRelativeTime(profile.last_synced_at),
+                    time: formatRelativeTime(profile.last_synced_at, t),
                   })}
                 >
                   <FaSync className={`text-xs ${profileLoading ? 'animate-spin' : ''}`} />

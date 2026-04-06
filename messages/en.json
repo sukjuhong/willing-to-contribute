@@ -114,6 +114,8 @@
     "step4Done": "Interests analyzed",
     "step5": "Personalization applied",
     "errorRetry": "Analysis failed. Retry?",
+    "repoCount": "{count} repositories",
+    "categoryCount": "{count} categories",
     "close": "Close"
   },
   "filters": {

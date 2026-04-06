@@ -123,11 +123,11 @@ export default function ProfileAnalysisModal({
         return profileData.top_languages?.join(', ') || null;
       case 3:
         return profileData.contributed_repos
-          ? `${profileData.contributed_repos.length} repositories`
+          ? t('repoCount', { count: profileData.contributed_repos.length })
           : null;
       case 4:
         return profileData.starred_categories
-          ? `${profileData.starred_categories.length} categories`
+          ? t('categoryCount', { count: profileData.starred_categories.length })
           : null;
       default:
         return null;
@@ -187,7 +187,7 @@ export default function ProfileAnalysisModal({
                     <div className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center">
                       <FaCheck className="text-emerald-400 text-xs" />
                     </div>
-                  ) : isActive || analyzing ? (
+                  ) : isActive ? (
                     <div className="w-5 h-5 flex items-center justify-center">
                       <FaSpinner className="text-gray-500 text-sm animate-spin" />
                     </div>

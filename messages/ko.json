@@ -114,6 +114,8 @@
     "step4Done": "관심 분야 분석 완료",
     "step5": "개인화 적용 완료",
     "errorRetry": "분석 실패. 다시 시도할까요?",
+    "repoCount": "{count}개의 저장소",
+    "categoryCount": "{count}개의 카테고리",
     "close": "닫기"
   },
   "filters": {
