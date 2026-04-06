@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { env } from '@/app/lib/env';
 
 declare global {
   interface Window {
@@ -33,7 +34,7 @@ function AdUnit({ adSlot, adFormat = 'auto', fullWidthResponsive = true }: AdUni
       ref={adRef}
       className="adsbygoogle"
       style={{ display: 'block' }}
-      data-ad-client={process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID}
+      data-ad-client={env.NEXT_PUBLIC_ADSENSE_CLIENT_ID}
       data-ad-slot={adSlot}
       data-ad-format={adFormat}
       data-full-width-responsive={fullWidthResponsive}
@@ -46,7 +47,7 @@ interface AdSidebarProps {
 }
 
 export default function AdSidebar({ position }: AdSidebarProps) {
-  const adSlot = process.env.NEXT_PUBLIC_ADSENSE_SLOT_ID;
+  const adSlot = env.NEXT_PUBLIC_ADSENSE_SLOT_ID;
 
   if (!adSlot) return null;
 

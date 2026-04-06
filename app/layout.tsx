@@ -4,6 +4,7 @@ import { JetBrains_Mono } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
 import JsonLd from './components/JsonLd';
+import { env } from '@/app/lib/env';
 
 const pretendard = localFont({
   src: [
@@ -53,7 +54,8 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://contrifit.vercel.app'),
-  keywords: 'GitHub, open source, beginner friendly, contribution, issues, programming, personalized, recommendation',
+  keywords:
+    'GitHub, open source, beginner friendly, contribution, issues, programming, personalized, recommendation',
   authors: [{ name: 'contrifit Team' }],
   creator: 'contrifit Team',
   publisher: 'contrifit Team',
@@ -89,10 +91,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <JsonLd />
         <meta name="google-adsense-account" content="ca-pub-9157231737129938" />
-        {process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID && (
+        {env.NEXT_PUBLIC_ADSENSE_CLIENT_ID && (
           <Script
             async
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID}`}
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${env.NEXT_PUBLIC_ADSENSE_CLIENT_ID}`}
             crossOrigin="anonymous"
             strategy="beforeInteractive"
           />

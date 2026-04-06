@@ -1,5 +1,6 @@
 import { Octokit } from '@octokit/rest';
 import { createAppAuth } from '@octokit/auth-app';
+import { env } from '@/app/lib/env';
 
 let cachedOctokit: Octokit | null = null;
 let cacheExpiresAt = 0;
@@ -9,9 +10,9 @@ export async function getServerOctokit(): Promise<Octokit> {
     return cachedOctokit;
   }
 
-  const appId = process.env.GITHUB_APP_ID;
-  const privateKey = process.env.GITHUB_APP_PRIVATE_KEY;
-  const installationId = process.env.GITHUB_APP_INSTALLATION_ID;
+  const appId = env.GITHUB_APP_ID;
+  const privateKey = env.GITHUB_APP_PRIVATE_KEY;
+  const installationId = env.GITHUB_APP_INSTALLATION_ID;
 
   if (!appId || !privateKey || !installationId) {
     throw new Error(

@@ -2,6 +2,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
+import { env } from '@/app/lib/env';
 
 type Props = {
   children: React.ReactNode;
@@ -11,8 +12,7 @@ type Props = {
 export async function generateMetadata({ params }: Props) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'common' });
-  const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL || 'https://contrifit.vercel.app';
+  const baseUrl = env.NEXT_PUBLIC_BASE_URL || 'https://contrifit.vercel.app';
 
   const pageTitle = t('pageTitle');
 
