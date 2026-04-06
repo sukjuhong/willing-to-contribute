@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Privacy Policy',
   description:
-    'Privacy Policy for Willing to Contribute - Learn how we handle your data.',
+    'Privacy Policy for contrifit - Learn how we handle your data.',
 };
 
 export default function PrivacyPolicy() {
@@ -17,13 +17,13 @@ export default function PrivacyPolicy() {
           {/* Introduction */}
           <section>
             <p className="text-gray-300 leading-relaxed">
-              Welcome to <strong className="text-gray-100">Willing to Contribute</strong>{' '}
+              Welcome to <strong className="text-gray-100">contrifit</strong>{' '}
               (
               <a
-                href="https://willing-to-contribute.vercel.app"
+                href="https://contrifit.vercel.app"
                 className="text-cyan-400 hover:text-cyan-300 underline"
               >
-                https://willing-to-contribute.vercel.app
+                https://contrifit.vercel.app
               </a>
               ). We are committed to protecting your privacy. This Privacy Policy explains
               how we collect, use, and safeguard your information when you use our
@@ -216,7 +216,7 @@ export default function PrivacyPolicy() {
               4. Chrome Extension
             </h2>
             <p className="text-gray-300 leading-relaxed mb-4">
-              The Willing to Contribute Chrome Extension stores and manages data locally
+              The contrifit Chrome Extension stores and manages data locally
               within your browser using Chrome&apos;s built-in storage APIs. No data is
               transmitted to any external server operated by us.
             </p>
@@ -576,7 +576,7 @@ export default function PrivacyPolicy() {
                   >
                     GitHub OAuth Application Settings
                   </a>{' '}
-                  and revoking access for &quot;Willing to Contribute&quot;. After
+                  and revoking access for &quot;contrifit&quot;. After
                   revocation, you will be logged out and no further API calls will be made
                   on your behalf.
                 </p>
@@ -597,7 +597,7 @@ export default function PrivacyPolicy() {
                   >
                     GitHub Gists page
                   </a>
-                  . The Gist is titled &quot;Willing to Contribute Settings&quot; and can
+                  . The Gist is titled &quot;contrifit Settings&quot; and can
                   be identified and deleted from your GitHub account at any time.
                 </p>
               </div>
@@ -665,16 +665,16 @@ export default function PrivacyPolicy() {
             </p>
             <div className="bg-[#161b22] border border-gray-700 rounded-lg p-4 mt-4">
               <p className="text-gray-300 leading-relaxed">
-                <strong className="text-gray-100">Willing to Contribute</strong>
+                <strong className="text-gray-100">contrifit</strong>
                 <br />
                 GitHub Issues:{' '}
                 <a
-                  href="https://github.com/sukjuhong/willing-to-contribute/issues"
+                  href="https://github.com/sukjuhong/contrifit/issues"
                   className="text-cyan-400 hover:text-cyan-300 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  https://github.com/sukjuhong/willing-to-contribute/issues
+                  https://github.com/sukjuhong/contrifit/issues
                 </a>
               </p>
             </div>

@@ -18,7 +18,7 @@ const Header: React.FC<HeaderProps> = ({
   onLogout,
   showAppLogin = false,
 }) => {
-  const repoUrl = 'https://github.com/sukjuhong/willing-to-contribute';
+  const repoUrl = 'https://github.com/sukjuhong/contrifit';
   const t = useTranslations();
 
   return (

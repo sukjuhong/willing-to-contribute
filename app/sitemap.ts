@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://willing-to-contribute.vercel.app';
+  const baseUrl = 'https://contrifit.vercel.app';
   const staticPageDate = '2026-03-23';
 
   const locales = ['en', 'ko'];

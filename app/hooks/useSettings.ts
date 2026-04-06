@@ -1,40 +1,35 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { UserSettings } from '../types';
 import { saveSettings, loadSettings, defaultSettings } from '../utils/localStorage';
+import { getRepository, parseRepoUrl } from '../utils/github';
 import {
-  getRepository,
-  parseRepoUrl,
-  saveSettingsToGist,
-  loadSettingsFromGist,
-} from '../utils/github';
+  loadUserSettings as loadFromSupabase,
+  saveUserSettings as saveToSupabase,
+} from '../lib/supabase/settings';
 
 // Custom hook for managing user settings
-const useSettings = (isLoggedIn: boolean) => {
+const useSettings = (isLoggedIn: boolean, userId?: string) => {
   const [settings, setSettings] = useState<UserSettings>(defaultSettings);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   // Load settings on mount and when auth state changes
   useEffect(() => {
     const loadUserSettings = async () => {
       setLoading(true);
       try {
-        // Only load settings when logged in
         if (isLoggedIn) {
-          const localSettings = loadSettings();
-
-          try {
-            const gistContent = await loadSettingsFromGist();
-
-            if (gistContent) {
-              const parsedGistSettings = JSON.parse(gistContent) as UserSettings;
-              setSettings(parsedGistSettings);
-              saveSettings(parsedGistSettings);
+          if (userId) {
+            const dbSettings = await loadFromSupabase(userId);
+            if (dbSettings) {
+              setSettings(dbSettings);
+              saveSettings(dbSettings);
             } else {
-              setSettings(localSettings);
+              setSettings(loadSettings());
             }
-          } catch (gistError) {
-            console.error('Error loading settings from Gist:', gistError);
-            setSettings(localSettings);
+          } else {
+            setSettings(loadSettings());
           }
         } else {
           setSettings(defaultSettings);
@@ -49,21 +44,21 @@ const useSettings = (isLoggedIn: boolean) => {
     };
 
     loadUserSettings();
-  }, [isLoggedIn]);
+  }, [isLoggedIn, userId]);
 
-  // Save settings to localStorage and optionally to GitHub Gist
   const saveUserSettings = useCallback(
     async (newSettings: UserSettings) => {
       try {
-        // Always save to localStorage
         saveSettings(newSettings);
-
-        // Update state
         setSettings(newSettings);
 
-        // If logged in, also save to GitHub Gist
-        if (isLoggedIn) {
-          await saveSettingsToGist(JSON.stringify(newSettings));
+        if (isLoggedIn && userId) {
+          if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+          saveTimerRef.current = setTimeout(() => {
+            saveToSupabase(userId, newSettings).catch(err =>
+              console.error('Error saving settings to Supabase:', err),
+            );
+          }, 500);
         }
 
         return true;
@@ -73,7 +68,7 @@ const useSettings = (isLoggedIn: boolean) => {
         return false;
       }
     },
-    [isLoggedIn],
+    [isLoggedIn, userId],
   );
 
   // Add a repository

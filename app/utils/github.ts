@@ -1,13 +1,9 @@
 import { Octokit } from '@octokit/rest';
 import { Issue, Repository, Label } from '../types';
-import { loadAuthToken } from './localStorage';
 
 // Create Octokit instance with or without auth token
-const getOctokit = () => {
-  const token = loadAuthToken();
-  return new Octokit({
-    auth: token || undefined,
-  });
+const getOctokit = (token?: string) => {
+  return new Octokit({ auth: token || undefined });
 };
 
 // Parse repository URL to get owner and name
@@ -383,112 +379,3 @@ export const searchRepositories = async (query: string): Promise<Repository[]> =
   }
 };
 
-const GIST_DESCRIPTION = 'Willing to Contribute Settings';
-const GIST_CACHE_KEY = 'wtc-gist-id';
-
-// Find existing Gist ID using cache first, then fallback to listing
-async function findOrCreateGistId(octokit: OctokitType): Promise<string | null> {
-  if (typeof window === 'undefined') return null;
-
-  const cachedId = localStorage.getItem(GIST_CACHE_KEY);
-  if (cachedId) {
-    return cachedId;
-  }
-
-  // Fallback: search the first page of gists (up to 100)
-  const { data: gists } = await octokit.gists.list({ per_page: 100 });
-  const found = gists.find(g => g.description === GIST_DESCRIPTION);
-  if (found) {
-    localStorage.setItem(GIST_CACHE_KEY, found.id);
-    return found.id;
-  }
-
-  return null;
-}
-
-// Save settings to GitHub Gist
-export const saveSettingsToGist = async (content: string): Promise<string | null> => {
-  try {
-    const octokit = getOctokit();
-    const token = loadAuthToken();
-
-    if (!token) {
-      throw new Error('No GitHub token available');
-    }
-
-    const existingId = await findOrCreateGistId(octokit);
-
-    if (existingId) {
-      try {
-        // Update existing gist
-        const { data } = await octokit.gists.update({
-          gist_id: existingId,
-          files: {
-            'willing-to-contribute-settings.json': {
-              content,
-            },
-          },
-        });
-        return data.id ?? null;
-      } catch {
-        // Cached ID is stale (gist deleted), clear and create new
-        localStorage.removeItem(GIST_CACHE_KEY);
-      }
-    }
-
-    // Create new gist and cache its ID
-    {
-      const { data } = await octokit.gists.create({
-        description: GIST_DESCRIPTION,
-        public: false,
-        files: {
-          'willing-to-contribute-settings.json': {
-            content,
-          },
-        },
-      });
-      if (data.id) {
-        localStorage.setItem(GIST_CACHE_KEY, data.id);
-      }
-      return data.id ?? null;
-    }
-  } catch (error) {
-    console.error('Error saving settings to GitHub Gist:', error);
-    return null;
-  }
-};
-
-// Load settings from GitHub Gist
-export const loadSettingsFromGist = async (): Promise<string | null> => {
-  try {
-    const octokit = getOctokit();
-    const token = loadAuthToken();
-
-    if (!token) {
-      throw new Error('No GitHub token available');
-    }
-
-    const existingId = await findOrCreateGistId(octokit);
-
-    if (!existingId) {
-      return null;
-    }
-
-    // Get gist content directly using cached/found ID
-    try {
-      const { data } = await octokit.gists.get({
-        gist_id: existingId,
-      });
-
-      const file = data.files?.['willing-to-contribute-settings.json'];
-      return file?.content || null;
-    } catch {
-      // Cached ID is stale (gist deleted), clear cache
-      localStorage.removeItem(GIST_CACHE_KEY);
-      return null;
-    }
-  } catch (error) {
-    console.error('Error loading settings from GitHub Gist:', error);
-    return null;
-  }
-};

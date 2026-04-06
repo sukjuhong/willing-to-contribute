@@ -3,7 +3,7 @@ import { Link } from '@/i18n/routing';
 
 export const metadata: Metadata = {
   title: 'Terms of Service',
-  description: 'Terms of Service for Willing to Contribute.',
+  description: 'Terms of Service for contrifit.',
 };
 
 export default function TermsOfService() {
@@ -18,12 +18,12 @@ export default function TermsOfService() {
           <section>
             <p className="text-gray-300 leading-relaxed">
               These Terms of Service (&quot;Terms&quot;) govern your access to and use of{' '}
-              <strong className="text-gray-100">Willing to Contribute</strong> (
+              <strong className="text-gray-100">contrifit</strong> (
               <a
-                href="https://willing-to-contribute.vercel.app"
+                href="https://contrifit.vercel.app"
                 className="text-cyan-400 hover:text-cyan-300 underline"
               >
-                https://willing-to-contribute.vercel.app
+                https://contrifit.vercel.app
               </a>
               ), a service that helps developers discover and track beginner-friendly
               GitHub issues across multiple repositories. Please read these Terms
@@ -37,7 +37,7 @@ export default function TermsOfService() {
               1. Acceptance of Terms
             </h2>
             <p className="text-gray-300 leading-relaxed">
-              By accessing or using the Willing to Contribute service
+              By accessing or using the contrifit service
               (&quot;Service&quot;), you agree to be bound by these Terms of Service and
               our{' '}
               <Link
@@ -51,7 +51,7 @@ export default function TermsOfService() {
             </p>
             <p className="text-gray-300 leading-relaxed mt-4">
               These Terms constitute a legally binding agreement between you and the
-              operators of Willing to Contribute. If you are using the Service on behalf
+              operators of contrifit. If you are using the Service on behalf
               of an organization, you represent that you have the authority to bind that
               organization to these Terms.
             </p>
@@ -63,7 +63,7 @@ export default function TermsOfService() {
               2. Description of Service
             </h2>
             <p className="text-gray-300 leading-relaxed">
-              Willing to Contribute is a web application that provides the following
+              contrifit is a web application that provides the following
               functionality:
             </p>
             <ul className="list-disc list-inside text-gray-300 leading-relaxed mt-3 space-y-2 ml-4">
@@ -220,7 +220,7 @@ export default function TermsOfService() {
                 </h3>
                 <p className="text-gray-300 leading-relaxed">
                   The Service, including its original content, features, and
-                  functionality, is owned by the operators of Willing to Contribute and is
+                  functionality, is owned by the operators of contrifit and is
                   protected by applicable intellectual property laws. You may not copy,
                   modify, distribute, sell, or lease any part of our Service without our
                   express written permission.
@@ -232,7 +232,7 @@ export default function TermsOfService() {
                   5.2 Open Source
                 </h3>
                 <p className="text-gray-300 leading-relaxed">
-                  The source code of Willing to Contribute may be made available under an
+                  The source code of contrifit may be made available under an
                   open source license. Where source code is provided under an open source
                   license, the terms of that license govern your use of the source code.
                   Please refer to our GitHub repository for the applicable license terms.
@@ -479,16 +479,16 @@ export default function TermsOfService() {
             </p>
             <div className="bg-[#161b22] border border-gray-700 rounded-lg p-4 mt-4">
               <p className="text-gray-300 leading-relaxed">
-                <strong className="text-gray-100">Willing to Contribute</strong>
+                <strong className="text-gray-100">contrifit</strong>
                 <br />
                 GitHub Issues:{' '}
                 <a
-                  href="https://github.com/sukjuhong/willing-to-contribute/issues"
+                  href="https://github.com/sukjuhong/contrifit/issues"
                   className="text-cyan-400 hover:text-cyan-300 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  https://github.com/sukjuhong/willing-to-contribute/issues
+                  https://github.com/sukjuhong/contrifit/issues
                 </a>
               </p>
             </div>

@@ -1,12 +1,12 @@
 export default function JsonLd() {
-  const baseUrl = 'https://willing-to-contribute.vercel.app';
+  const baseUrl = 'https://contrifit.vercel.app';
 
   const webApplication = {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
-    name: 'Willing to Contribute',
+    name: 'contrifit',
     description:
-      'Discover and contribute to beginner-friendly GitHub issues. Track repositories, get notifications, and start your open source journey.',
+      'A personalized open-source contribution curator that analyzes your GitHub activity to recommend the best issues for you.',
     url: baseUrl,
     applicationCategory: 'DeveloperApplication',
     operatingSystem: 'Web',
@@ -17,12 +17,13 @@ export default function JsonLd() {
     },
     author: {
       '@type': 'Organization',
-      name: 'Willing to Contribute Team',
+      name: 'contrifit Team',
       url: baseUrl,
     },
     featureList: [
+      'Personalized issue recommendations based on GitHub activity',
       'Track beginner-friendly GitHub issues',
-      'Cross-device syncing via GitHub Gists',
+      'Cloud sync across devices',
       'Browser notifications for new issues',
       'Multi-language support (English/Korean)',
       'GitHub OAuth authentication',
@@ -32,10 +33,10 @@ export default function JsonLd() {
   const organization = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'Willing to Contribute',
+    name: 'contrifit',
     url: baseUrl,
     logo: `${baseUrl}/og-image.png`,
-    sameAs: ['https://github.com/sukjuhong/willing-to-contribute'],
+    sameAs: ['https://github.com/sukjuhong/contrifit'],
   };
 
   const breadcrumbList = {

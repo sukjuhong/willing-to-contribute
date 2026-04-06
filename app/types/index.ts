@@ -50,14 +50,13 @@ export interface UserSettings {
   lastCheckedAt?: string;
 }
 
-// GitHub Auth types
+// Auth types
 export interface GithubAuthState {
   isLoggedIn: boolean;
-  isAppAuth?: boolean; // Whether authentication is via GitHub App (true) or OAuth App (false/undefined)
-  token?: string;
-  installationToken?: string; // Token for GitHub App installation
   user?: {
     login: string;
     avatarUrl: string;
   };
+  accessToken?: string; // GitHub provider_token from Supabase session
+  userId?: string; // Supabase user id
 }

@@ -215,7 +215,7 @@ export default function GuidePage() {
           <p>
             Tools like{' '}
             <Link href="/issues" className="text-cyan-400 hover:text-cyan-300 underline">
-              Willing to Contribute
+              contrifit
             </Link>{' '}
             make this process much faster by aggregating beginner-friendly issues from all
             your tracked repositories and surfacing maintainer responsiveness data, so you
@@ -568,7 +568,7 @@ export default function GuidePage() {
           Ready to Find Your First Issue?
         </h2>
         <p className="text-gray-400 mb-8 max-w-xl mx-auto leading-relaxed">
-          Use Willing to Contribute to browse beginner-friendly issues from your favorite
+          Use contrifit to browse beginner-friendly issues from your favorite
           repositories — all in one place, with maintainer responsiveness data to help you
           pick the right project.
         </p>

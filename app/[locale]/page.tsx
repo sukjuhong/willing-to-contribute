@@ -3,11 +3,11 @@ import Link from 'next/link';
 import Footer from '@/app/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'Willing to Contribute - Find Beginner-Friendly GitHub Issues',
+  title: 'contrifit - Personalized Open Source Contribution Curator',
   description:
-    'Discover beginner-friendly GitHub issues across your favorite repositories. Track projects, get notified of new opportunities, and take your first step into open source.',
+    'A personalized open-source contribution curator that analyzes your GitHub activity to recommend the best issues for you.',
   alternates: {
-    canonical: 'https://willing-to-contribute.vercel.app',
+    canonical: 'https://contrifit.vercel.app',
   },
 };
 
@@ -33,7 +33,7 @@ const FEATURES = [
   {
     title: 'Cross-Device Sync',
     description:
-      'Your repository list and preferences sync across all devices via private GitHub Gists. Start tracking a repo on your laptop and it instantly appears on your phone or work computer. No separate account needed — your GitHub login is enough.',
+      'Your repository list and preferences sync across all devices via cloud sync. Start tracking a repo on your laptop and it instantly appears on your phone or work computer. No separate account needed — your GitHub login is enough.',
     icon: '🔄',
   },
 ];
@@ -72,7 +72,7 @@ export default function LandingPage() {
       <header className="bg-[#161b22] border-b border-gray-700 py-4 px-6 sticky top-0 z-10">
         <div className="container mx-auto flex justify-between items-center">
           <span className="text-2xl font-bold text-gray-100 font-[family-name:var(--font-mono)]">
-            <span className="text-gray-500">&gt;_</span> Willing to Contribute
+            <span className="text-gray-500">&gt;_</span> contrifit
           </span>
           <nav className="flex items-center gap-2 sm:gap-4">
             <Link
@@ -144,7 +144,7 @@ export default function LandingPage() {
                 Everything You Need to Start Contributing
               </h2>
               <p className="text-gray-400 max-w-xl mx-auto leading-relaxed">
-                Willing to Contribute bundles the tools that remove the friction between
+                contrifit bundles the tools that remove the friction between
                 wanting to contribute and actually opening your first pull request.
               </p>
             </div>
@@ -239,7 +239,7 @@ export default function LandingPage() {
         <section className="container mx-auto px-4 py-20 max-w-3xl">
           <div className="bg-[#161b22] border border-gray-700 rounded-xl p-8 text-center space-y-4">
             <h2 className="text-2xl font-bold text-gray-100">
-              Willing to Contribute is Itself Open Source
+              contrifit is Itself Open Source
             </h2>
             <p className="text-gray-400 leading-relaxed max-w-xl mx-auto">
               We practice what we preach. The full source code is available on GitHub and
@@ -249,7 +249,7 @@ export default function LandingPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-2">
               <a
-                href="https://github.com/sukjuhong/willing-to-contribute"
+                href="https://github.com/sukjuhong/contrifit"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-600 text-gray-100 px-6 py-2.5 rounded-lg transition-colors text-sm font-medium"

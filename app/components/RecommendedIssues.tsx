@@ -17,7 +17,8 @@ import type { Issue } from '../types';
 
 export default function RecommendedIssues() {
   const t = useTranslations();
-  const { settings, addRepository, authState } = useApp();
+  const { settings, addRepository, authState, profile, syncProfile, profileLoading } =
+    useApp();
   const [collapsed, setCollapsed] = useState(false);
   const [addingRepos, setAddingRepos] = useState<Set<string>>(new Set());
 
@@ -33,6 +34,7 @@ export default function RecommendedIssues() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(false);
+  const [isPersonalized, setIsPersonalized] = useState(false);
 
   // Track which repos are already tracked
   const trackedRepoKeys = new Set(settings.repositories.map(r => `${r.owner}/${r.name}`));
@@ -56,7 +58,7 @@ export default function RecommendedIssues() {
 
         if (res.status === 429) {
           throw new Error(
-            authState.token
+            authState.accessToken
               ? t('errors.rateLimitExceededLoggedIn')
               : t('errors.rateLimitExceeded'),
           );
@@ -69,6 +71,7 @@ export default function RecommendedIssues() {
         const data = await res.json();
         const newIssues: Issue[] = data.issues ?? data.data ?? [];
         const total: number = data.total ?? data.totalCount ?? 0;
+        if (data.personalized) setIsPersonalized(true);
 
         setIssues(prev => {
           const next = append ? [...prev, ...newIssues] : newIssues;
@@ -145,9 +148,14 @@ export default function RecommendedIssues() {
         className="flex items-center justify-between p-4 cursor-pointer"
         onClick={() => setCollapsed(!collapsed)}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <FaStar className="text-amber-400" />
           <h3 className="text-lg font-bold text-gray-100">{t('recommended.title')}</h3>
+          {isPersonalized && (
+            <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-400 border border-cyan-500/25">
+              {t('recommended.personalized')}
+            </span>
+          )}
           <span className="text-xs text-gray-500">{t('recommended.description')}</span>
         </div>
         <div className="flex items-center gap-3">
@@ -164,6 +172,22 @@ export default function RecommendedIssues() {
         <div className="px-4 pb-4 space-y-3">
           {/* Filters */}
           <IssueFilters filters={filters} onFilterChange={setFilters} />
+
+          {/* Profile CTA: logged in but no profile analyzed yet */}
+          {authState.isLoggedIn && !profile && !profileLoading && (
+            <div className="flex items-center justify-between bg-cyan-500/10 border border-cyan-500/20 rounded-md px-3 py-2 text-sm">
+              <span className="text-cyan-300">{t('recommended.analyzeProfileCta')}</span>
+              <button
+                onClick={e => {
+                  e.stopPropagation();
+                  syncProfile();
+                }}
+                className="ml-3 flex-shrink-0 px-3 py-1 text-xs font-medium bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 rounded-md border border-cyan-500/30 transition-colors"
+              >
+                {t('recommended.analyzeNow')}
+              </button>
+            </div>
+          )}
 
           {/* Error */}
           {error && (

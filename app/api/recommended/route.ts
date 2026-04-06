@@ -4,6 +4,7 @@ import { estimateDifficulty } from './difficulty';
 import { calculateMaintainerScore } from './maintainerScore';
 import { getServerOctokit } from './serverOctokit';
 import { cacheGet, cacheSet } from '../../lib/cache';
+import { createClient } from '@/app/lib/supabase/server';
 
 const CACHE_TTL_SECONDS = 900; // 15 minutes
 
@@ -32,7 +33,38 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
 
-    const language = searchParams.get('language') || '';
+    // Personalization: load user profile if session exists
+    let userTopLanguages: string[] = [];
+    let userContributedRepos: Set<string> = new Set();
+    let isPersonalized = false;
+    try {
+      const supabase = await createClient();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (session) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: profile } = await (supabase as any)
+          .from('user_profiles')
+          .select('top_languages, contributed_repos')
+          .eq('id', session.user.id)
+          .single();
+        if (profile) {
+          userTopLanguages = (profile.top_languages as string[] | null) ?? [];
+          userContributedRepos = new Set(
+            (profile.contributed_repos as string[] | null) ?? [],
+          );
+          isPersonalized = true;
+        }
+      }
+    } catch {
+      // Session/profile fetch is best-effort — continue without personalization
+    }
+
+    // Auto-inject language from profile if not explicitly set
+    const rawLanguage = searchParams.get('language') || '';
+    const language =
+      !rawLanguage && userTopLanguages.length > 0 ? userTopLanguages[0] : rawLanguage;
     const difficulties = searchParams.getAll('difficulty');
     const minStars = parseInt(searchParams.get('minStars') || '500', 10);
     const maxStarsRaw = parseInt(searchParams.get('maxStars') || '', 10);
@@ -202,8 +234,16 @@ export async function GET(request: Request) {
       );
     }
 
-    const issues = filtered.map(({ issue }) => issue);
-    const result = { issues, total: data.total_count };
+    let issues = filtered.map(({ issue }) => issue);
+
+    // Exclude issues from repos the user has already contributed to
+    if (userContributedRepos.size > 0) {
+      issues = issues.filter(
+        issue => !userContributedRepos.has(`${issue.repository.owner}/${issue.repository.name}`),
+      );
+    }
+
+    const result = { issues, total: data.total_count, personalized: isPersonalized };
 
     await cacheSet(cacheKey, result, CACHE_TTL_SECONDS);
 

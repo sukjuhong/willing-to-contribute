@@ -33,10 +33,10 @@ const AddRepositoryForm: React.FC<AddRepositoryFormProps> = ({
     setSearching(true);
     setError(null);
     try {
-      if (isLoggedIn && authState.token) {
+      if (isLoggedIn && authState.accessToken) {
         const response = await fetch(
           `/api/search?type=repos&q=${encodeURIComponent(query.trim())}`,
-          { headers: { Authorization: `Bearer ${authState.token}` } },
+          { headers: { Authorization: `Bearer ${authState.accessToken}` } },
         );
         if (response.status === 429) {
           setError(t('errors.rateLimitExceededLoggedIn'));
@@ -62,7 +62,7 @@ const AddRepositoryForm: React.FC<AddRepositoryFormProps> = ({
     } finally {
       setSearching(false);
     }
-  }, [query, t, isLoggedIn, authState.token, rateLimited]);
+  }, [query, t, isLoggedIn, authState.accessToken, rateLimited]);
 
   const isTracked = (repo: Repository) =>
     trackedRepositories.some(r => r.owner === repo.owner && r.name === repo.name);

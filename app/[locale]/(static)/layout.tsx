@@ -11,7 +11,7 @@ export default function StaticLayout({ children }: { children: React.ReactNode }
             href="/issues"
             className="text-2xl font-bold text-gray-100 font-[family-name:var(--font-mono)] hover:text-cyan-400 transition-colors"
           >
-            <span className="text-gray-500">&gt;_</span> Willing to Contribute
+            <span className="text-gray-500">&gt;_</span> contrifit
           </Link>
           <nav className="flex items-center space-x-4">
             <Link

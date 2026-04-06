@@ -1,9 +1,8 @@
 import { UserSettings, Repository, Issue } from '../types';
 
-const SETTINGS_KEY = 'willing-to-contribute-settings';
-const ISSUES_KEY = 'willing-to-contribute-issues';
-const AUTH_KEY = 'willing-to-contribute-auth';
-const CACHE_TIMESTAMP_KEY = 'willing-to-contribute-cache-timestamp';
+const SETTINGS_KEY = 'contrifit-settings';
+const ISSUES_KEY = 'contrifit-issues';
+const CACHE_TIMESTAMP_KEY = 'contrifit-cache-timestamp';
 
 // Default settings
 export const defaultSettings: UserSettings = {
@@ -137,35 +136,6 @@ export const loadRepositoryTimestamp = (repositoryKey: string): number | null =>
   return null;
 };
 
-// Auth
-export const saveAuthToken = (token: string): void => {
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(AUTH_KEY, token);
-  }
-};
-
-export const loadAuthToken = (): string | null => {
-  if (typeof window !== 'undefined') {
-    return localStorage.getItem(AUTH_KEY);
-  }
-  return null;
-};
-
-export const clearAuthToken = (): void => {
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem(AUTH_KEY);
-  }
-};
-
-export const clearAllUserData = (): void => {
-  if (typeof window !== 'undefined') {
-    const appPrefix = 'willing-to-contribute-';
-    Object.keys(localStorage)
-      .filter(key => key.startsWith(appPrefix))
-      .forEach(key => localStorage.removeItem(key));
-  }
-};
-
 // Save cache timestamp
 export const saveCacheTimestamp = (timestamp: number): void => {
   try {
@@ -191,7 +161,7 @@ export const createRepositoryKey = (repository: Repository): string => {
 };
 
 // Recommended issues cache
-const RECOMMENDED_ISSUES_KEY = 'willing-to-contribute-recommended-issues';
+const RECOMMENDED_ISSUES_KEY = 'contrifit-recommended-issues';
 const RECOMMENDED_CACHE_MINUTES = 30;
 
 interface RecommendedIssuesCache {
