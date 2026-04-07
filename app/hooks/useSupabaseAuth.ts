@@ -74,7 +74,7 @@ const useSupabaseAuth = (): {
       provider: 'github',
       options: {
         scopes: 'read:user,repo',
-        redirectTo: `${window.location.origin}/api/auth/callback`,
+        redirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(window.location.pathname)}`,
       },
     });
   }, [supabase]);
