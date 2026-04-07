@@ -1,6 +1,8 @@
-# Willing to Contribute
+# Pickssue
 
-A browser-based tool to collect, track, and manage beginner-friendly GitHub issues across your favorite repositories.
+Personalized open-source issue finder for developers. Discover and track beginner-friendly GitHub issues across your favorite repositories.
+
+**[pickssue.dev](https://pickssue.dev)**
 
 ## Features
 
@@ -27,61 +29,15 @@ A browser-based tool to collect, track, and manage beginner-friendly GitHub issu
 - Hide or dim closed issues
 - Sort and filter issues by age and status
 
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+ and npm
-
-### Installation
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/yourusername/willing-to-contribute.git
-   cd willing-to-contribute
-   ```
-
-2. Install dependencies:
-
-   ```bash
-   npm install
-   ```
-
-3. Create a `.env.local` file with your GitHub OAuth app credentials:
-
-   ```text
-   GITHUB_CLIENT_ID=your_github_client_id
-   GITHUB_CLIENT_SECRET=your_github_client_secret
-   NEXT_PUBLIC_GITHUB_CLIENT_ID=your_github_client_id
-   NEXT_PUBLIC_GITHUB_REDIRECT_URI=http://localhost:3000
-   ```
-
-4. Start the development server:
-
-   ```bash
-   npm run dev
-   ```
-
-5. Open your browser and navigate to `http://localhost:3000`
-
-### GitHub OAuth App Setup
-
-To use the GitHub authentication features:
-
-1. Register a new OAuth application at [GitHub Developer Settings](https://github.com/settings/developers)
-2. Set the Authorization callback URL to `http://localhost:3000` for development
-3. Copy the Client ID and Client Secret to your `.env.local` file
-
 ## Technologies Used
 
 - Next.js 15
 - React 19
 - TypeScript
-- TailwindCSS
+- TailwindCSS 4
+- shadcn/ui components
 - Octokit (GitHub API)
 - SWR for data fetching
-- DaisyUI components
 
 ## Future Improvements
 
