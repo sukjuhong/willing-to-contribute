@@ -18,19 +18,19 @@ export default function Footer() {
           <nav className="flex flex-col items-center space-y-2 sm:flex-row sm:space-y-0 sm:space-x-6">
             <Link
               href="/about"
-              className="text-muted-foreground hover:text-cyan-400 transition-colors text-sm"
+              className="text-muted-foreground hover:text-primary transition-colors text-sm"
             >
               {t('footer.about')}
             </Link>
             <Link
               href="/privacy"
-              className="text-muted-foreground hover:text-cyan-400 transition-colors text-sm"
+              className="text-muted-foreground hover:text-primary transition-colors text-sm"
             >
               {t('footer.privacy')}
             </Link>
             <Link
               href="/terms"
-              className="text-muted-foreground hover:text-cyan-400 transition-colors text-sm"
+              className="text-muted-foreground hover:text-primary transition-colors text-sm"
             >
               {t('footer.terms')}
             </Link>

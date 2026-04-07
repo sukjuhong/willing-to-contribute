@@ -95,7 +95,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
   return (
     <Card className="bg-card border-border p-4">
       <div className="flex items-center mb-4">
-        <FaCog className="text-cyan-400 mr-2" />
+        <FaCog className="text-primary mr-2" />
         <h3 className="text-lg font-semibold text-foreground">{t('settings.title')}</h3>
       </div>
 
@@ -158,14 +158,14 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             {settings.customLabels.map(label => (
               <span
                 key={label}
-                className="inline-flex items-center bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-full px-2.5 py-0.5 text-xs font-medium font-[family-name:var(--font-mono)]"
+                className="inline-flex items-center bg-primary/10 text-primary border border-primary/20 rounded-full px-2.5 py-0.5 text-xs font-medium font-mono"
               >
                 {label}
                 <button
                   type="button"
                   onClick={() => handleRemoveCustomLabel(label)}
                   disabled={disabled || loading}
-                  className="ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-cyan-500/20 hover:text-cyan-300 focus:outline-none"
+                  className="ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-primary/20 hover:text-primary/80 focus:outline-none"
                 >
                   <span className="sr-only">{t('settings.removeLabel', { label })}</span>×
                 </button>

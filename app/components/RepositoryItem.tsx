@@ -28,7 +28,7 @@ const RepositoryItem: React.FC<RepositoryItemProps> = ({ repository, onRemove })
     <Card className="bg-card border-border p-4 hover:border-border/80 transition-colors">
       <div className="flex justify-between items-start">
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-cyan-400 font-[family-name:var(--font-mono)]">
+          <h3 className="text-lg font-semibold text-primary font-mono">
             {repository.owner}/{repository.name}
           </h3>
 
@@ -50,7 +50,7 @@ const RepositoryItem: React.FC<RepositoryItemProps> = ({ repository, onRemove })
               href={repository.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center text-muted-foreground hover:text-cyan-400 transition-colors"
+              className="flex items-center text-muted-foreground hover:text-primary transition-colors"
             >
               <FaGithub className="mr-1" />
               <span>{t('common.viewOnGithub')}</span>

@@ -186,7 +186,7 @@ export default function RecommendedIssues() {
               </h3>
               {isPersonalized && (
                 <>
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-400 border border-cyan-500/25">
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/25">
                     {t('recommended.personalized')}
                   </span>
                   {profile && (
@@ -197,7 +197,7 @@ export default function RecommendedIssues() {
                       }}
                       disabled={profileLoading}
                       aria-label={t('recommended.resync')}
-                      className="text-muted-foreground hover:text-cyan-400 transition-colors p-1 disabled:opacity-50"
+                      className="text-muted-foreground hover:text-primary transition-colors p-1 disabled:opacity-50"
                       title={t('recommended.lastSynced', {
                         time: formatRelativeTime(profile.last_synced_at, t),
                       })}
@@ -254,8 +254,8 @@ export default function RecommendedIssues() {
 
             {/* Profile CTA: logged in but no profile analyzed yet */}
             {authState.isLoggedIn && !profile && !profileLoading && (
-              <div className="flex items-center justify-between bg-cyan-500/10 border border-cyan-500/20 rounded-md px-3 py-2 text-sm">
-                <span className="text-cyan-300">
+              <div className="flex items-center justify-between bg-primary/10 border border-primary/20 rounded-md px-3 py-2 text-sm">
+                <span className="text-primary/80">
                   {t('recommended.analyzeProfileCta')}
                 </span>
                 <Button
@@ -265,7 +265,7 @@ export default function RecommendedIssues() {
                     e.stopPropagation();
                     setShowAnalysisModal(true);
                   }}
-                  className="ml-3 flex-shrink-0 text-xs bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 border-cyan-500/30"
+                  className="ml-3 flex-shrink-0 text-xs bg-primary/20 hover:bg-primary/30 text-primary border-primary/30"
                 >
                   {t('recommended.analyzeNow')}
                 </Button>
@@ -292,7 +292,7 @@ export default function RecommendedIssues() {
             ) : loading && issues.length > 0 ? (
               <div className="relative">
                 <div className="absolute inset-0 bg-card/70 flex justify-center items-center z-10 rounded-md">
-                  <FaSync className="animate-spin text-cyan-400 mr-2" />
+                  <FaSync className="animate-spin text-primary mr-2" />
                   <span className="text-muted-foreground text-sm">
                     {t('recommended.loading')}
                   </span>
@@ -338,7 +338,7 @@ export default function RecommendedIssues() {
                                 ? 'flex-shrink-0 text-xs bg-muted text-muted-foreground border-border cursor-not-allowed'
                                 : isAdding
                                   ? 'flex-shrink-0 text-xs bg-muted text-muted-foreground border-transparent cursor-not-allowed'
-                                  : 'flex-shrink-0 text-xs bg-cyan-500/10 text-cyan-400 border-cyan-500/20 hover:bg-cyan-500/20'
+                                  : 'flex-shrink-0 text-xs bg-primary/10 text-primary border-primary/20 hover:bg-primary/20'
                           }
                           title={
                             isTracked
@@ -376,7 +376,7 @@ export default function RecommendedIssues() {
                       variant="outline"
                       onClick={handleLoadMore}
                       disabled={loading}
-                      className="flex items-center gap-2 text-sm font-medium text-cyan-400 bg-cyan-500/10 border-cyan-500/20 hover:bg-cyan-500/20 disabled:opacity-50"
+                      className="flex items-center gap-2 text-sm font-medium text-primary bg-primary/10 border-primary/20 hover:bg-primary/20 disabled:opacity-50"
                     >
                       {loading ? <FaSync className="animate-spin text-xs" /> : null}
                       {t('recommended.loadMore')}

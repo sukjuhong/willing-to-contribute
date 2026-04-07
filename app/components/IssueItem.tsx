@@ -75,11 +75,9 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
                 href={issue.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-cyan-400 transition-colors"
+                className="hover:text-primary transition-colors"
               >
-                <span className="font-[family-name:var(--font-mono)] text-muted-foreground">
-                  #{issue.number}
-                </span>{' '}
+                <span className="font-mono text-muted-foreground">#{issue.number}</span>{' '}
                 {issue.title}
               </a>
             </h3>
@@ -131,7 +129,7 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
           </div>
 
           <div className="flex flex-col items-end ml-3 shrink-0 text-xs text-muted-foreground gap-1">
-            <span className="font-[family-name:var(--font-mono)] text-foreground/70">
+            <span className="font-mono text-foreground/70">
               {issue.repository.owner}/{issue.repository.name}
             </span>
             <div className="flex items-center gap-2">
@@ -187,7 +185,7 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
                 href={issue.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-cyan-400 transition-colors"
+                className="hover:text-primary transition-colors"
               >
                 {issue.title}
               </a>
@@ -249,7 +247,7 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
 
           <div className="flex items-center mt-3 text-sm text-muted-foreground flex-wrap gap-y-1">
             <div className="flex items-center mr-4">
-              <span className="text-xs font-[family-name:var(--font-mono)]">
+              <span className="text-xs font-mono">
                 {issue.repository.owner}/{issue.repository.name} #{issue.number}
               </span>
             </div>
@@ -291,7 +289,7 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
               href={issue.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center text-cyan-400 hover:text-cyan-300 transition-colors ml-auto text-xs"
+              className="flex items-center text-primary hover:text-primary/80 transition-colors ml-auto text-xs"
             >
               <FaGithub className="mr-1" />
               <span>{t('common.viewIssue')}</span>

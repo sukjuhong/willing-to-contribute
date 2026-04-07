@@ -26,10 +26,10 @@ const Header: React.FC<HeaderProps> = ({
     <header className="bg-card border-b border-border py-4 px-6">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center space-x-2">
-          <h1 className="text-2xl font-bold text-foreground font-[family-name:var(--font-mono)]">
+          <h1 className="text-2xl font-bold text-foreground font-mono">
             <span className="text-muted-foreground">&gt;_</span> {t('common.welcome')}
           </h1>
-          <span className="bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-mono text-xs px-2 py-0.5 rounded">
+          <span className="bg-primary/10 text-primary border border-primary/20 font-mono text-xs px-2 py-0.5 rounded">
             {t('common.beta')}
           </span>
           <Button

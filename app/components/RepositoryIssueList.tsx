@@ -28,7 +28,7 @@ const RepositoryIssueList: React.FC<RepositoryIssueListProps> = ({
     <Collapsible open={isExpanded} onOpenChange={setIsExpanded} className="mb-4">
       <Card className="bg-card rounded-lg border border-border overflow-hidden gap-0 py-0">
         {/* Repository header */}
-        <div className="bg-accent border-l-2 border-cyan-500">
+        <div className="bg-accent border-l-2 border-primary">
           <CollapsibleTrigger asChild>
             <button className="w-full p-3 flex items-center justify-between cursor-pointer">
               <div className="flex items-center">
@@ -37,7 +37,7 @@ const RepositoryIssueList: React.FC<RepositoryIssueListProps> = ({
                 ) : (
                   <FaChevronRight className="text-muted-foreground mr-2" />
                 )}
-                <h3 className="font-medium text-foreground font-[family-name:var(--font-mono)]">
+                <h3 className="font-medium text-foreground font-mono">
                   {repository.owner}/{repository.name}
                 </h3>
                 <span className="ml-2 text-xs bg-muted text-muted-foreground border border-border px-2 py-0.5 rounded font-mono">
@@ -54,7 +54,7 @@ const RepositoryIssueList: React.FC<RepositoryIssueListProps> = ({
                 href={`https://github.com/${repository.owner}/${repository.name}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-cyan-400 hover:text-cyan-300 flex items-center text-sm"
+                className="text-primary hover:text-primary/80 flex items-center text-sm"
                 onClick={e => e.stopPropagation()}
               >
                 <FaExternalLinkAlt className="mr-1 text-xs" />

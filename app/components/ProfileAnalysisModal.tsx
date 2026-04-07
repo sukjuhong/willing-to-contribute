@@ -180,7 +180,7 @@ export default function ProfileAnalysisModal({
                   >
                     {label}
                   </p>
-                  {data && <p className="text-xs text-cyan-400 mt-0.5">{data}</p>}
+                  {data && <p className="text-xs text-primary mt-0.5">{data}</p>}
                 </div>
               </div>
             );
@@ -212,7 +212,7 @@ export default function ProfileAnalysisModal({
             <Button
               variant="outline"
               onClick={onClose}
-              className="text-cyan-400 border-cyan-500/20 bg-cyan-500/10 hover:bg-cyan-500/20"
+              className="text-primary border-primary/20 bg-primary/10 hover:bg-primary/20"
             >
               {t('close')}
             </Button>

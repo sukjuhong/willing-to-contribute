@@ -157,7 +157,7 @@ const AddRepositoryForm: React.FC<AddRepositoryFormProps> = ({
                         )}
                         {repo.stargazersCount !== undefined && (
                           <span className="inline-flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
-                            <FaStar className="text-yellow-500" />
+                            <FaStar className="text-amber-400" />
                             {repo.stargazersCount.toLocaleString()}
                           </span>
                         )}

@@ -117,7 +117,7 @@ export default function IssueFilters({
     cn(
       'h-11 min-w-11 px-2.5 text-xs font-medium rounded-md border transition-colors',
       active
-        ? 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30 hover:bg-cyan-500/30'
+        ? 'bg-primary/20 text-primary border-primary/30 hover:bg-primary/30'
         : 'bg-muted text-muted-foreground border-border hover:bg-accent',
     );
 
@@ -158,7 +158,7 @@ export default function IssueFilters({
             </SelectContent>
           </Select>
           {profileLanguage && filters.language === 'all' && (
-            <span className="text-xs px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+            <span className="text-xs px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
               {t('filters.fromProfile')}: {profileLanguage}
             </span>
           )}
