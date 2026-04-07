@@ -5,6 +5,7 @@ import Script from 'next/script';
 import './globals.css';
 import JsonLd from './components/JsonLd';
 import { env } from '@/app/lib/env';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 const pretendard = localFont({
   src: [
@@ -87,7 +88,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <JsonLd />
         <meta name="google-adsense-account" content="ca-pub-9157231737129938" />
@@ -96,7 +97,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             async
             src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${env.NEXT_PUBLIC_ADSENSE_CLIENT_ID}`}
             crossOrigin="anonymous"
-            strategy="beforeInteractive"
+            strategy="lazyOnload"
           />
         )}
       </head>
@@ -104,7 +105,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         className={`${pretendard.variable} ${jetbrainsMono.variable} font-sans`}
         suppressHydrationWarning
       >
-        {children}
+        <TooltipProvider>{children}</TooltipProvider>
       </body>
     </html>
   );

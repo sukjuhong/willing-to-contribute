@@ -9,20 +9,20 @@ export const metadata: Metadata = {
 
 export default function GuidePage() {
   return (
-    <article className="text-gray-300">
+    <article className="text-foreground">
       {/* Hero Section */}
       <section className="text-center mb-16">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-100 mb-6 font-[family-name:var(--font-mono)]">
-          <span className="text-cyan-400">&gt;_</span> Your First Contribution
+        <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 font-[family-name:var(--font-mono)]">
+          <span className="text-primary">&gt;_</span> Your First Contribution
         </h1>
-        <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-xl text-foreground max-w-2xl mx-auto leading-relaxed">
           A practical, step-by-step guide to making your first open source contribution —
           even if you have never done it before.
         </p>
         <div className="mt-8">
           <Link
             href="/issues"
-            className="inline-flex items-center gap-2 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold px-8 py-3 rounded-lg transition-colors text-lg"
+            className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-8 py-3 rounded-lg transition-colors text-lg"
           >
             Find an Issue to Start
           </Link>
@@ -31,7 +31,7 @@ export default function GuidePage() {
 
       {/* Introduction */}
       <section className="mb-16">
-        <h2 className="text-2xl font-bold text-gray-100 mb-6 border-b border-gray-700 pb-3">
+        <h2 className="text-2xl font-bold text-foreground mb-6 border-b border-border pb-3">
           Introduction: Why Read This Guide?
         </h2>
         <div className="space-y-4 leading-relaxed">
@@ -45,7 +45,7 @@ export default function GuidePage() {
           <p>
             The open source community is, by and large, a welcoming place that actively
             wants new contributors. Maintainers label issues as{' '}
-            <code className="bg-[#161b22] text-cyan-400 px-1.5 py-0.5 rounded text-sm font-mono">
+            <code className="bg-card text-primary px-1.5 py-0.5 rounded text-sm font-mono">
               good first issue
             </code>{' '}
             specifically because they want people like you to pick them up. They write
@@ -65,7 +65,7 @@ export default function GuidePage() {
 
       {/* Understanding Open Source */}
       <section className="mb-16">
-        <h2 className="text-2xl font-bold text-gray-100 mb-6 border-b border-gray-700 pb-3">
+        <h2 className="text-2xl font-bold text-foreground mb-6 border-b border-border pb-3">
           Understanding Open Source
         </h2>
         <div className="space-y-4 leading-relaxed">
@@ -91,14 +91,14 @@ export default function GuidePage() {
             patent protection), and the GPL (requires derivative work to also be open
             source). You do not need to be a lawyer to contribute, but it is worth reading
             a project&apos;s{' '}
-            <code className="bg-[#161b22] text-cyan-400 px-1.5 py-0.5 rounded text-sm font-mono">
+            <code className="bg-card text-primary px-1.5 py-0.5 rounded text-sm font-mono">
               LICENSE
             </code>{' '}
             file so you understand how your contributions will be used.
           </p>
           <p>
             Most projects also have a{' '}
-            <code className="bg-[#161b22] text-cyan-400 px-1.5 py-0.5 rounded text-sm font-mono">
+            <code className="bg-card text-primary px-1.5 py-0.5 rounded text-sm font-mono">
               CONTRIBUTING.md
             </code>{' '}
             file that explains their specific workflow — how to report bugs, the branching
@@ -111,7 +111,7 @@ export default function GuidePage() {
 
       {/* Setting Up Your Environment */}
       <section className="mb-16">
-        <h2 className="text-2xl font-bold text-gray-100 mb-6 border-b border-gray-700 pb-3">
+        <h2 className="text-2xl font-bold text-foreground mb-6 border-b border-border pb-3">
           Setting Up Your Environment
         </h2>
         <div className="space-y-4 leading-relaxed">
@@ -121,40 +121,40 @@ export default function GuidePage() {
             project on GitHub, so you only have to do it once.
           </p>
           <p>
-            <span className="text-cyan-400 font-semibold">Git</span> is the version
-            control system that almost all open source projects use. It tracks every
-            change to every file over time, allows multiple people to work on the same
-            codebase simultaneously, and makes it easy to propose changes without
-            affecting the main codebase. Install Git from{' '}
+            <span className="text-primary font-semibold">Git</span> is the version control
+            system that almost all open source projects use. It tracks every change to
+            every file over time, allows multiple people to work on the same codebase
+            simultaneously, and makes it easy to propose changes without affecting the
+            main codebase. Install Git from{' '}
             <a
               href="https://git-scm.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-cyan-400 hover:text-cyan-300 underline"
+              className="text-primary hover:text-primary/80 underline"
             >
               git-scm.com
             </a>{' '}
             and configure your name and email with{' '}
-            <code className="bg-[#161b22] text-cyan-400 px-1.5 py-0.5 rounded text-sm font-mono">
+            <code className="bg-card text-primary px-1.5 py-0.5 rounded text-sm font-mono">
               git config --global
             </code>
             .
           </p>
           <p>
-            <span className="text-cyan-400 font-semibold">GitHub</span> is the hosting
+            <span className="text-primary font-semibold">GitHub</span> is the hosting
             platform where most open source projects live. Create a free account, and then
             learn two key concepts: <em>forking</em> and <em>cloning</em>. A{' '}
-            <strong className="text-gray-100">fork</strong> is your personal copy of a
+            <strong className="text-foreground">fork</strong> is your personal copy of a
             repository on GitHub — it lives under your account and you have full write
-            access to it. A <strong className="text-gray-100">clone</strong> is a local
+            access to it. A <strong className="text-foreground">clone</strong> is a local
             copy of a repository on your own computer. The typical workflow is: fork the
             project on GitHub, clone your fork to your machine, make changes locally, push
             them back to your fork, and then open a pull request to propose your changes
             to the original project.
           </p>
-          <div className="bg-[#161b22] border border-gray-700 rounded-lg p-6 space-y-2">
-            <p className="text-sm font-semibold text-cyan-400">Quick Setup Checklist</p>
-            <ul className="list-disc list-inside space-y-1 text-gray-400 text-sm">
+          <div className="bg-card border border-border rounded-lg p-6 space-y-2">
+            <p className="text-sm font-semibold text-primary">Quick Setup Checklist</p>
+            <ul className="list-disc list-inside space-y-1 text-muted-foreground text-sm">
               <li>Install Git and configure your name/email</li>
               <li>Create a GitHub account and set up SSH keys</li>
               <li>Install a code editor (VS Code is a great choice)</li>
@@ -169,7 +169,7 @@ export default function GuidePage() {
 
       {/* Finding the Right Issue */}
       <section className="mb-16">
-        <h2 className="text-2xl font-bold text-gray-100 mb-6 border-b border-gray-700 pb-3">
+        <h2 className="text-2xl font-bold text-foreground mb-6 border-b border-border pb-3">
           Finding the Right Issue
         </h2>
         <div className="space-y-4 leading-relaxed">
@@ -180,11 +180,11 @@ export default function GuidePage() {
           </p>
           <p>
             Start by looking for issues labeled{' '}
-            <code className="bg-[#161b22] text-cyan-400 px-1.5 py-0.5 rounded text-sm font-mono">
+            <code className="bg-card text-primary px-1.5 py-0.5 rounded text-sm font-mono">
               good first issue
             </code>{' '}
             or{' '}
-            <code className="bg-[#161b22] text-cyan-400 px-1.5 py-0.5 rounded text-sm font-mono">
+            <code className="bg-card text-primary px-1.5 py-0.5 rounded text-sm font-mono">
               help wanted
             </code>
             . These labels are the maintainer&apos;s signal that the issue is
@@ -206,15 +206,15 @@ export default function GuidePage() {
           </p>
           <p>
             Look at the project&apos;s overall responsiveness. Check the{' '}
-            <strong className="text-gray-100">Pulse</strong> tab on GitHub, look at recent
-            pull requests to see how long they took to get reviewed, and check when the
-            last commit was made. A project with an active maintainer who reviews PRs
+            <strong className="text-foreground">Pulse</strong> tab on GitHub, look at
+            recent pull requests to see how long they took to get reviewed, and check when
+            the last commit was made. A project with an active maintainer who reviews PRs
             within a week is dramatically more rewarding for a first-time contributor than
             one where PRs sit open for months.
           </p>
           <p>
             Tools like{' '}
-            <Link href="/issues" className="text-cyan-400 hover:text-cyan-300 underline">
+            <Link href="/issues" className="text-primary hover:text-primary/80 underline">
               contrifit
             </Link>{' '}
             make this process much faster by aggregating beginner-friendly issues from all
@@ -226,7 +226,7 @@ export default function GuidePage() {
 
       {/* Making Your First Contribution */}
       <section className="mb-16">
-        <h2 className="text-2xl font-bold text-gray-100 mb-6 border-b border-gray-700 pb-3">
+        <h2 className="text-2xl font-bold text-foreground mb-6 border-b border-border pb-3">
           Making Your First Contribution
         </h2>
         <p className="mb-6 leading-relaxed">
@@ -239,10 +239,10 @@ export default function GuidePage() {
               1
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-100 mb-1">
+              <h3 className="text-lg font-semibold text-foreground mb-1">
                 Comment on the Issue
               </h3>
-              <p className="text-gray-400 leading-relaxed">
+              <p className="text-muted-foreground leading-relaxed">
                 Before writing any code, leave a comment on the issue saying you would
                 like to work on it. This prevents duplicate effort, gives the maintainer a
                 chance to clarify requirements, and starts a conversation. Something
@@ -257,11 +257,11 @@ export default function GuidePage() {
               2
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-100 mb-1">
+              <h3 className="text-lg font-semibold text-foreground mb-1">
                 Fork the Repository
               </h3>
-              <p className="text-gray-400 leading-relaxed">
-                Click the <strong className="text-gray-200">Fork</strong> button on the
+              <p className="text-muted-foreground leading-relaxed">
+                Click the <strong className="text-foreground">Fork</strong> button on the
                 GitHub repository page. This creates a copy of the entire repository under
                 your GitHub account. You now have full write access to this copy and can
                 experiment freely without affecting the original project.
@@ -274,12 +274,12 @@ export default function GuidePage() {
               3
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-100 mb-1">
+              <h3 className="text-lg font-semibold text-foreground mb-1">
                 Clone Your Fork Locally
               </h3>
-              <p className="text-gray-400 leading-relaxed">
+              <p className="text-muted-foreground leading-relaxed">
                 Run{' '}
-                <code className="bg-[#161b22] text-cyan-400 px-1.5 py-0.5 rounded text-sm font-mono">
+                <code className="bg-card text-primary px-1.5 py-0.5 rounded text-sm font-mono">
                   git clone https://github.com/YOUR-USERNAME/REPO-NAME.git
                 </code>{' '}
                 to download the repository to your computer. Then run the project locally
@@ -294,20 +294,20 @@ export default function GuidePage() {
               4
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-100 mb-1">
+              <h3 className="text-lg font-semibold text-foreground mb-1">
                 Create a New Branch
               </h3>
-              <p className="text-gray-400 leading-relaxed">
+              <p className="text-muted-foreground leading-relaxed">
                 Never work directly on the{' '}
-                <code className="bg-[#161b22] text-cyan-400 px-1.5 py-0.5 rounded text-sm font-mono">
+                <code className="bg-card text-primary px-1.5 py-0.5 rounded text-sm font-mono">
                   main
                 </code>{' '}
                 branch. Create a descriptive branch for your change:{' '}
-                <code className="bg-[#161b22] text-cyan-400 px-1.5 py-0.5 rounded text-sm font-mono">
+                <code className="bg-card text-primary px-1.5 py-0.5 rounded text-sm font-mono">
                   git checkout -b fix/typo-in-readme
                 </code>{' '}
                 or{' '}
-                <code className="bg-[#161b22] text-cyan-400 px-1.5 py-0.5 rounded text-sm font-mono">
+                <code className="bg-card text-primary px-1.5 py-0.5 rounded text-sm font-mono">
                   git checkout -b feat/add-dark-mode
                 </code>
                 . This keeps your work isolated and makes it easy to manage multiple
@@ -321,10 +321,10 @@ export default function GuidePage() {
               5
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-100 mb-1">
+              <h3 className="text-lg font-semibold text-foreground mb-1">
                 Write Your Code
               </h3>
-              <p className="text-gray-400 leading-relaxed">
+              <p className="text-muted-foreground leading-relaxed">
                 Make the smallest change that solves the problem. Read the existing code
                 carefully and match the style you see — indentation, naming conventions,
                 comment style. Run the existing test suite to confirm nothing is broken.
@@ -338,22 +338,22 @@ export default function GuidePage() {
               6
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-100 mb-1">
+              <h3 className="text-lg font-semibold text-foreground mb-1">
                 Commit with a Clear Message
               </h3>
-              <p className="text-gray-400 leading-relaxed">
+              <p className="text-muted-foreground leading-relaxed">
                 Write a commit message that explains what you changed and why, not just
                 what files you touched. Many projects follow the{' '}
                 <a
                   href="https://www.conventionalcommits.org"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-cyan-400 hover:text-cyan-300 underline"
+                  className="text-primary hover:text-primary/80 underline"
                 >
                   Conventional Commits
                 </a>{' '}
                 format:{' '}
-                <code className="bg-[#161b22] text-cyan-400 px-1.5 py-0.5 rounded text-sm font-mono">
+                <code className="bg-card text-primary px-1.5 py-0.5 rounded text-sm font-mono">
                   fix: correct off-by-one error in pagination
                 </code>
                 . Check the project&apos;s existing commits for the expected format.
@@ -366,12 +366,12 @@ export default function GuidePage() {
               7
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-100 mb-1">
+              <h3 className="text-lg font-semibold text-foreground mb-1">
                 Push and Open a Pull Request
               </h3>
-              <p className="text-gray-400 leading-relaxed">
+              <p className="text-muted-foreground leading-relaxed">
                 Push your branch to your fork with{' '}
-                <code className="bg-[#161b22] text-cyan-400 px-1.5 py-0.5 rounded text-sm font-mono">
+                <code className="bg-card text-primary px-1.5 py-0.5 rounded text-sm font-mono">
                   git push origin your-branch-name
                 </code>
                 , then go to the original repository on GitHub. You will see a banner
@@ -385,7 +385,7 @@ export default function GuidePage() {
 
       {/* Writing a Good Pull Request */}
       <section className="mb-16">
-        <h2 className="text-2xl font-bold text-gray-100 mb-6 border-b border-gray-700 pb-3">
+        <h2 className="text-2xl font-bold text-foreground mb-6 border-b border-border pb-3">
           Writing a Good Pull Request
         </h2>
         <div className="space-y-4 leading-relaxed">
@@ -396,11 +396,11 @@ export default function GuidePage() {
             respect their time.
           </p>
           <div className="grid md:grid-cols-2 gap-4">
-            <div className="bg-[#161b22] border border-gray-700 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-cyan-400 mb-2">
+            <div className="bg-card border border-border rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-primary mb-2">
                 Write a Clear Title
               </h3>
-              <p className="text-gray-400 text-sm leading-relaxed">
+              <p className="text-muted-foreground text-sm leading-relaxed">
                 The title should summarize what the PR does in one sentence.{' '}
                 <span className="text-green-400">
                   &quot;Fix: resolve null pointer in user authentication flow&quot;
@@ -408,18 +408,18 @@ export default function GuidePage() {
                 is much better than{' '}
                 <span className="text-red-400">&quot;fixed bug&quot;</span>. Include the
                 issue number if relevant:{' '}
-                <code className="bg-gray-900 text-cyan-400 px-1 py-0.5 rounded text-xs font-mono">
+                <code className="bg-background text-primary px-1 py-0.5 rounded text-xs font-mono">
                   Fixes #123
                 </code>
                 .
               </p>
             </div>
 
-            <div className="bg-[#161b22] border border-gray-700 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-cyan-400 mb-2">
+            <div className="bg-card border border-border rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-primary mb-2">
                 Describe the Problem
               </h3>
-              <p className="text-gray-400 text-sm leading-relaxed">
+              <p className="text-muted-foreground text-sm leading-relaxed">
                 Explain what problem you are solving and why your solution is correct.
                 Link to the issue. If the change has any visual element, attach a
                 screenshot. The reviewer should understand your intent without having to
@@ -427,9 +427,9 @@ export default function GuidePage() {
               </p>
             </div>
 
-            <div className="bg-[#161b22] border border-gray-700 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-cyan-400 mb-2">Keep It Small</h3>
-              <p className="text-gray-400 text-sm leading-relaxed">
+            <div className="bg-card border border-border rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-primary mb-2">Keep It Small</h3>
+              <p className="text-muted-foreground text-sm leading-relaxed">
                 Small pull requests get reviewed faster. If you notice other issues while
                 working, open separate PRs for them. A PR that changes 50 lines in one
                 logical area will be reviewed in minutes. A PR that changes 500 lines
@@ -437,11 +437,11 @@ export default function GuidePage() {
               </p>
             </div>
 
-            <div className="bg-[#161b22] border border-gray-700 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-cyan-400 mb-2">
+            <div className="bg-card border border-border rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-primary mb-2">
                 Respond to Reviews
               </h3>
-              <p className="text-gray-400 text-sm leading-relaxed">
+              <p className="text-muted-foreground text-sm leading-relaxed">
                 When a reviewer leaves comments, respond to every one — even if just to
                 say &quot;done&quot; or &quot;I see your point, but here is why I did it
                 this way.&quot; Implement requested changes promptly. Push the updated
@@ -454,7 +454,7 @@ export default function GuidePage() {
 
       {/* Common Mistakes */}
       <section className="mb-16">
-        <h2 className="text-2xl font-bold text-gray-100 mb-6 border-b border-gray-700 pb-3">
+        <h2 className="text-2xl font-bold text-foreground mb-6 border-b border-border pb-3">
           Common Mistakes to Avoid
         </h2>
         <div className="space-y-4 leading-relaxed">
@@ -464,54 +464,54 @@ export default function GuidePage() {
             avoidable reasons.
           </p>
           <ul className="space-y-4">
-            <li className="bg-[#161b22] border border-gray-700 rounded-lg p-4">
-              <h3 className="text-gray-100 font-semibold mb-1">
+            <li className="bg-card border border-border rounded-lg p-4">
+              <h3 className="text-foreground font-semibold mb-1">
                 Not reading CONTRIBUTING.md
               </h3>
-              <p className="text-gray-400 text-sm leading-relaxed">
+              <p className="text-muted-foreground text-sm leading-relaxed">
                 Every project has its own contribution workflow, coding style, and testing
                 requirements. Skipping this file is the single most common reason for a PR
                 to be immediately closed or rejected. Read it. Every word.
               </p>
             </li>
-            <li className="bg-[#161b22] border border-gray-700 rounded-lg p-4">
-              <h3 className="text-gray-100 font-semibold mb-1">
+            <li className="bg-card border border-border rounded-lg p-4">
+              <h3 className="text-foreground font-semibold mb-1">
                 Opening a PR without discussing the approach first
               </h3>
-              <p className="text-gray-400 text-sm leading-relaxed">
+              <p className="text-muted-foreground text-sm leading-relaxed">
                 For anything beyond trivial fixes, comment on the issue first and describe
                 your planned approach. The maintainer might tell you the issue is already
                 being handled, suggest a different solution, or provide context that saves
                 you hours of work.
               </p>
             </li>
-            <li className="bg-[#161b22] border border-gray-700 rounded-lg p-4">
-              <h3 className="text-gray-100 font-semibold mb-1">
+            <li className="bg-card border border-border rounded-lg p-4">
+              <h3 className="text-foreground font-semibold mb-1">
                 Changing unrelated code
               </h3>
-              <p className="text-gray-400 text-sm leading-relaxed">
+              <p className="text-muted-foreground text-sm leading-relaxed">
                 Do not fix formatting issues, rename variables, or &quot;clean up&quot;
                 code that is not directly related to the issue you are solving. These
                 changes make your diff larger, harder to review, and create merge
                 conflicts with other open PRs. One PR, one purpose.
               </p>
             </li>
-            <li className="bg-[#161b22] border border-gray-700 rounded-lg p-4">
-              <h3 className="text-gray-100 font-semibold mb-1">
+            <li className="bg-card border border-border rounded-lg p-4">
+              <h3 className="text-foreground font-semibold mb-1">
                 Not running tests before submitting
               </h3>
-              <p className="text-gray-400 text-sm leading-relaxed">
+              <p className="text-muted-foreground text-sm leading-relaxed">
                 Always run the full test suite before opening your PR. A PR that breaks
                 existing tests signals to reviewers that you did not verify your work. If
                 CI runs automatically on your PR and it fails, fix it before asking for a
                 review.
               </p>
             </li>
-            <li className="bg-[#161b22] border border-gray-700 rounded-lg p-4">
-              <h3 className="text-gray-100 font-semibold mb-1">
+            <li className="bg-card border border-border rounded-lg p-4">
+              <h3 className="text-foreground font-semibold mb-1">
                 Getting discouraged by feedback
               </h3>
-              <p className="text-gray-400 text-sm leading-relaxed">
+              <p className="text-muted-foreground text-sm leading-relaxed">
                 Code review comments are not personal criticism. Every experienced
                 developer gets feedback that requires changes. Treat review comments as
                 free mentoring from someone who knows the codebase deeply. Thank reviewers
@@ -524,7 +524,7 @@ export default function GuidePage() {
 
       {/* After Your First PR */}
       <section className="mb-16">
-        <h2 className="text-2xl font-bold text-gray-100 mb-6 border-b border-gray-700 pb-3">
+        <h2 className="text-2xl font-bold text-foreground mb-6 border-b border-border pb-3">
           After Your First PR
         </h2>
         <div className="space-y-4 leading-relaxed">
@@ -563,25 +563,25 @@ export default function GuidePage() {
       </section>
 
       {/* CTA */}
-      <section className="text-center bg-[#161b22] border border-cyan-500/20 rounded-xl p-12">
-        <h2 className="text-3xl font-bold text-gray-100 mb-4">
+      <section className="text-center bg-card border border-primary/20 rounded-xl p-12">
+        <h2 className="text-3xl font-bold text-foreground mb-4">
           Ready to Find Your First Issue?
         </h2>
-        <p className="text-gray-400 mb-8 max-w-xl mx-auto leading-relaxed">
-          Use contrifit to browse beginner-friendly issues from your favorite
-          repositories — all in one place, with maintainer responsiveness data to help you
-          pick the right project.
+        <p className="text-muted-foreground mb-8 max-w-xl mx-auto leading-relaxed">
+          Use contrifit to browse beginner-friendly issues from your favorite repositories
+          — all in one place, with maintainer responsiveness data to help you pick the
+          right project.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/issues"
-            className="inline-flex items-center justify-center gap-2 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold px-10 py-4 rounded-lg transition-colors text-lg"
+            className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-10 py-4 rounded-lg transition-colors text-lg"
           >
             Browse Issues
           </Link>
           <Link
             href="/faq"
-            className="inline-flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-600 text-gray-100 font-semibold px-10 py-4 rounded-lg transition-colors text-lg"
+            className="inline-flex items-center justify-center gap-2 bg-accent hover:bg-accent/80 text-foreground font-semibold px-10 py-4 rounded-lg transition-colors text-lg"
           >
             Read the FAQ
           </Link>

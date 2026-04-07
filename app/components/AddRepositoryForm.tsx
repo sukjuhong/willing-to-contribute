@@ -4,6 +4,10 @@ import { useTranslations } from 'next-intl';
 import { useApp } from '../contexts/AppContext';
 import { searchRepositories } from '../utils/github';
 import { Repository } from '../types';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 
 interface AddRepositoryFormProps {
   onAddRepository: (repoUrl: string) => Promise<boolean>;
@@ -19,7 +23,7 @@ const AddRepositoryForm: React.FC<AddRepositoryFormProps> = ({
   trackedRepositories,
 }) => {
   const t = useTranslations();
-  const { login, authState } = useApp();
+  const { authState } = useApp();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Repository[]>([]);
   const [searching, setSearching] = useState(false);
@@ -80,8 +84,8 @@ const AddRepositoryForm: React.FC<AddRepositoryFormProps> = ({
   };
 
   return (
-    <div className="bg-[#161b22] rounded-lg border border-gray-700 p-4">
-      <h3 className="text-lg font-semibold mb-3 text-gray-100">
+    <Card className="bg-card border-border p-4">
+      <h3 className="text-lg font-semibold mb-3 text-foreground">
         {t('repository.addRepository')}
       </h3>
 
@@ -89,8 +93,8 @@ const AddRepositoryForm: React.FC<AddRepositoryFormProps> = ({
         <div className="relative">
           <div className="flex items-center gap-2">
             <div className="relative flex-1">
-              <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
-              <input
+              <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+              <Input
                 type="text"
                 value={query}
                 onChange={e => {
@@ -101,97 +105,110 @@ const AddRepositoryForm: React.FC<AddRepositoryFormProps> = ({
                   if (e.key === 'Enter') handleSearch();
                 }}
                 placeholder={t('repository.searchPlaceholder')}
-                className="w-full pl-9 pr-3 py-2 bg-[#0d1117] border border-gray-700 rounded-md text-gray-100 placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500"
+                className="pl-9 bg-background border-border text-foreground placeholder:text-muted-foreground"
                 disabled={disabled}
               />
             </div>
-            <button
+            <Button
               onClick={handleSearch}
               disabled={disabled || searching || !query.trim() || rateLimited}
-              className="px-3 py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-sm font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              size="sm"
+              className="shrink-0"
             >
               {searching ? <FaSpinner className="animate-spin" /> : t('common.search')}
-            </button>
+            </Button>
           </div>
 
-          <p className="mt-1 text-gray-500 text-xs">
+          <p className="mt-1 text-muted-foreground text-xs">
             {t('repository.monitorDescription')}
           </p>
 
           {!isLoggedIn && (
-            <p className="mt-1 text-gray-500 text-xs">{t('repository.loginRequired')}</p>
+            <p className="mt-1 text-muted-foreground text-xs">
+              {t('repository.loginRequired')}
+            </p>
           )}
 
-          {error && <p className="mt-1 text-red-400 text-sm">{error}</p>}
+          {error && (
+            <p role="alert" className="mt-1 text-destructive text-sm">
+              {error}
+            </p>
+          )}
 
           {results.length > 0 && (
-            <ul className="mt-2 border border-gray-700 rounded-md bg-[#0d1117] divide-y divide-gray-800 overflow-hidden">
-              {results.map(repo => {
-                const tracked = isTracked(repo);
-                const adding = addingId === repo.id;
-                return (
-                  <li
-                    key={repo.id}
-                    className="flex items-center justify-between px-3 py-2 gap-3"
-                  >
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-gray-100 truncate">
-                        {repo.owner}/{repo.name}
-                      </p>
-                      {repo.description && (
-                        <p className="text-xs text-gray-500 truncate">
-                          {repo.description}
+            <Card className="mt-2 border-border bg-background overflow-hidden">
+              <ul className="divide-y divide-border">
+                {results.map(repo => {
+                  const tracked = isTracked(repo);
+                  const adding = addingId === repo.id;
+                  return (
+                    <li
+                      key={repo.id}
+                      className="flex items-center justify-between px-3 py-2 gap-3"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium text-foreground truncate">
+                          {repo.owner}/{repo.name}
                         </p>
-                      )}
-                      {repo.stargazersCount !== undefined && (
-                        <span className="inline-flex items-center gap-1 text-xs text-gray-500 mt-0.5">
-                          <FaStar className="text-yellow-500" />
-                          {repo.stargazersCount.toLocaleString()}
-                        </span>
-                      )}
-                    </div>
-
-                    {tracked ? (
-                      <span className="shrink-0 text-xs px-2 py-1 rounded bg-gray-700 text-gray-400 cursor-default">
-                        {t('recommended.alreadyTracked')}
-                      </span>
-                    ) : !isLoggedIn ? (
-                      <button
-                        disabled
-                        className="shrink-0 flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-md border bg-gray-800 text-gray-500 border-gray-700 cursor-not-allowed"
-                      >
-                        <FaLock />
-                        {t('repository.loginToTrack')}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => handleAdd(repo)}
-                        disabled={disabled || adding}
-                        className={`shrink-0 flex items-center gap-1 px-2 py-1 text-xs font-medium text-white bg-cyan-600 rounded hover:bg-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 ${
-                          disabled || adding ? 'opacity-50 cursor-not-allowed' : ''
-                        }`}
-                      >
-                        {adding ? (
-                          <>
-                            <FaSpinner className="animate-spin" />
-                            {t('common.adding')}
-                          </>
-                        ) : (
-                          <>
-                            <FaPlus />
-                            {t('repository.addRepository')}
-                          </>
+                        {repo.description && (
+                          <p className="text-xs text-muted-foreground truncate">
+                            {repo.description}
+                          </p>
                         )}
-                      </button>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
+                        {repo.stargazersCount !== undefined && (
+                          <span className="inline-flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
+                            <FaStar className="text-amber-400" />
+                            {repo.stargazersCount.toLocaleString()}
+                          </span>
+                        )}
+                      </div>
+
+                      {tracked ? (
+                        <span className="shrink-0 text-xs px-2 py-1 rounded bg-muted text-muted-foreground cursor-default">
+                          {t('recommended.alreadyTracked')}
+                        </span>
+                      ) : !isLoggedIn ? (
+                        <Button
+                          disabled
+                          variant="outline"
+                          size="sm"
+                          className="shrink-0 gap-1"
+                        >
+                          <FaLock />
+                          {t('repository.loginToTrack')}
+                        </Button>
+                      ) : (
+                        <Button
+                          onClick={() => handleAdd(repo)}
+                          disabled={disabled || adding}
+                          size="sm"
+                          className={cn(
+                            'shrink-0 gap-1',
+                            (disabled || adding) && 'opacity-50',
+                          )}
+                        >
+                          {adding ? (
+                            <>
+                              <FaSpinner className="animate-spin" />
+                              {t('common.adding')}
+                            </>
+                          ) : (
+                            <>
+                              <FaPlus />
+                              {t('repository.addRepository')}
+                            </>
+                          )}
+                        </Button>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </Card>
           )}
         </div>
       </div>
-    </div>
+    </Card>
   );
 };
 

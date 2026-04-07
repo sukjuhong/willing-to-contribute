@@ -10,7 +10,7 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
   const { authState, login, logout } = useApp();
 
   return (
-    <div className="min-h-screen bg-[#0d1117] flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       <Header
         authState={authState}
         onAppLogin={login}

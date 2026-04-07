@@ -94,59 +94,63 @@ export default function RepositoriesPage() {
   if (!authState.isLoggedIn) {
     return (
       <div className="space-y-6">
-        <h2 className="text-xl font-bold text-gray-100">
+        <h2 className="text-xl font-bold text-foreground">
           {t('settings.trackedRepositories')}
         </h2>
         <LoginPrompt />
 
         {/* Feature overview for unauthenticated users / SEO content */}
         <div className="space-y-6 mt-4">
-          <div className="bg-[#161b22] border border-gray-700 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-cyan-400 mb-3">
+          <div className="bg-card border border-border rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-primary mb-3">
               {t('repositoriesGuest.whatIsTracking')}
             </h3>
-            <p className="text-gray-300 leading-relaxed">
+            <p className="text-foreground leading-relaxed">
               {t('repositoriesGuest.trackingDesc1')}
             </p>
-            <p className="text-gray-400 mt-3 leading-relaxed">
+            <p className="text-muted-foreground mt-3 leading-relaxed">
               {t('repositoriesGuest.trackingDesc2')}
             </p>
           </div>
 
-          <div className="bg-[#161b22] border border-gray-700 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-cyan-400 mb-4">
+          <div className="bg-card border border-border rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-primary mb-4">
               {t('repositoriesGuest.featuresTitle')}
             </h3>
             <ul className="space-y-3">
               {FEATURES.map(item => (
                 <li key={item.titleKey} className="flex gap-3">
-                  <span className="mt-1 h-2 w-2 flex-shrink-0 rounded-full bg-cyan-500" />
+                  <span className="mt-1 h-2 w-2 flex-shrink-0 rounded-full bg-primary" />
                   <div>
-                    <span className="text-gray-100 font-medium">{t(item.titleKey)}</span>
-                    <p className="text-gray-400 text-sm mt-0.5">{t(item.descKey)}</p>
+                    <span className="text-foreground font-medium">
+                      {t(item.titleKey)}
+                    </span>
+                    <p className="text-muted-foreground text-sm mt-0.5">
+                      {t(item.descKey)}
+                    </p>
                   </div>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className="bg-[#161b22] border border-gray-700 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-cyan-400 mb-2">
+          <div className="bg-card border border-border rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-primary mb-2">
               {t('repositoriesGuest.popularTitle')}
             </h3>
-            <p className="text-gray-400 text-sm mb-4">
+            <p className="text-muted-foreground text-sm mb-4">
               {t('repositoriesGuest.popularDesc')}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {POPULAR_REPOS.map(repo => (
                 <div
                   key={repo.name}
-                  className="border border-gray-700 rounded-md p-3 bg-[#0d1117]"
+                  className="border border-border rounded-md p-3 bg-background"
                 >
-                  <p className="text-cyan-400 font-mono text-sm font-semibold">
+                  <p className="text-primary font-mono text-sm font-semibold">
                     {repo.name}
                   </p>
-                  <p className="text-gray-400 text-xs mt-1 leading-relaxed">
+                  <p className="text-muted-foreground text-xs mt-1 leading-relaxed">
                     {repo.desc}
                   </p>
                 </div>
@@ -154,18 +158,18 @@ export default function RepositoriesPage() {
             </div>
           </div>
 
-          <div className="bg-[#161b22] border border-gray-700 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-cyan-400 mb-2">
+          <div className="bg-card border border-border rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-primary mb-2">
               {t('repositoriesGuest.howItWorksTitle')}
             </h3>
-            <ol className="space-y-3 text-gray-300">
+            <ol className="space-y-3 text-foreground">
               {HOW_IT_WORKS_STEPS.map(item => (
                 <li key={item.step} className="flex gap-3">
-                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 text-xs font-bold flex items-center justify-center">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center">
                     {item.step}
                   </span>
                   <span>
-                    <strong className="text-gray-100">{t(item.titleKey)}</strong>
+                    <strong className="text-foreground">{t(item.titleKey)}</strong>
                     {' — '}
                     {t(item.descKey)}
                   </span>
@@ -180,7 +184,7 @@ export default function RepositoriesPage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-bold text-gray-100">
+      <h2 className="text-xl font-bold text-foreground">
         {t('settings.trackedRepositories')}
       </h2>
 
@@ -199,8 +203,8 @@ export default function RepositoriesPage() {
 
       {settingsLoading ? (
         <div className="flex justify-center items-center p-8">
-          <FaSync className="animate-spin text-cyan-400 mr-2" />
-          <span className="text-gray-400">{t('common.loadingRepositories')}</span>
+          <FaSync className="animate-spin text-primary mr-2" />
+          <span className="text-muted-foreground">{t('common.loadingRepositories')}</span>
         </div>
       ) : settings.repositories.length > 0 ? (
         <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
@@ -209,12 +213,12 @@ export default function RepositoriesPage() {
           ))}
         </div>
       ) : (
-        <div className="text-center bg-[#161b22] border border-gray-700 rounded-lg p-8">
-          <FaGithub className="mx-auto h-12 w-12 text-gray-600" />
-          <h3 className="mt-2 text-lg font-medium text-gray-100">
+        <div className="text-center bg-card border border-border rounded-lg p-8">
+          <FaGithub className="mx-auto h-12 w-12 text-muted-foreground" />
+          <h3 className="mt-2 text-lg font-medium text-foreground">
             {t('settings.noRepositories')}
           </h3>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-muted-foreground">
             {t('settings.addRepositoriesToStart')}
           </p>
         </div>

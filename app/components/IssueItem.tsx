@@ -2,6 +2,9 @@ import React from 'react';
 import { Issue } from '../types';
 import { FaGithub, FaClock, FaStar, FaCodeBranch } from 'react-icons/fa';
 import { useTranslations, useLocale } from 'next-intl';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 interface IssueItemProps {
   issue: Issue;
@@ -43,7 +46,7 @@ const difficultyStyles = {
 const maintainerGradeStyles = {
   A: 'bg-emerald-500/15 text-emerald-400',
   B: 'bg-amber-500/15 text-amber-400',
-  C: 'bg-gray-500/15 text-gray-400',
+  C: 'bg-muted text-muted-foreground',
 };
 
 const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
@@ -56,67 +59,77 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
   if (compact) {
     return (
       <div
-        className={`bg-[#161b22] rounded p-2 hover:bg-[#21262d] transition-colors border-l-2 ${
+        className={cn(
+          'bg-card rounded p-2 hover:bg-accent transition-colors border-l-2',
           issue.isNew
             ? 'border-amber-400'
             : issue.state === 'open'
-              ? 'border-emerald-500'
-              : 'border-gray-600'
-        }`}
+              ? 'border-[color:var(--color-success)]'
+              : 'border-[color:var(--color-danger)]',
+        )}
       >
         <div className="flex items-center justify-between">
           <div className="flex-1 min-w-0">
-            <h3 className="text-sm font-medium text-gray-200 truncate">
+            <h3 className="text-sm font-medium text-foreground truncate">
               <a
                 href={issue.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-cyan-400 transition-colors"
+                className="hover:text-primary transition-colors"
               >
-                <span className="font-[family-name:var(--font-mono)] text-gray-500">
-                  #{issue.number}
-                </span>{' '}
+                <span className="font-mono text-muted-foreground">#{issue.number}</span>{' '}
                 {issue.title}
               </a>
             </h3>
 
             <div className="flex flex-wrap gap-1 mt-1">
               {issue.labels.slice(0, 3).map(label => (
-                <span
+                <Badge
                   key={label.id}
-                  className="text-xs px-1.5 py-0.5 rounded"
+                  variant="outline"
+                  className="text-xs px-1.5 py-0.5 rounded border-none"
                   style={{
                     backgroundColor: `#${label.color}15`,
                     color: `#${label.color}`,
                   }}
                 >
                   {label.name}
-                </span>
+                </Badge>
               ))}
               {issue.labels.length > 3 && (
-                <span className="text-xs text-gray-500">+{issue.labels.length - 3}</span>
+                <span className="text-xs text-muted-foreground">
+                  +{issue.labels.length - 3}
+                </span>
               )}
               {issue.difficulty && (
-                <span
-                  className={`text-xs px-1.5 py-0.5 rounded border ${difficultyStyles[issue.difficulty]}`}
+                <Badge
+                  variant="outline"
+                  className={cn(
+                    'text-xs px-1.5 py-0.5 rounded border',
+                    difficultyStyles[issue.difficulty],
+                  )}
                   title={t('difficulty.estimated')}
                 >
                   {tDifficulty(issue.difficulty)}
-                </span>
+                </Badge>
               )}
               {issue.repository.maintainerScore && (
-                <span
-                  className={`text-xs px-1.5 py-0.5 rounded ${maintainerGradeStyles[issue.repository.maintainerScore.grade]}`}
+                <Badge
+                  variant="outline"
+                  className={cn(
+                    'text-xs px-1.5 py-0.5 rounded border-none',
+                    maintainerGradeStyles[issue.repository.maintainerScore.grade],
+                  )}
                   title={`${tMaintainer(`grade${issue.repository.maintainerScore.grade}`)} · ${tMaintainer('responseTime', { hours: Math.round(issue.repository.maintainerScore.avgResponseTimeHours) })} · ${tMaintainer('mergeRate', { rate: Math.round(issue.repository.maintainerScore.mergeRate * 100) })}`}
                 >
                   {tMaintainer(`grade${issue.repository.maintainerScore.grade}`)}
-                </span>
+                </Badge>
               )}
             </div>
           </div>
 
-          <div className="flex flex-col items-end ml-3 shrink-0 text-xs text-gray-500 gap-1">
-            <span className="font-[family-name:var(--font-mono)] text-gray-400">
+          <div className="flex flex-col items-end ml-3 shrink-0 text-xs text-muted-foreground gap-1">
+            <span className="font-mono text-foreground/70">
               {issue.repository.owner}/{issue.repository.name}
             </span>
             <div className="flex items-center gap-2">
@@ -139,9 +152,12 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
                 {formatRelativeTime(issue.createdAt, tCommon, locale)}
               </span>
               {issue.isNew && (
-                <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-mono px-1.5 py-0.5 rounded">
+                <Badge
+                  variant="outline"
+                  className="bg-amber-500/10 text-amber-400 border-amber-500/20 text-xs font-mono px-1.5 py-0.5 rounded"
+                >
                   {t('common.new')}
-                </span>
+                </Badge>
               )}
             </div>
           </div>
@@ -151,60 +167,73 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
   }
 
   return (
-    <div
-      className={`bg-[#161b22] rounded-lg border border-gray-700 p-4 hover:border-gray-600 transition-colors border-l-2 ${
+    <Card
+      className={cn(
+        'rounded-lg border-border p-4 hover:border-border/80 transition-colors border-l-2 gap-0',
         issue.isNew
           ? 'border-amber-400'
           : issue.state === 'open'
-            ? 'border-emerald-500'
-            : 'border-gray-600'
-      }`}
+            ? 'border-[color:var(--color-success)]'
+            : 'border-[color:var(--color-danger)]',
+      )}
     >
       <div className="flex items-start">
         <div className="flex-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="text-lg font-semibold text-gray-100">
+            <h3 className="text-lg font-semibold text-foreground">
               <a
                 href={issue.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-cyan-400 transition-colors"
+                className="hover:text-primary transition-colors"
               >
                 {issue.title}
               </a>
             </h3>
 
             {issue.isNew && (
-              <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-mono px-2.5 py-0.5 rounded">
+              <Badge
+                variant="outline"
+                className="bg-amber-500/10 text-amber-400 border-amber-500/20 text-xs font-mono px-2.5 py-0.5 rounded"
+              >
                 {t('common.new')}
-              </span>
+              </Badge>
             )}
 
             {issue.difficulty && (
-              <span
-                className={`text-xs px-2 py-0.5 rounded border ${difficultyStyles[issue.difficulty]}`}
+              <Badge
+                variant="outline"
+                className={cn(
+                  'text-xs px-2 py-0.5 rounded border',
+                  difficultyStyles[issue.difficulty],
+                )}
                 title={t('difficulty.estimated')}
               >
                 {tDifficulty(issue.difficulty)}
-              </span>
+              </Badge>
             )}
 
             {issue.repository.maintainerScore && (
-              <span
-                className={`text-xs px-2 py-0.5 rounded ${maintainerGradeStyles[issue.repository.maintainerScore.grade]}`}
+              <Badge
+                variant="outline"
+                className={cn(
+                  'text-xs px-2 py-0.5 rounded border-none',
+                  maintainerGradeStyles[issue.repository.maintainerScore.grade],
+                )}
                 title={`${tMaintainer('responseTime', { hours: Math.round(issue.repository.maintainerScore.avgResponseTimeHours) })} · ${tMaintainer('mergeRate', { rate: Math.round(issue.repository.maintainerScore.mergeRate * 100) })}`}
               >
                 {issue.repository.maintainerScore.grade} ·{' '}
                 {tMaintainer(`grade${issue.repository.maintainerScore.grade}`)}
-              </span>
+              </Badge>
             )}
           </div>
 
           <div className="flex flex-wrap gap-1.5 mt-2">
             {issue.labels.map(label => (
-              <span
+              <Badge
                 key={label.id}
-                className="text-xs px-2.5 py-0.5 rounded-full"
+                variant="outline"
+                className="text-xs px-2.5 py-0.5 rounded-full border-none"
                 style={{
                   backgroundColor: `#${label.color}25`,
                   color: `#${label.color}`,
@@ -212,13 +241,13 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
                 }}
               >
                 {label.name}
-              </span>
+              </Badge>
             ))}
           </div>
 
-          <div className="flex items-center mt-3 text-sm text-gray-500 flex-wrap gap-y-1">
+          <div className="flex items-center mt-3 text-sm text-muted-foreground flex-wrap gap-y-1">
             <div className="flex items-center mr-4">
-              <span className="text-xs font-[family-name:var(--font-mono)]">
+              <span className="text-xs font-mono">
                 {issue.repository.owner}/{issue.repository.name} #{issue.number}
               </span>
             </div>
@@ -260,7 +289,7 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
               href={issue.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center text-cyan-400 hover:text-cyan-300 transition-colors ml-auto text-xs"
+              className="flex items-center text-primary hover:text-primary/80 transition-colors ml-auto text-xs"
             >
               <FaGithub className="mr-1" />
               <span>{t('common.viewIssue')}</span>
@@ -268,7 +297,7 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
           </div>
         </div>
       </div>
-    </div>
+    </Card>
   );
 };
 

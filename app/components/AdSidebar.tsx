@@ -60,8 +60,8 @@ export default function AdSidebar({ position }: AdSidebarProps) {
     <aside
       className={`fixed top-1/3 hidden w-40 xl:w-44 2xl:w-52 xl:block ${positionClass}`}
     >
-      <div className="rounded-lg bg-[#161b22] border border-gray-700 p-3">
-        <p className="mb-2 text-center text-gray-600 text-xs">AD</p>
+      <div className="rounded-lg bg-card border border-border p-3">
+        <p className="mb-2 text-center text-muted-foreground text-xs">AD</p>
         <AdUnit adSlot={adSlot} />
       </div>
     </aside>
