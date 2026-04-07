@@ -111,10 +111,10 @@ export default function IssuesPage() {
           <LoginPrompt />
           <div className="mt-8 bg-card border border-border rounded-lg p-8">
             <h3 className="text-lg font-semibold text-foreground mb-2">
-              What is contrifit?
+              What is Pickssue?
             </h3>
             <p className="text-muted-foreground text-sm mb-4">
-              contrifit helps developers find beginner-friendly open source issues across
+              Pickssue helps developers find beginner-friendly open source issues across
               GitHub repositories — all in one place.
             </p>
             <ul className="space-y-2 text-sm text-muted-foreground">

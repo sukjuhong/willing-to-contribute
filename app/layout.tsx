@@ -54,12 +54,12 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://contrifit.vercel.app'),
+  metadataBase: new URL('https://pickssue.dev'),
   keywords:
     'GitHub, open source, beginner friendly, contribution, issues, programming, personalized, recommendation',
-  authors: [{ name: 'contrifit Team' }],
-  creator: 'contrifit Team',
-  publisher: 'contrifit Team',
+  authors: [{ name: 'Pickssue Team' }],
+  creator: 'Pickssue Team',
+  publisher: 'Pickssue Team',
   formatDetection: {
     email: false,
     address: false,

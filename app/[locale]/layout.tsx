@@ -12,14 +12,14 @@ type Props = {
 export async function generateMetadata({ params }: Props) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'common' });
-  const baseUrl = env.NEXT_PUBLIC_BASE_URL || 'https://contrifit.vercel.app';
+  const baseUrl = env.NEXT_PUBLIC_BASE_URL || 'https://pickssue.dev';
 
   const pageTitle = t('pageTitle');
 
   return {
     title: {
       default: pageTitle,
-      template: '%s | contrifit',
+      template: '%s | Pickssue',
     },
     description: t('description'),
     alternates: {
@@ -35,14 +35,14 @@ export async function generateMetadata({ params }: Props) {
       type: 'website',
       locale: locale === 'ko' ? 'ko_KR' : 'en_US',
       alternateLocale: [locale === 'ko' ? 'en_US' : 'ko_KR'],
-      siteName: 'contrifit',
+      siteName: 'Pickssue',
       url: `${baseUrl}/${locale}`,
       images: [
         {
           url: '/og-image.png',
           width: 1200,
           height: 630,
-          alt: 'contrifit',
+          alt: 'Pickssue',
         },
       ],
     },
@@ -51,8 +51,8 @@ export async function generateMetadata({ params }: Props) {
       title: pageTitle,
       description: t('description'),
       images: ['/og-image.png'],
-      creator: '@willing2contribute',
-      site: '@willing2contribute',
+      creator: '@pickssue',
+      site: '@pickssue',
     },
   };
 }

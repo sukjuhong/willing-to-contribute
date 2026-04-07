@@ -3,11 +3,11 @@ import Link from 'next/link';
 import Footer from '@/app/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'contrifit - Personalized Open Source Contribution Curator',
+  title: 'Pickssue - Personalized Open Source Contribution Curator',
   description:
     'A personalized open-source contribution curator that analyzes your GitHub activity to recommend the best issues for you.',
   alternates: {
-    canonical: 'https://contrifit.vercel.app',
+    canonical: 'https://pickssue.dev',
   },
 };
 
@@ -72,7 +72,7 @@ export default function LandingPage() {
       <header className="bg-card border-b border-border py-4 px-6 sticky top-0 z-10">
         <div className="container mx-auto flex justify-between items-center">
           <span className="text-2xl font-bold text-foreground font-[family-name:var(--font-mono)]">
-            <span className="text-muted-foreground">&gt;_</span> contrifit
+            <span className="text-muted-foreground">&gt;_</span> Pickssue
           </span>
           <nav className="flex items-center gap-2 sm:gap-4">
             <Link
@@ -146,7 +146,7 @@ export default function LandingPage() {
                 Everything You Need to Start Contributing
               </h2>
               <p className="text-muted-foreground max-w-xl mx-auto leading-relaxed">
-                contrifit bundles the tools that remove the friction between wanting to
+                Pickssue bundles the tools that remove the friction between wanting to
                 contribute and actually opening your first pull request.
               </p>
             </div>
@@ -243,7 +243,7 @@ export default function LandingPage() {
         <section className="container mx-auto px-4 py-20 max-w-3xl">
           <div className="bg-card border border-border rounded-xl p-8 text-center space-y-4">
             <h2 className="text-2xl font-bold text-foreground">
-              contrifit is Itself Open Source
+              Pickssue is Itself Open Source
             </h2>
             <p className="text-muted-foreground leading-relaxed max-w-xl mx-auto">
               We practice what we preach. The full source code is available on GitHub and
@@ -253,7 +253,7 @@ export default function LandingPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-2">
               <a
-                href="https://github.com/sukjuhong/willing-to-contribute"
+                href="https://github.com/sukjuhong/pickssue"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 bg-accent hover:bg-accent/80 text-foreground px-6 py-2.5 rounded-lg transition-colors text-sm font-medium"

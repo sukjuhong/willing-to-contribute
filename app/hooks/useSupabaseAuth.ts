@@ -3,7 +3,7 @@ import { createClient } from '@/app/lib/supabase/client';
 import { GithubAuthState } from '../types';
 import { clearAllUserData } from '../utils/localStorage';
 
-const PROVIDER_TOKEN_KEY = 'contrifit-provider-token';
+const PROVIDER_TOKEN_KEY = 'pickssue-provider-token';
 
 const useSupabaseAuth = (): {
   authState: GithubAuthState;

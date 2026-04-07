@@ -4,7 +4,7 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'Frequently Asked Questions',
   description:
-    'Answers to common questions about contrifit and open source contribution — from getting started to advancing your career.',
+    'Answers to common questions about Pickssue and open source contribution — from getting started to advancing your career.',
 };
 
 type FAQItem = {
@@ -14,10 +14,10 @@ type FAQItem = {
 
 const serviceQuestions: FAQItem[] = [
   {
-    question: 'What is contrifit?',
+    question: 'What is Pickssue?',
     answer: (
       <>
-        contrifit is a free tool that helps developers discover beginner-friendly GitHub
+        Pickssue is a free tool that helps developers discover beginner-friendly GitHub
         issues across multiple repositories in one place. You add the repositories you
         care about, and the platform surfaces open issues labeled{' '}
         <code className="bg-background text-primary px-1.5 py-0.5 rounded text-sm font-mono">
@@ -35,7 +35,7 @@ const serviceQuestions: FAQItem[] = [
     ),
   },
   {
-    question: 'Is contrifit free to use?',
+    question: 'Is Pickssue free to use?',
     answer:
       'Yes, completely free. There are no paid plans, no premium tiers, and no hidden costs. The platform is itself an open source project, so the code is publicly available for anyone to inspect, fork, or self-host.',
   },
@@ -54,9 +54,9 @@ const serviceQuestions: FAQItem[] = [
     ),
   },
   {
-    question: 'What data does contrifit collect?',
+    question: 'What data does Pickssue collect?',
     answer:
-      "When you sign in with GitHub, contrifit stores your repository list and preferences in a secure cloud database tied to your account. Your GitHub profile (languages, starred repos, contribution history) is analyzed to provide personalized recommendations and stored in the database. In anonymous mode, settings are saved only in your browser's localStorage. We do not share your data with third parties.",
+      "When you sign in with GitHub, Pickssue stores your repository list and preferences in a secure cloud database tied to your account. Your GitHub profile (languages, starred repos, contribution history) is analyzed to provide personalized recommendations and stored in the database. In anonymous mode, settings are saved only in your browser's localStorage. We do not share your data with third parties.",
   },
   {
     question: 'How does cross-device settings sync work?',
@@ -151,8 +151,8 @@ export default function FAQPage() {
           <span className="text-primary">&gt;_</span> FAQ
         </h1>
         <p className="text-xl text-foreground max-w-2xl mx-auto leading-relaxed">
-          Answers to the most common questions about contrifit and open source
-          contribution in general.
+          Answers to the most common questions about Pickssue and open source contribution
+          in general.
         </p>
       </section>
 

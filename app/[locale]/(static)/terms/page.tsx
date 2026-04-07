@@ -3,7 +3,7 @@ import { Link } from '@/i18n/routing';
 
 export const metadata: Metadata = {
   title: 'Terms of Service',
-  description: 'Terms of Service for contrifit.',
+  description: 'Terms of Service for Pickssue.',
 };
 
 export default function TermsOfService() {
@@ -18,12 +18,12 @@ export default function TermsOfService() {
           <section>
             <p className="text-foreground leading-relaxed">
               These Terms of Service (&quot;Terms&quot;) govern your access to and use of{' '}
-              <strong className="text-foreground">contrifit</strong> (
+              <strong className="text-foreground">Pickssue</strong> (
               <a
-                href="https://contrifit.vercel.app"
+                href="https://pickssue.dev"
                 className="text-primary hover:text-primary/80 underline"
               >
-                https://contrifit.vercel.app
+                https://pickssue.dev
               </a>
               ), a service that helps developers discover and track beginner-friendly
               GitHub issues across multiple repositories. Please read these Terms
@@ -37,7 +37,7 @@ export default function TermsOfService() {
               1. Acceptance of Terms
             </h2>
             <p className="text-foreground leading-relaxed">
-              By accessing or using the contrifit service (&quot;Service&quot;), you agree
+              By accessing or using the Pickssue service (&quot;Service&quot;), you agree
               to be bound by these Terms of Service and our{' '}
               <Link
                 href="/privacy"
@@ -50,7 +50,7 @@ export default function TermsOfService() {
             </p>
             <p className="text-foreground leading-relaxed mt-4">
               These Terms constitute a legally binding agreement between you and the
-              operators of contrifit. If you are using the Service on behalf of an
+              operators of Pickssue. If you are using the Service on behalf of an
               organization, you represent that you have the authority to bind that
               organization to these Terms.
             </p>
@@ -62,7 +62,7 @@ export default function TermsOfService() {
               2. Description of Service
             </h2>
             <p className="text-foreground leading-relaxed">
-              contrifit is a web application that provides the following functionality:
+              Pickssue is a web application that provides the following functionality:
             </p>
             <ul className="list-disc list-inside text-foreground leading-relaxed mt-3 space-y-2 ml-4">
               <li>
@@ -218,8 +218,8 @@ export default function TermsOfService() {
                 </h3>
                 <p className="text-foreground leading-relaxed">
                   The Service, including its original content, features, and
-                  functionality, is owned by the operators of contrifit and is protected
-                  by applicable intellectual property laws. You may not copy, modify,
+                  functionality, is owned by the operators of Pickssue and is protected by
+                  applicable intellectual property laws. You may not copy, modify,
                   distribute, sell, or lease any part of our Service without our express
                   written permission.
                 </p>
@@ -230,7 +230,7 @@ export default function TermsOfService() {
                   5.2 Open Source
                 </h3>
                 <p className="text-foreground leading-relaxed">
-                  The source code of contrifit may be made available under an open source
+                  The source code of Pickssue may be made available under an open source
                   license. Where source code is provided under an open source license, the
                   terms of that license govern your use of the source code. Please refer
                   to our GitHub repository for the applicable license terms.
@@ -477,16 +477,16 @@ export default function TermsOfService() {
             </p>
             <div className="bg-card border border-border rounded-lg p-4 mt-4">
               <p className="text-foreground leading-relaxed">
-                <strong className="text-foreground">contrifit</strong>
+                <strong className="text-foreground">Pickssue</strong>
                 <br />
                 GitHub Issues:{' '}
                 <a
-                  href="https://github.com/sukjuhong/willing-to-contribute/issues"
+                  href="https://github.com/sukjuhong/pickssue/issues"
                   className="text-primary hover:text-primary/80 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  https://github.com/sukjuhong/willing-to-contribute/issues
+                  https://github.com/sukjuhong/pickssue/issues
                 </a>
               </p>
             </div>

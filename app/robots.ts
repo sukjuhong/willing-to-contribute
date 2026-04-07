@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/api/', '/_next/', '/static/'],
     },
-    sitemap: 'https://contrifit.vercel.app/sitemap.xml',
+    sitemap: 'https://pickssue.dev/sitemap.xml',
   };
 }

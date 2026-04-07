@@ -1,7 +1,7 @@
 {
   "common": {
-    "welcome": "contrifit",
-    "pageTitle": "contrifit - Personalized Open Source Contribution Curator",
+    "welcome": "Pickssue",
+    "pageTitle": "Pickssue - Personalized Open Source Contribution Curator",
     "description": "A personalized open-source contribution curator that analyzes your GitHub activity to recommend the best issues for you",
     "search": "Search",
     "language": "Language",
@@ -174,12 +174,12 @@
     "about": "About",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
-    "copyright": "© {year} contrifit. All rights reserved.",
+    "copyright": "© {year} Pickssue. All rights reserved.",
     "description": "Helping developers discover beginner-friendly open source issues"
   },
   "repositoriesGuest": {
     "whatIsTracking": "What is Repository Tracking?",
-    "trackingDesc1": "Repository Tracking is the core feature of contrifit. Once you sign in with GitHub, you can add any public GitHub repository to your personal tracking list. The app continuously monitors those repositories and surfaces open issues labeled as beginner-friendly — so you never have to manually browse dozens of issue trackers.",
+    "trackingDesc1": "Repository Tracking is the core feature of Pickssue. Once you sign in with GitHub, you can add any public GitHub repository to your personal tracking list. The app continuously monitors those repositories and surfaces open issues labeled as beginner-friendly — so you never have to manually browse dozens of issue trackers.",
     "trackingDesc2": "You can track as many repositories as you like. Each repository is shown as a card with a direct link to its GitHub page. Removing a repository from your list takes a single click and never affects the upstream project in any way.",
     "featuresTitle": "Everything You Can Do After Signing In",
     "features": {
@@ -210,7 +210,7 @@
   },
   "settingsGuest": {
     "customizeTitle": "Customize Your Experience",
-    "customizeDesc1": "The Settings page lets you tailor every aspect of how contrifit works for you. Once you sign in with GitHub you can configure notification frequency, define custom issue-label filters, decide whether to show or hide closed issues, and manage cross-device synchronization — all from a single panel.",
+    "customizeDesc1": "The Settings page lets you tailor every aspect of how Pickssue works for you. Once you sign in with GitHub you can configure notification frequency, define custom issue-label filters, decide whether to show or hide closed issues, and manage cross-device synchronization — all from a single panel.",
     "customizeDesc2": "Every setting is persisted in your browser and optionally backed up to the cloud so your preferences follow you across devices and browsers. Changes take effect immediately — no page reload required.",
     "notificationFrequency": "Notification Frequency",
     "notificationFrequencyDesc": "Choose how often the app checks for new beginner-friendly issues — every 15 minutes, 30 minutes, hourly, or on-demand. Browser notifications are delivered instantly when a matching issue appears so you can act on it before others.",
@@ -221,7 +221,7 @@
     "gistSync": "Cloud Sync",
     "gistSyncDesc": "Save your entire settings — tracked repositories, label filters, and preferences — to the cloud with one click. Load them back at any time or on any device. Conflict resolution is built in, so you always stay in control of which version wins.",
     "crossDeviceTitle": "Cross-Device Cloud Sync",
-    "crossDeviceDesc1": "contrifit uses cloud storage to sync your settings across devices — no separate account or third-party service required. When you trigger a sync, the app serializes your current settings and saves them securely so only you can read them.",
+    "crossDeviceDesc1": "Pickssue uses cloud storage to sync your settings across devices — no separate account or third-party service required. When you trigger a sync, the app serializes your current settings and saves them securely so only you can read them.",
     "crossDeviceDesc2": "On another device, sign in with the same GitHub account and load your settings to restore everything instantly. If the remote settings and your local settings have diverged, a conflict resolution dialog guides you through choosing which version to keep — local, remote, or a manual merge.",
     "syncSteps": {
       "step1": "Save to Cloud",
@@ -232,7 +232,7 @@
       "step3Desc": "Click \"Load from Cloud\" to restore your tracked repositories and preferences."
     },
     "whyTitle": "Why These Settings Matter for Open-Source Contributors",
-    "whyDesc1": "Finding the right issue to work on is one of the biggest hurdles for new open-source contributors. The default GitHub interface shows every issue across a repository — bugs, feature requests, performance work, and refactors — without distinguishing which ones are suitable for beginners. contrifit solves this by analyzing your GitHub activity and recommending issues that match your skills and interests.",
+    "whyDesc1": "Finding the right issue to work on is one of the biggest hurdles for new open-source contributors. The default GitHub interface shows every issue across a repository — bugs, feature requests, performance work, and refactors — without distinguishing which ones are suitable for beginners. Pickssue solves this by analyzing your GitHub activity and recommending issues that match your skills and interests.",
     "whyDesc2": "Notification frequency matters too. Many beginner-friendly issues are claimed within hours of being labeled. Setting a shorter polling interval means you hear about new issues faster, giving you a better chance of being the first to comment and claim the work. Combined with custom label filters, you can build a highly targeted feed that surfaces exactly the kind of issues you are ready to tackle.",
     "whyDesc3": "All settings are stored locally in your browser first, so the app works even without an internet connection after the initial load. The cloud sync layer is purely optional and additive — it adds persistence across devices without removing local control."
   },

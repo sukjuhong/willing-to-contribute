@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
-  description: 'Privacy Policy for contrifit - Learn how we handle your data.',
+  description: 'Privacy Policy for Pickssue - Learn how we handle your data.',
 };
 
 export default function PrivacyPolicy() {
@@ -16,12 +16,12 @@ export default function PrivacyPolicy() {
           {/* Introduction */}
           <section>
             <p className="text-foreground leading-relaxed">
-              Welcome to <strong className="text-foreground">contrifit</strong> (
+              Welcome to <strong className="text-foreground">Pickssue</strong> (
               <a
-                href="https://contrifit.vercel.app"
+                href="https://pickssue.dev"
                 className="text-primary hover:text-primary/80 underline"
               >
-                https://contrifit.vercel.app
+                https://pickssue.dev
               </a>
               ). We are committed to protecting your privacy. This Privacy Policy explains
               how we collect, use, and safeguard your information when you use our
@@ -212,7 +212,7 @@ export default function PrivacyPolicy() {
               4. Chrome Extension
             </h2>
             <p className="text-foreground leading-relaxed mb-4">
-              The contrifit Chrome Extension stores and manages data locally within your
+              The Pickssue Chrome Extension stores and manages data locally within your
               browser using Chrome&apos;s built-in storage APIs. No data is transmitted to
               any external server operated by us.
             </p>
@@ -574,8 +574,8 @@ export default function PrivacyPolicy() {
                   >
                     GitHub OAuth Application Settings
                   </a>{' '}
-                  and revoking access for &quot;contrifit&quot;. After revocation, you
-                  will be logged out and no further API calls will be made on your behalf.
+                  and revoking access for &quot;Pickssue&quot;. After revocation, you will
+                  be logged out and no further API calls will be made on your behalf.
                 </p>
               </div>
 
@@ -654,16 +654,16 @@ export default function PrivacyPolicy() {
             </p>
             <div className="bg-card border border-border rounded-lg p-4 mt-4">
               <p className="text-foreground leading-relaxed">
-                <strong className="text-foreground">contrifit</strong>
+                <strong className="text-foreground">Pickssue</strong>
                 <br />
                 GitHub Issues:{' '}
                 <a
-                  href="https://github.com/sukjuhong/willing-to-contribute/issues"
+                  href="https://github.com/sukjuhong/pickssue/issues"
                   className="text-primary hover:text-primary/80 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  https://github.com/sukjuhong/willing-to-contribute/issues
+                  https://github.com/sukjuhong/pickssue/issues
                 </a>
               </p>
             </div>

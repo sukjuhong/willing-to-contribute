@@ -1,57 +1,46 @@
 import { UserSettings, Repository, Issue } from '../types';
 
-const SETTINGS_KEY = 'contrifit-settings';
-const ISSUES_KEY = 'contrifit-issues';
-const CACHE_TIMESTAMP_KEY = 'contrifit-cache-timestamp';
+const SETTINGS_KEY = 'pickssue-settings';
+const ISSUES_KEY = 'pickssue-issues';
+const CACHE_TIMESTAMP_KEY = 'pickssue-cache-timestamp';
 
-// Legacy keys for migration from willing-to-contribute → contrifit
-const LEGACY_PREFIX = 'willing-to-contribute-';
-const LEGACY_KEY_MAP: Record<string, string> = {
-  [`${LEGACY_PREFIX}settings`]: SETTINGS_KEY,
-  [`${LEGACY_PREFIX}issues`]: ISSUES_KEY,
-  [`${LEGACY_PREFIX}cache-timestamp`]: CACHE_TIMESTAMP_KEY,
-};
+// Legacy prefixes for migration chain: willing-to-contribute → contrifit → pickssue
+const LEGACY_PREFIXES = ['willing-to-contribute-', 'contrifit-'];
 
 // Migrate localStorage data from old keys to new keys (runs once)
 export const migrateLocalStorageKeys = (): void => {
   if (typeof window === 'undefined') return;
 
-  for (const [oldKey, newKey] of Object.entries(LEGACY_KEY_MAP)) {
-    const oldValue = localStorage.getItem(oldKey);
-    if (oldValue && !localStorage.getItem(newKey)) {
-      localStorage.setItem(newKey, oldValue);
-    }
-    if (oldValue) {
-      localStorage.removeItem(oldKey);
+  const currentPrefix = 'pickssue-';
+  const keysToMigrate: [string, string][] = [];
+
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (!key) continue;
+
+    for (const legacyPrefix of LEGACY_PREFIXES) {
+      if (key.startsWith(legacyPrefix)) {
+        const newKey = key.replace(legacyPrefix, currentPrefix);
+        keysToMigrate.push([key, newKey]);
+        break;
+      }
     }
   }
 
-  // Also migrate recommended-issues cache keys (they have language suffix)
-  const keysToMigrate: string[] = [];
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    if (key?.startsWith(`${LEGACY_PREFIX}recommended-issues`)) {
-      keysToMigrate.push(key);
-    }
-  }
-  for (const oldKey of keysToMigrate) {
-    const newKey = oldKey.replace(LEGACY_PREFIX, 'contrifit-');
+  for (const [oldKey, newKey] of keysToMigrate) {
     const oldValue = localStorage.getItem(oldKey);
     if (oldValue && !localStorage.getItem(newKey)) {
       localStorage.setItem(newKey, oldValue);
     }
     localStorage.removeItem(oldKey);
   }
-
-  // Clean up legacy auth key (no longer needed with Supabase)
-  localStorage.removeItem(`${LEGACY_PREFIX}auth`);
 };
 
 // Clear all user data from localStorage on logout
 export const clearAllUserData = (): void => {
   if (typeof window === 'undefined') return;
 
-  const prefix = 'contrifit-';
+  const prefix = 'pickssue-';
   const keysToRemove: string[] = [];
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
@@ -219,7 +208,7 @@ export const createRepositoryKey = (repository: Repository): string => {
 };
 
 // Recommended issues cache
-const RECOMMENDED_ISSUES_KEY = 'contrifit-recommended-issues';
+const RECOMMENDED_ISSUES_KEY = 'pickssue-recommended-issues';
 const RECOMMENDED_CACHE_MINUTES = 30;
 
 interface RecommendedIssuesCache {

@@ -11,7 +11,7 @@ export default function StaticLayout({ children }: { children: React.ReactNode }
             href="/issues"
             className="text-2xl font-bold text-foreground font-[family-name:var(--font-mono)] hover:text-primary transition-colors"
           >
-            <span className="text-muted-foreground">&gt;_</span> contrifit
+            <span className="text-muted-foreground">&gt;_</span> Pickssue
           </Link>
           <nav className="flex items-center space-x-4">
             <Link

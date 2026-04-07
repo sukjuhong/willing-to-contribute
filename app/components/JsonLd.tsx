@@ -1,10 +1,10 @@
 export default function JsonLd() {
-  const baseUrl = 'https://contrifit.vercel.app';
+  const baseUrl = 'https://pickssue.dev';
 
   const webApplication = {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
-    name: 'contrifit',
+    name: 'Pickssue',
     description:
       'A personalized open-source contribution curator that analyzes your GitHub activity to recommend the best issues for you.',
     url: baseUrl,
@@ -17,7 +17,7 @@ export default function JsonLd() {
     },
     author: {
       '@type': 'Organization',
-      name: 'contrifit Team',
+      name: 'Pickssue Team',
       url: baseUrl,
     },
     featureList: [
@@ -33,10 +33,10 @@ export default function JsonLd() {
   const organization = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'contrifit',
+    name: 'Pickssue',
     url: baseUrl,
     logo: `${baseUrl}/og-image.png`,
-    sameAs: ['https://github.com/sukjuhong/willing-to-contribute'],
+    sameAs: ['https://github.com/sukjuhong/pickssue'],
   };
 
   const breadcrumbList = {
