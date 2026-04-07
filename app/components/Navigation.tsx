@@ -1,7 +1,8 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Link, usePathname, useRouter } from '@/i18n/routing';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function Navigation() {
@@ -10,9 +11,9 @@ export default function Navigation() {
   const tTabs = useTranslations('tabs');
 
   const tabs = [
-    { name: 'issues' as const, path: '/issues' as const },
-    { name: 'repositories' as const, path: '/repositories' as const },
-    { name: 'settings' as const, path: '/settings' as const },
+    { name: 'issues' as const, path: '/issues' },
+    { name: 'repositories' as const, path: '/repositories' },
+    { name: 'settings' as const, path: '/settings' },
   ];
 
   return (
@@ -21,7 +22,7 @@ export default function Navigation() {
         <select
           value={pathname}
           onChange={e => {
-            router.push(e.target.value as '/issues' | '/repositories' | '/settings');
+            router.push(e.target.value);
           }}
           className="block w-full rounded-md bg-card border border-border text-foreground"
         >

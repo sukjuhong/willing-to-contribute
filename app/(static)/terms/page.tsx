@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Link } from '@/i18n/routing';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Terms of Service',

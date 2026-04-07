@@ -1,7 +1,6 @@
 'use client';
 
-import { useLocale } from 'next-intl';
-import { useRouter, usePathname } from '@/i18n/routing';
+import { useLocaleSwitch } from '@/app/providers/IntlProvider';
 import { FaGlobe } from 'react-icons/fa';
 import { BsChevronDown } from 'react-icons/bs';
 import {
@@ -19,9 +18,7 @@ interface LanguageOption {
 }
 
 export default function LanguageSwitcher() {
-  const locale = useLocale() as Language;
-  const router = useRouter();
-  const pathname = usePathname();
+  const { locale, setLocale } = useLocaleSwitch();
 
   const languages: LanguageOption[] = [
     { code: 'en', name: 'English' },
@@ -39,7 +36,7 @@ export default function LanguageSwitcher() {
         {languages.map(lang => (
           <DropdownMenuItem
             key={lang.code}
-            onClick={() => router.replace(pathname, { locale: lang.code })}
+            onClick={() => setLocale(lang.code)}
             className={locale === lang.code ? 'bg-accent text-accent-foreground' : ''}
           >
             {lang.name}

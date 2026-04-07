@@ -1,7 +1,8 @@
 import React from 'react';
 import { Issue } from '../types';
 import { FaGithub, FaClock, FaStar, FaCodeBranch } from 'react-icons/fa';
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
+import { useLocaleSwitch } from '@/app/providers/IntlProvider';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -54,7 +55,7 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
   const tCommon = useTranslations('common');
   const tDifficulty = useTranslations('difficulty');
   const tMaintainer = useTranslations('maintainer');
-  const locale = useLocale();
+  const { locale } = useLocaleSwitch();
 
   if (compact) {
     return (

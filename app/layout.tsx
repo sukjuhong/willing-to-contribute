@@ -3,9 +3,9 @@ import localFont from 'next/font/local';
 import { JetBrains_Mono } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
-import JsonLd from './components/JsonLd';
 import { env } from '@/app/lib/env';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import IntlProvider from './providers/IntlProvider';
 
 const pretendard = localFont({
   src: [
@@ -55,42 +55,15 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://pickssue.dev'),
-  keywords:
-    'GitHub, open source, beginner friendly, contribution, issues, programming, personalized, recommendation',
-  authors: [{ name: 'Pickssue Team' }],
-  creator: 'Pickssue Team',
-  publisher: 'Pickssue Team',
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
-  },
-  verification: {
-    google: 'v48wQTUeuTGTvIYIAGEUtLnvtaqMaxcwJ45YtP0-3xc',
-  },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-  },
-  category: 'technology',
+  title: 'Pickssue',
+  description:
+    'A personalized open-source contribution curator that analyzes your GitHub activity to recommend the best issues for you.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <JsonLd />
         <meta name="google-adsense-account" content="ca-pub-9157231737129938" />
         {env.NEXT_PUBLIC_ADSENSE_CLIENT_ID && (
           <Script
@@ -105,7 +78,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         className={`${pretendard.variable} ${jetbrainsMono.variable} font-sans`}
         suppressHydrationWarning
       >
-        <TooltipProvider>{children}</TooltipProvider>
+        <IntlProvider>
+          <TooltipProvider>{children}</TooltipProvider>
+        </IntlProvider>
       </body>
     </html>
   );
