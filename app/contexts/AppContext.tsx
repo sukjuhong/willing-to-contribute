@@ -1,13 +1,15 @@
 'use client';
 
-import React, { createContext, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useCallback } from 'react';
 import useSupabaseAuth from '../hooks/useSupabaseAuth';
 import useSettings from '../hooks/useSettings';
-import useIssues from '../hooks/useIssues';
+import usePickedIssues from '../hooks/usePickedIssues';
+import type { StateChange } from '../hooks/usePickedIssues';
 import useRecommendedIssues from '../hooks/useRecommendedIssues';
 import useUserProfile from '../hooks/useUserProfile';
 import { checkNotificationPermission } from '../utils/notifications';
 import { migrateLocalStorageKeys } from '../utils/localStorage';
+import { Issue } from '../types';
 
 interface AppContextType {
   // Auth
@@ -19,20 +21,19 @@ interface AppContextType {
   settings: ReturnType<typeof useSettings>['settings'];
   settingsLoading: boolean;
   settingsError: string | null;
-  addRepository: (repoUrl: string) => Promise<boolean>;
-  removeRepository: (repoId: string) => Promise<void>;
+  pickIssue: (issue: Issue) => Promise<boolean>;
+  unpickIssue: (issueId: string) => Promise<void>;
+  updateIssueTags: (issueId: string, tags: string[]) => Promise<void>;
   updateNotificationFrequency: ReturnType<
     typeof useSettings
   >['updateNotificationFrequency'];
-  toggleCustomLabel: ReturnType<typeof useSettings>['toggleCustomLabel'];
-  updateLastCheckedAt: ReturnType<typeof useSettings>['updateLastCheckedAt'];
   toggleHideClosedIssues: ReturnType<typeof useSettings>['toggleHideClosedIssues'];
 
-  // Issues
-  issues: ReturnType<typeof useIssues>['issues'];
-  issuesLoading: boolean;
-  issuesError: string | null;
-  fetchIssues: ReturnType<typeof useIssues>['fetchIssues'];
+  // Picked Issues
+  pickedIssues: ReturnType<typeof usePickedIssues>['pickedIssues'];
+  pickedIssuesLoading: boolean;
+  pickedIssuesError: string | null;
+  refreshPickedIssues: () => Promise<StateChange[]>;
 
   // Recommended Issues
   recommendedIssues: ReturnType<typeof useRecommendedIssues>['recommendedIssues'];
@@ -62,21 +63,59 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     settings,
     loading: settingsLoading,
     error: settingsError,
-    addRepository,
-    removeRepository,
+    pickIssue,
+    unpickIssue,
+    updateIssueTags,
     updateNotificationFrequency,
-    toggleCustomLabel,
-    updateLastCheckedAt,
     toggleHideClosedIssues,
+    updateLastCheckedAt,
+    saveUserSettings,
   } = useSettings(authState.isLoggedIn, authState.userId);
 
-  // Issues state
+  // Picked issues state — uses saveUserSettings for persistence (localStorage + Supabase)
   const {
-    issues,
-    loading: issuesLoading,
-    error: issuesError,
-    fetchIssues,
-  } = useIssues(settings);
+    pickedIssues,
+    loading: pickedIssuesLoading,
+    error: pickedIssuesError,
+    refreshPickedIssues: _refreshPickedIssues,
+  } = usePickedIssues(settings, saveUserSettings, authState.accessToken);
+
+  // Wrap refreshPickedIssues to show aggregated notifications
+  const refreshPickedIssues = useCallback(async () => {
+    const changes = await _refreshPickedIssues();
+
+    if (changes.length > 0) {
+      const hasPermission = await checkNotificationPermission();
+      if (hasPermission) {
+        const stateChanges = changes.filter(c => c.field === 'state');
+        const assigneeChanges = changes.filter(c => c.field === 'assignee');
+
+        const lines: string[] = [];
+        if (stateChanges.length > 0) {
+          const closed = stateChanges.filter(c => c.to === 'closed').length;
+          const opened = stateChanges.filter(c => c.to === 'open').length;
+          if (closed > 0) lines.push(`${closed} issue(s) closed`);
+          if (opened > 0) lines.push(`${opened} issue(s) reopened`);
+        }
+        if (assigneeChanges.length > 0) {
+          lines.push(`${assigneeChanges.length} issue(s) assignee changed`);
+        }
+
+        try {
+          new Notification('Pickssue: Issue Updates', {
+            body: lines.join(', '),
+            icon: '/favicon.ico',
+          });
+        } catch {
+          // Notification not supported
+        }
+      }
+
+      await updateLastCheckedAt(new Date());
+    }
+
+    return changes;
+  }, [_refreshPickedIssues, updateLastCheckedAt]);
 
   // Recommended issues state
   const {
@@ -99,48 +138,37 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     checkNotificationPermission();
   }, []);
 
-  // Fetch issues on mount and when settings change
-  useEffect(() => {
-    if (!settingsLoading) {
-      fetchIssues(false);
-    }
-  }, [fetchIssues, settingsLoading]);
-
-  // Fetch recommended issues on mount only (changeLanguageFilter handles re-fetch on filter change)
+  // Fetch recommended issues on mount only
   useEffect(() => {
     fetchRecommendedIssues();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Setup periodic checks for new issues
+  // Setup periodic checks for picked issue state changes
   useEffect(() => {
-    if (settings.notificationFrequency === 'never') {
-      return;
-    }
+    if (settings.notificationFrequency === 'never') return;
+    if (settings.pickedIssues.length === 0) return;
 
     let interval: NodeJS.Timeout;
 
-    // Set interval based on notification frequency
     switch (settings.notificationFrequency) {
       case 'hourly':
-        interval = setInterval(() => fetchIssues(true), 60 * 60 * 1000);
+        interval = setInterval(() => refreshPickedIssues(), 60 * 60 * 1000);
         break;
       case '6hours':
-        interval = setInterval(() => fetchIssues(true), 6 * 60 * 60 * 1000);
+        interval = setInterval(() => refreshPickedIssues(), 6 * 60 * 60 * 1000);
         break;
       case 'daily':
-        interval = setInterval(() => fetchIssues(true), 24 * 60 * 60 * 1000);
+        interval = setInterval(() => refreshPickedIssues(), 24 * 60 * 60 * 1000);
         break;
       default:
         break;
     }
 
     return () => {
-      if (interval) {
-        clearInterval(interval);
-      }
+      if (interval) clearInterval(interval);
     };
-  }, [settings.notificationFrequency, fetchIssues]);
+  }, [settings.notificationFrequency, settings.pickedIssues.length, refreshPickedIssues]);
 
   const value: AppContextType = {
     authState,
@@ -149,16 +177,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     settings,
     settingsLoading,
     settingsError,
-    addRepository,
-    removeRepository,
+    pickIssue,
+    unpickIssue,
+    updateIssueTags,
     updateNotificationFrequency,
-    toggleCustomLabel,
-    updateLastCheckedAt,
     toggleHideClosedIssues,
-    issues,
-    issuesLoading,
-    issuesError,
-    fetchIssues,
+    pickedIssues,
+    pickedIssuesLoading,
+    pickedIssuesError,
+    refreshPickedIssues,
     recommendedIssues,
     recommendedLoading,
     recommendedError,

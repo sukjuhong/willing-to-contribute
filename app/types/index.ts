@@ -41,10 +41,28 @@ export interface Issue {
   difficulty?: 'beginner' | 'intermediate' | 'advanced';
 }
 
+// Saved (picked) issue types
+export interface PickedIssue {
+  id: string; // GitHub issue ID
+  number: number;
+  title: string;
+  url: string;
+  state: 'open' | 'closed';
+  repository: {
+    owner: string;
+    name: string;
+  };
+  labels: Label[];
+  savedAt: string; // ISO timestamp
+  userTags: string[];
+  lastKnownState: 'open' | 'closed';
+  lastCheckedAt: string; // ISO timestamp
+  assignee?: string;
+}
+
 // User settings types
 export interface UserSettings {
-  repositories: Repository[];
-  customLabels: string[];
+  pickedIssues: PickedIssue[];
   notificationFrequency: 'hourly' | '6hours' | 'daily' | 'never';
   hideClosedIssues: boolean;
   lastCheckedAt?: string;

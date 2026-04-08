@@ -4,10 +4,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
   FaSync,
   FaStar,
-  FaPlus,
-  FaCheck,
   FaChevronDown,
   FaChevronUp,
+  FaBookmark,
+  FaRegBookmark,
 } from 'react-icons/fa';
 import IssueItem from './IssueItem';
 import IssueFilters, { DEFAULT_FILTER_STATE, type FilterState } from './IssueFilters';
@@ -42,7 +42,8 @@ export default function RecommendedIssues() {
   const t = useTranslations();
   const {
     settings,
-    addRepository,
+    pickIssue,
+    unpickIssue,
     authState,
     profile,
     syncProfile,
@@ -50,7 +51,7 @@ export default function RecommendedIssues() {
     profileError,
   } = useApp();
   const [collapsed, setCollapsed] = useState(false);
-  const [addingRepos, setAddingRepos] = useState<Set<string>>(new Set());
+  const [pickingIssues, setPickingIssues] = useState<Set<string>>(new Set());
   const [showAnalysisModal, setShowAnalysisModal] = useState(false);
   const [userOverrodeLanguage, setUserOverrodeLanguage] = useState(false);
 
@@ -68,8 +69,8 @@ export default function RecommendedIssues() {
   const [hasMore, setHasMore] = useState(false);
   const [isPersonalized, setIsPersonalized] = useState(false);
 
-  // Track which repos are already tracked
-  const trackedRepoKeys = new Set(settings.repositories.map(r => `${r.owner}/${r.name}`));
+  // Track which issues are already picked
+  const pickedIssueIds = new Set(settings.pickedIssues.map(s => s.id));
 
   const fetchFromApi = useCallback(
     async (currentPage: number, append: boolean) => {
@@ -154,20 +155,19 @@ export default function RecommendedIssues() {
     fetchFromApi(nextPage, true);
   };
 
-  // Filter out issues from already tracked repos
-  const filteredIssues = issues.filter(
-    issue => !trackedRepoKeys.has(`${issue.repository.owner}/${issue.repository.name}`),
-  );
-
-  const handleAddRepo = async (issue: Issue) => {
-    const repoKey = `${issue.repository.owner}/${issue.repository.name}`;
-    setAddingRepos(prev => new Set(prev).add(repoKey));
+  const handlePickIssue = async (issue: Issue) => {
+    const isPicked = pickedIssueIds.has(issue.id);
+    setPickingIssues(prev => new Set(prev).add(issue.id));
     try {
-      await addRepository(repoKey);
+      if (isPicked) {
+        await unpickIssue(issue.id);
+      } else {
+        await pickIssue(issue);
+      }
     } finally {
-      setAddingRepos(prev => {
+      setPickingIssues(prev => {
         const next = new Set(prev);
-        next.delete(repoKey);
+        next.delete(issue.id);
         return next;
       });
     }
@@ -298,7 +298,7 @@ export default function RecommendedIssues() {
                   </span>
                 </div>
                 <div className="opacity-40 pointer-events-none space-y-2">
-                  {filteredIssues.slice(0, 3).map(issue => (
+                  {issues.slice(0, 3).map(issue => (
                     <div key={issue.id} className="flex items-center gap-2">
                       <div className="flex-1 min-w-0">
                         <IssueItem issue={issue} compact />
@@ -307,17 +307,16 @@ export default function RecommendedIssues() {
                   ))}
                 </div>
               </div>
-            ) : filteredIssues.length === 0 ? (
+            ) : issues.length === 0 ? (
               <div className="text-center p-6 text-muted-foreground text-sm">
                 {t('recommended.noIssues')}
               </div>
             ) : (
               <>
                 <div className="space-y-2">
-                  {filteredIssues.map(issue => {
-                    const repoKey = `${issue.repository.owner}/${issue.repository.name}`;
-                    const isTracked = trackedRepoKeys.has(repoKey);
-                    const isAdding = addingRepos.has(repoKey);
+                  {issues.map(issue => {
+                    const isPicked = pickedIssueIds.has(issue.id);
+                    const isPicking = pickingIssues.has(issue.id);
 
                     return (
                       <div key={issue.id} className="flex items-center gap-2">
@@ -328,40 +327,32 @@ export default function RecommendedIssues() {
                           variant="outline"
                           size="sm"
                           onClick={() =>
-                            authState.isLoggedIn ? handleAddRepo(issue) : undefined
+                            authState.isLoggedIn ? handlePickIssue(issue) : undefined
                           }
-                          disabled={isTracked || isAdding || !authState.isLoggedIn}
+                          disabled={isPicking || !authState.isLoggedIn}
                           className={
-                            isTracked
-                              ? 'flex-shrink-0 text-xs bg-[color:var(--color-success)]/10 text-[color:var(--color-success)] border-[color:var(--color-success)]/20 cursor-default'
+                            isPicked
+                              ? 'flex-shrink-0 text-xs bg-primary/10 text-primary border-primary/20 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20'
                               : !authState.isLoggedIn
                                 ? 'flex-shrink-0 text-xs bg-muted text-muted-foreground border-border cursor-not-allowed'
-                                : isAdding
+                                : isPicking
                                   ? 'flex-shrink-0 text-xs bg-muted text-muted-foreground border-transparent cursor-not-allowed'
                                   : 'flex-shrink-0 text-xs bg-primary/10 text-primary border-primary/20 hover:bg-primary/20'
                           }
                           title={
-                            isTracked
-                              ? t('recommended.alreadyTracked')
+                            isPicked
+                              ? t('recommended.unpick')
                               : !authState.isLoggedIn
-                                ? t('recommended.loginToTrack')
-                                : t('recommended.addRepo')
+                                ? t('recommended.loginToPick')
+                                : t('recommended.pick')
                           }
                         >
-                          {isTracked ? (
-                            <>
-                              <FaCheck className="text-xs" />
-                              {t('recommended.alreadyTracked')}
-                            </>
-                          ) : isAdding ? (
+                          {isPicking ? (
                             <FaSync className="animate-spin text-xs" />
+                          ) : isPicked ? (
+                            <FaBookmark className="text-xs" />
                           ) : (
-                            <>
-                              <FaPlus className="text-xs" />
-                              {authState.isLoggedIn
-                                ? t('recommended.addRepo')
-                                : t('recommended.loginToTrack')}
-                            </>
+                            <FaRegBookmark className="text-xs" />
                           )}
                         </Button>
                       </div>
@@ -388,7 +379,7 @@ export default function RecommendedIssues() {
                 {totalCount > 0 && (
                   <div className="text-center text-xs text-muted-foreground">
                     {t('recommended.showingCount', {
-                      count: filteredIssues.length,
+                      count: issues.length,
                       total: totalCount,
                     })}
                   </div>

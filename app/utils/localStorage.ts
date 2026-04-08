@@ -1,8 +1,6 @@
-import { UserSettings, Repository, Issue } from '../types';
+import { UserSettings, Issue } from '../types';
 
 const SETTINGS_KEY = 'pickssue-settings';
-const ISSUES_KEY = 'pickssue-issues';
-const CACHE_TIMESTAMP_KEY = 'pickssue-cache-timestamp';
 
 // Legacy prefixes for migration chain: willing-to-contribute → contrifit → pickssue
 const LEGACY_PREFIXES = ['willing-to-contribute-', 'contrifit-'];
@@ -34,6 +32,42 @@ export const migrateLocalStorageKeys = (): void => {
     }
     localStorage.removeItem(oldKey);
   }
+
+  // Migrate old settings shape (repositories → pickedIssues)
+  migrateSettingsShape();
+};
+
+// Convert old settings with repositories[] to new shape with pickedIssues[]
+const migrateSettingsShape = (): void => {
+  const raw = localStorage.getItem(SETTINGS_KEY);
+  if (!raw) return;
+
+  try {
+    const parsed = JSON.parse(raw);
+    // Old shape had 'repositories' and 'customLabels'
+    if (parsed.repositories && !parsed.pickedIssues) {
+      const migrated: UserSettings = {
+        pickedIssues: [],
+        notificationFrequency: parsed.notificationFrequency ?? 'daily',
+        hideClosedIssues: parsed.hideClosedIssues ?? true,
+        lastCheckedAt: parsed.lastCheckedAt,
+      };
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(migrated));
+    }
+  } catch {
+    // Corrupt data — reset to defaults
+    localStorage.removeItem(SETTINGS_KEY);
+  }
+
+  // Clean up old repo issue caches
+  const keysToRemove: string[] = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key === 'pickssue-issues' || key === 'pickssue-cache-timestamp') {
+      keysToRemove.push(key);
+    }
+  }
+  keysToRemove.forEach(key => localStorage.removeItem(key));
 };
 
 // Clear all user data from localStorage on logout
@@ -53,8 +87,7 @@ export const clearAllUserData = (): void => {
 
 // Default settings
 export const defaultSettings: UserSettings = {
-  repositories: [],
-  customLabels: ['good first issue', 'help wanted', 'easy'],
+  pickedIssues: [],
   notificationFrequency: 'daily',
   hideClosedIssues: true,
   lastCheckedAt: new Date().toISOString(),
@@ -71,140 +104,12 @@ export const loadSettings = (): UserSettings => {
   if (typeof window !== 'undefined') {
     const settings = localStorage.getItem(SETTINGS_KEY);
     if (settings) {
-      return JSON.parse(settings);
+      const parsed = JSON.parse(settings);
+      // Guard against loading old shape
+      if (parsed.pickedIssues) return parsed;
     }
   }
   return defaultSettings;
-};
-
-// Repository-specific issues
-export interface RepositoryIssuesCache {
-  [key: string]: {
-    issues: Issue[];
-    timestamp: number;
-  };
-}
-
-// Issues - Using a repository-based structure
-export const saveIssues = (issues: Issue[]): void => {
-  if (typeof window !== 'undefined') {
-    // Group issues by repository
-    const repoIssues: RepositoryIssuesCache = {};
-
-    // Group by repository
-    issues.forEach(issue => {
-      const repoKey = createRepositoryKey(issue.repository);
-
-      if (!repoIssues[repoKey]) {
-        repoIssues[repoKey] = {
-          issues: [],
-          timestamp: Date.now(),
-        };
-      }
-
-      repoIssues[repoKey].issues.push(issue);
-    });
-
-    localStorage.setItem(ISSUES_KEY, JSON.stringify(repoIssues));
-  }
-};
-
-export const loadIssues = (): Issue[] => {
-  if (typeof window !== 'undefined') {
-    const data = localStorage.getItem(ISSUES_KEY);
-    if (data) {
-      try {
-        const repoIssues: RepositoryIssuesCache = JSON.parse(data);
-        // Flatten all repository issues into a single array
-        return Object.values(repoIssues).flatMap(repo => repo.issues);
-      } catch (error) {
-        console.error('Error loading issues:', error);
-        // If there's an error parsing the JSON, return an empty array
-        return [];
-      }
-    }
-  }
-  return [];
-};
-
-export const saveRepositoryIssues = (repositoryKey: string, issues: Issue[]): void => {
-  if (typeof window !== 'undefined') {
-    try {
-      let repoIssues: RepositoryIssuesCache = {};
-      const existingData = localStorage.getItem(ISSUES_KEY);
-
-      if (existingData) {
-        repoIssues = JSON.parse(existingData);
-      }
-
-      repoIssues[repositoryKey] = {
-        issues: issues,
-        timestamp: Date.now(),
-      };
-
-      localStorage.setItem(ISSUES_KEY, JSON.stringify(repoIssues));
-    } catch (error) {
-      console.error(`Error saving issues for repository ${repositoryKey}:`, error);
-    }
-  }
-};
-
-export const loadRepositoryIssues = (repositoryKey: string): Issue[] | null => {
-  if (typeof window !== 'undefined') {
-    try {
-      const allData = localStorage.getItem(ISSUES_KEY);
-      if (allData) {
-        const repoIssues: RepositoryIssuesCache = JSON.parse(allData);
-        if (repoIssues[repositoryKey]) {
-          return repoIssues[repositoryKey].issues;
-        }
-      }
-    } catch (error) {
-      console.error(`Error loading issues for repository ${repositoryKey}:`, error);
-    }
-  }
-  return null;
-};
-
-export const loadRepositoryTimestamp = (repositoryKey: string): number | null => {
-  if (typeof window !== 'undefined') {
-    try {
-      const allData = localStorage.getItem(ISSUES_KEY);
-      if (allData) {
-        const repoIssues: RepositoryIssuesCache = JSON.parse(allData);
-        if (repoIssues[repositoryKey]) {
-          return repoIssues[repositoryKey].timestamp;
-        }
-      }
-    } catch (error) {
-      console.error(`Error loading timestamp for repository ${repositoryKey}:`, error);
-    }
-  }
-  return null;
-};
-
-// Save cache timestamp
-export const saveCacheTimestamp = (timestamp: number): void => {
-  try {
-    localStorage.setItem(CACHE_TIMESTAMP_KEY, timestamp.toString());
-  } catch (error) {
-    console.error('Error saving cache timestamp:', error);
-  }
-};
-
-// Load cache timestamp
-export const loadCacheTimestamp = (): number | null => {
-  try {
-    const timestamp = localStorage.getItem(CACHE_TIMESTAMP_KEY);
-    return timestamp ? parseInt(timestamp, 10) : null;
-  } catch (error) {
-    console.error('Error loading cache timestamp:', error);
-    return null;
-  }
-};
-
-export const createRepositoryKey = (repository: Repository): string => {
-  return `${repository.owner}/${repository.name}`;
 };
 
 // Recommended issues cache
