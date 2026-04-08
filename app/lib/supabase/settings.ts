@@ -16,8 +16,7 @@ export async function loadUserSettings(userId: string): Promise<UserSettings | n
   if (error || !data) return null;
 
   return {
-    repositories: (data.repositories as unknown as UserSettings['repositories']) ?? [],
-    customLabels: (data.custom_labels as unknown as string[]) ?? [],
+    savedIssues: (data.saved_issues as unknown as UserSettings['savedIssues']) ?? [],
     notificationFrequency:
       (data.notification_frequency as UserSettings['notificationFrequency']) ?? 'daily',
     hideClosedIssues: data.hide_closed_issues ?? true,
@@ -31,9 +30,7 @@ export async function saveUserSettings(
   const supabase = createClient();
   const row: UserSettingsInsert = {
     user_id: userId,
-    repositories: settings.repositories as unknown as UserSettingsInsert['repositories'],
-    custom_labels:
-      settings.customLabels as unknown as UserSettingsInsert['custom_labels'],
+    saved_issues: settings.savedIssues as unknown as UserSettingsInsert['saved_issues'],
     notification_frequency: settings.notificationFrequency,
     hide_closed_issues: settings.hideClosedIssues,
     updated_at: new Date().toISOString(),

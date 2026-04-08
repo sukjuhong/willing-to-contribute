@@ -12,8 +12,7 @@ export default function Navigation() {
 
   const tabs = [
     { name: 'issues' as const, path: '/issues' },
-    { name: 'repositories' as const, path: '/repositories' },
-    { name: 'settings' as const, path: '/settings' },
+    { name: 'picked' as const, path: '/picked' },
   ];
 
   return (

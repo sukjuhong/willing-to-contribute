@@ -26,7 +26,8 @@
     "justNow": "방금 전",
     "minutesAgo": "{minutes}분 전",
     "hoursAgo": "{hours}시간 전",
-    "daysAgo": "{days}일 전"
+    "daysAgo": "{days}일 전",
+    "loading": "불러오는 중..."
   },
   "navigation": {
     "home": "홈",
@@ -35,8 +36,7 @@
   },
   "tabs": {
     "issues": "이슈",
-    "repositories": "저장소",
-    "settings": "설정"
+    "picked": "Picked"
   },
   "settings": {
     "beginnerFriendlyIssues": "기여하기 좋은 이슈",
@@ -90,12 +90,12 @@
     "personalized": "나를 위한 추천",
     "basedOnProfile": "내 GitHub 활동 기반",
     "allLanguages": "전체 언어",
-    "addRepo": "추가",
-    "alreadyTracked": "추가됨",
+    "pick": "Pick",
+    "unpick": "Unpick",
+    "loginToPick": "로그인하여 Pick",
     "noIssues": "추천 이슈가 없습니다.",
     "loading": "추천 이슈를 불러오는 중...",
     "searchPlaceholder": "키워드로 이슈 검색...",
-    "loginToTrack": "로그인하여 추적",
     "loadMore": "더 보기",
     "showingCount": "{total}개 중 {count}개 표시",
     "analyzeProfileCta": "GitHub 프로필을 분석하여 맞춤 추천을 받아보세요",
@@ -235,6 +235,26 @@
     "whyDesc1": "작업할 이슈를 찾는 것은 새로운 오픈소스 기여자에게 가장 큰 장벽 중 하나입니다. 기본 GitHub 인터페이스는 버그, 기능 요청, 성능 작업, 리팩토링 등 저장소의 모든 이슈를 초보자에게 적합한지 구분 없이 보여줍니다. Pickssue는 내 GitHub 활동을 분석하여 실력과 관심사에 맞는 이슈를 추천해 줍니다.",
     "whyDesc2": "알림 빈도도 중요합니다. 초보자 친화적 이슈는 라벨이 붙은 지 몇 시간 내에 선점되는 경우가 많습니다. 짧은 폴링 간격을 설정하면 새 이슈를 더 빨리 알 수 있어 처음으로 댓글을 달고 작업을 맡을 기회가 높아집니다. 사용자 정의 라벨 필터와 결합하면 준비된 이슈만 정확히 표시하는 맞춤형 피드를 만들 수 있습니다.",
     "whyDesc3": "모든 설정은 우선 브라우저에 로컬로 저장되므로 초기 로드 후에는 인터넷 연결 없이도 앱이 작동합니다. 클라우드 동기화는 완전히 선택 사항이며 부가적입니다 — 로컬 제어를 제거하지 않고 기기 간 지속성을 추가합니다."
+  },
+  "picked": {
+    "title": "Pick한 이슈",
+    "guestTitle": "작업할 이슈를 저장하세요",
+    "guestDesc": "GitHub로 로그인하면 추천 이슈에서 관심있는 이슈를 Pick할 수 있습니다. 상태 변화를 추적하고 알림을 받으세요.",
+    "empty": "아직 Pick한 이슈가 없습니다",
+    "emptyDesc": "추천 이슈를 둘러보고 관심있는 이슈를 Pick하세요.",
+    "browseIssues": "이슈 둘러보기",
+    "refresh": "상태 새로고침",
+    "hideClosed": "닫힌 이슈 숨기기",
+    "notifyFrequency": "확인 주기",
+    "unpick": "이 이슈 Unpick",
+    "addTag": "태그",
+    "tagPlaceholder": "태그 추가...",
+    "frequency": {
+      "hourly": "매시간",
+      "6hours": "6시간",
+      "daily": "매일",
+      "never": "안 함"
+    }
   },
   "profile": {
     "title": "내 프로필",

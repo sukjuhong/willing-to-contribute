@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { UserSettings } from '../types';
+import { UserSettings, Issue, SavedIssue } from '../types';
 import { saveSettings, loadSettings, defaultSettings } from '../utils/localStorage';
-import { getRepository, parseRepoUrl } from '../utils/github';
 import {
   loadUserSettings as loadFromSupabase,
   saveUserSettings as saveToSupabase,
@@ -78,71 +77,69 @@ const useSettings = (isLoggedIn: boolean, userId?: string) => {
     [isLoggedIn, userId],
   );
 
-  // Add a repository
-  const addRepository = useCallback(
-    async (repoUrl: string) => {
+  // Save (pick) an issue
+  const saveIssue = useCallback(
+    async (issue: Issue): Promise<boolean> => {
       try {
-        // Parse the repository URL
-        const repoInfo = parseRepoUrl(repoUrl);
+        const alreadySaved = settings.savedIssues.some(s => s.id === issue.id);
+        if (alreadySaved) return false;
 
-        if (!repoInfo) {
-          throw new Error('Invalid repository URL');
-        }
-
-        // Fetch repository details from GitHub
-        const repo = await getRepository(repoInfo.owner, repoInfo.name);
-
-        if (!repo) {
-          throw new Error('Repository not found');
-        }
-
-        // Check if repository already exists
-        const repoExists = settings.repositories.some(
-          r => r.owner === repo.owner && r.name === repo.name,
-        );
-
-        if (repoExists) {
-          throw new Error('Repository already added');
-        }
-
-        // Add to repositories list
-        const newSettings = {
-          ...settings,
-          repositories: [...settings.repositories, repo],
+        const now = new Date().toISOString();
+        const saved: SavedIssue = {
+          id: issue.id,
+          number: issue.number,
+          title: issue.title,
+          url: issue.url,
+          state: issue.state,
+          repository: {
+            owner: issue.repository.owner,
+            name: issue.repository.name,
+          },
+          labels: issue.labels,
+          savedAt: now,
+          userTags: [],
+          lastKnownState: issue.state,
+          lastCheckedAt: now,
+          assignee: undefined,
         };
 
-        // Save settings
+        const newSettings = {
+          ...settings,
+          savedIssues: [...settings.savedIssues, saved],
+        };
+
         await saveUserSettings(newSettings);
-
         return true;
-      } catch (err: unknown) {
-        console.error('Error adding repository:', err);
-
-        // Handle rate limit errors
-        const error = err as { isRateLimit?: boolean; resetTime?: Date };
-        if (error.isRateLimit && error.resetTime) {
-          const formattedTime = error.resetTime.toLocaleTimeString();
-          setError(
-            `GitHub API 사용 한도를 초과했습니다. ${formattedTime}에 다시 시도해주세요.`,
-          );
-        } else if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError('Failed to add repository');
-        }
-
+      } catch (err) {
+        console.error('Error saving issue:', err);
+        setError('Failed to save issue');
         return false;
       }
     },
     [settings, saveUserSettings],
   );
 
-  // Remove a repository
-  const removeRepository = useCallback(
-    async (repoId: string) => {
+  // Unsave (unpick) an issue
+  const unsaveIssue = useCallback(
+    async (issueId: string): Promise<void> => {
       const newSettings = {
         ...settings,
-        repositories: settings.repositories.filter(repo => repo.id !== repoId),
+        savedIssues: settings.savedIssues.filter(s => s.id !== issueId),
+      };
+
+      await saveUserSettings(newSettings);
+    },
+    [settings, saveUserSettings],
+  );
+
+  // Update user tags on a saved issue
+  const updateIssueTags = useCallback(
+    async (issueId: string, tags: string[]): Promise<void> => {
+      const newSettings = {
+        ...settings,
+        savedIssues: settings.savedIssues.map(s =>
+          s.id === issueId ? { ...s, userTags: tags } : s,
+        ),
       };
 
       await saveUserSettings(newSettings);
@@ -170,22 +167,20 @@ const useSettings = (isLoggedIn: boolean, userId?: string) => {
     [settings, saveUserSettings],
   );
 
-  // Toggle custom label
-  const toggleCustomLabel = useCallback(
-    async (label: string, add: boolean): Promise<boolean> => {
+  // Toggle hide closed issues
+  const toggleHideClosedIssues = useCallback(
+    async (hide: boolean): Promise<boolean> => {
       try {
         const newSettings = {
           ...settings,
-          customLabels: add
-            ? [...settings.customLabels, label]
-            : settings.customLabels.filter(l => l !== label),
+          hideClosedIssues: hide,
         };
 
         await saveUserSettings(newSettings);
         return true;
       } catch (err) {
-        console.error('Error updating custom labels:', err);
-        setError('Failed to update custom labels');
+        console.error('Error updating hide closed issues setting:', err);
+        setError('Failed to update hide closed issues setting');
         return false;
       }
     },
@@ -212,36 +207,16 @@ const useSettings = (isLoggedIn: boolean, userId?: string) => {
     [settings, saveUserSettings],
   );
 
-  // Toggle hide closed issues
-  const toggleHideClosedIssues = useCallback(
-    async (hide: boolean): Promise<boolean> => {
-      try {
-        const newSettings = {
-          ...settings,
-          hideClosedIssues: hide,
-        };
-
-        await saveUserSettings(newSettings);
-        return true;
-      } catch (err) {
-        console.error('Error updating hide closed issues setting:', err);
-        setError('Failed to update hide closed issues setting');
-        return false;
-      }
-    },
-    [settings, saveUserSettings],
-  );
-
   return {
     settings,
     loading,
     error,
-    addRepository,
-    removeRepository,
+    saveIssue,
+    unsaveIssue,
+    updateIssueTags,
     updateNotificationFrequency,
-    toggleCustomLabel,
-    updateLastCheckedAt,
     toggleHideClosedIssues,
+    updateLastCheckedAt,
   };
 };
 

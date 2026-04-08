@@ -1,13 +1,21 @@
 'use client';
 
-import React, { createContext, useContext, useEffect } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from 'react';
 import useSupabaseAuth from '../hooks/useSupabaseAuth';
 import useSettings from '../hooks/useSettings';
-import useIssues from '../hooks/useIssues';
+import useSavedIssues from '../hooks/useSavedIssues';
+import type { StateChange } from '../hooks/useSavedIssues';
 import useRecommendedIssues from '../hooks/useRecommendedIssues';
 import useUserProfile from '../hooks/useUserProfile';
 import { checkNotificationPermission } from '../utils/notifications';
 import { migrateLocalStorageKeys } from '../utils/localStorage';
+import { UserSettings, Issue } from '../types';
 
 interface AppContextType {
   // Auth
@@ -19,20 +27,19 @@ interface AppContextType {
   settings: ReturnType<typeof useSettings>['settings'];
   settingsLoading: boolean;
   settingsError: string | null;
-  addRepository: (repoUrl: string) => Promise<boolean>;
-  removeRepository: (repoId: string) => Promise<void>;
+  saveIssue: (issue: Issue) => Promise<boolean>;
+  unsaveIssue: (issueId: string) => Promise<void>;
+  updateIssueTags: (issueId: string, tags: string[]) => Promise<void>;
   updateNotificationFrequency: ReturnType<
     typeof useSettings
   >['updateNotificationFrequency'];
-  toggleCustomLabel: ReturnType<typeof useSettings>['toggleCustomLabel'];
-  updateLastCheckedAt: ReturnType<typeof useSettings>['updateLastCheckedAt'];
   toggleHideClosedIssues: ReturnType<typeof useSettings>['toggleHideClosedIssues'];
 
-  // Issues
-  issues: ReturnType<typeof useIssues>['issues'];
-  issuesLoading: boolean;
-  issuesError: string | null;
-  fetchIssues: ReturnType<typeof useIssues>['fetchIssues'];
+  // Saved Issues
+  savedIssues: ReturnType<typeof useSavedIssues>['savedIssues'];
+  savedIssuesLoading: boolean;
+  savedIssuesError: string | null;
+  refreshSavedIssues: () => Promise<StateChange[]>;
 
   // Recommended Issues
   recommendedIssues: ReturnType<typeof useRecommendedIssues>['recommendedIssues'];
@@ -62,21 +69,72 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     settings,
     loading: settingsLoading,
     error: settingsError,
-    addRepository,
-    removeRepository,
+    saveIssue,
+    unsaveIssue,
+    updateIssueTags,
     updateNotificationFrequency,
-    toggleCustomLabel,
-    updateLastCheckedAt,
     toggleHideClosedIssues,
+    updateLastCheckedAt,
   } = useSettings(authState.isLoggedIn, authState.userId);
 
-  // Issues state
+  // Internal settings state setter for useSavedIssues to update saved issue states
+  const [settingsOverride, setSettingsOverride] = useState<UserSettings | null>(null);
+  const effectiveSettings = settingsOverride ?? settings;
+
+  // Sync override when settings change from useSettings
+  useEffect(() => {
+    setSettingsOverride(null);
+  }, [settings]);
+
+  const handleSetSettings = useCallback(
+    (fn: (prev: UserSettings) => UserSettings) => {
+      setSettingsOverride(prev => fn(prev ?? settings));
+    },
+    [settings],
+  );
+
+  // Saved issues state
   const {
-    issues,
-    loading: issuesLoading,
-    error: issuesError,
-    fetchIssues,
-  } = useIssues(settings);
+    savedIssues,
+    loading: savedIssuesLoading,
+    error: savedIssuesError,
+    refreshSavedIssues: _refreshSavedIssues,
+  } = useSavedIssues(effectiveSettings, handleSetSettings, authState.accessToken);
+
+  // Wrap refreshSavedIssues to also show notifications
+  const refreshSavedIssues = useCallback(async () => {
+    const changes = await _refreshSavedIssues();
+
+    if (changes.length > 0) {
+      const hasPermission = await checkNotificationPermission();
+      if (hasPermission) {
+        for (const change of changes) {
+          const repo = `${change.issue.repository.owner}/${change.issue.repository.name}`;
+          let message: string;
+          if (change.field === 'state') {
+            message = `Issue #${change.issue.number} in ${repo} was ${change.to}`;
+          } else {
+            message = change.to
+              ? `Issue #${change.issue.number} in ${repo} was assigned to @${change.to}`
+              : `Issue #${change.issue.number} in ${repo} was unassigned`;
+          }
+
+          try {
+            new Notification(`Pickssue: ${repo}#${change.issue.number}`, {
+              body: message,
+              icon: '/favicon.ico',
+            });
+          } catch {
+            // Notification not supported
+          }
+        }
+      }
+
+      await updateLastCheckedAt(new Date());
+    }
+
+    return changes;
+  }, [_refreshSavedIssues, updateLastCheckedAt]);
 
   // Recommended issues state
   const {
@@ -99,66 +157,54 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     checkNotificationPermission();
   }, []);
 
-  // Fetch issues on mount and when settings change
-  useEffect(() => {
-    if (!settingsLoading) {
-      fetchIssues(false);
-    }
-  }, [fetchIssues, settingsLoading]);
-
-  // Fetch recommended issues on mount only (changeLanguageFilter handles re-fetch on filter change)
+  // Fetch recommended issues on mount only
   useEffect(() => {
     fetchRecommendedIssues();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Setup periodic checks for new issues
+  // Setup periodic checks for saved issue state changes
   useEffect(() => {
-    if (settings.notificationFrequency === 'never') {
-      return;
-    }
+    if (settings.notificationFrequency === 'never') return;
+    if (settings.savedIssues.length === 0) return;
 
     let interval: NodeJS.Timeout;
 
-    // Set interval based on notification frequency
     switch (settings.notificationFrequency) {
       case 'hourly':
-        interval = setInterval(() => fetchIssues(true), 60 * 60 * 1000);
+        interval = setInterval(() => refreshSavedIssues(), 60 * 60 * 1000);
         break;
       case '6hours':
-        interval = setInterval(() => fetchIssues(true), 6 * 60 * 60 * 1000);
+        interval = setInterval(() => refreshSavedIssues(), 6 * 60 * 60 * 1000);
         break;
       case 'daily':
-        interval = setInterval(() => fetchIssues(true), 24 * 60 * 60 * 1000);
+        interval = setInterval(() => refreshSavedIssues(), 24 * 60 * 60 * 1000);
         break;
       default:
         break;
     }
 
     return () => {
-      if (interval) {
-        clearInterval(interval);
-      }
+      if (interval) clearInterval(interval);
     };
-  }, [settings.notificationFrequency, fetchIssues]);
+  }, [settings.notificationFrequency, settings.savedIssues.length, refreshSavedIssues]);
 
   const value: AppContextType = {
     authState,
     login,
     logout,
-    settings,
+    settings: effectiveSettings,
     settingsLoading,
     settingsError,
-    addRepository,
-    removeRepository,
+    saveIssue,
+    unsaveIssue,
+    updateIssueTags,
     updateNotificationFrequency,
-    toggleCustomLabel,
-    updateLastCheckedAt,
     toggleHideClosedIssues,
-    issues,
-    issuesLoading,
-    issuesError,
-    fetchIssues,
+    savedIssues,
+    savedIssuesLoading,
+    savedIssuesError,
+    refreshSavedIssues,
     recommendedIssues,
     recommendedLoading,
     recommendedError,
