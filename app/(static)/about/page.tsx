@@ -91,11 +91,11 @@ export default function AboutPage() {
           <div className="bg-card border border-border rounded-lg p-6">
             <h3 className="text-lg font-semibold text-primary mb-2">Smart Filtering</h3>
             <p className="text-muted-foreground text-sm leading-relaxed">
-              Filter issues by programming language, difficulty level, custom labels, and
-              maintainer responsiveness. If you are learning Python, focus on Python
-              projects. If you prefer fast-response maintainers, filter by repositories
-              where issues get reviewed quickly. Find exactly the contribution that fits
-              your schedule and skill level.
+              Filter issues by programming language, labels, and maintainer
+              responsiveness. If you are learning Python, focus on Python projects. If you
+              prefer fast-response maintainers, filter by repositories where issues get
+              reviewed quickly. Find exactly the contribution that fits your schedule and
+              interests.
             </p>
           </div>
 

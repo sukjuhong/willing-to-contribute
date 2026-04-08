@@ -10,18 +10,12 @@ vi.mock('../../app/api/recommended/maintainerScore', () => ({
   calculateMaintainerScore: vi.fn(),
 }));
 
-vi.mock('../../app/api/recommended/difficulty', () => ({
-  estimateDifficulty: vi.fn(),
-}));
-
 import { getServerOctokit } from '../../app/api/recommended/serverOctokit';
 import { calculateMaintainerScore } from '../../app/api/recommended/maintainerScore';
-import { estimateDifficulty } from '../../app/api/recommended/difficulty';
 import { GET } from '../../app/api/recommended/route';
 
 const mockGetServerOctokit = vi.mocked(getServerOctokit);
 const mockCalculateMaintainerScore = vi.mocked(calculateMaintainerScore);
-const mockEstimateDifficulty = vi.mocked(estimateDifficulty);
 
 // Each test gets a unique page number to bust the module-level cache
 let testCounter = 1000;
@@ -77,10 +71,12 @@ const mockRepoData = {
   description: 'A great repo',
 };
 
-function makeOctokitMock(overrides: {
-  issuesAndPullRequests?: ReturnType<typeof vi.fn>;
-  reposGet?: ReturnType<typeof vi.fn>;
-} = {}) {
+function makeOctokitMock(
+  overrides: {
+    issuesAndPullRequests?: ReturnType<typeof vi.fn>;
+    reposGet?: ReturnType<typeof vi.fn>;
+  } = {},
+) {
   return {
     search: {
       issuesAndPullRequests:
@@ -95,7 +91,6 @@ function makeOctokitMock(overrides: {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockEstimateDifficulty.mockReturnValue('beginner');
   mockCalculateMaintainerScore.mockResolvedValue(mockMaintainerScore);
 });
 
@@ -112,7 +107,6 @@ describe('GET /api/recommended', () => {
       expect(body.total).toBe(1);
       expect(body.issues).toHaveLength(1);
       expect(body.issues[0].title).toBe('Good first issue');
-      expect(body.issues[0].difficulty).toBe('beginner');
     });
 
     it('includes maintainer score in repository metadata', async () => {
@@ -154,34 +148,6 @@ describe('GET /api/recommended', () => {
       expect(searchMock).toHaveBeenCalledWith(
         expect.objectContaining({ q: expect.stringContaining('language:Rust') }),
       );
-    });
-  });
-
-  describe('difficulty filter', () => {
-    it('filters issues by difficulty', async () => {
-      mockEstimateDifficulty
-        .mockReturnValueOnce('beginner')
-        .mockReturnValueOnce('advanced');
-
-      const twoItems = [
-        mockIssueItem,
-        { ...mockIssueItem, id: 2, number: 43, title: 'Hard issue' },
-      ];
-      mockGetServerOctokit.mockResolvedValue(
-        makeOctokitMock({
-          issuesAndPullRequests: vi
-            .fn()
-            .mockResolvedValue({ data: { items: twoItems, total_count: 2 } }),
-        }) as never,
-      );
-
-      const req = makeRequest({ difficulty: ['beginner'] });
-      const res = await GET(req);
-      const body = await res.json();
-
-      // Only beginner issue should remain
-      expect(body.issues).toHaveLength(1);
-      expect(body.issues[0].title).toBe('Good first issue');
     });
   });
 

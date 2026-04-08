@@ -123,7 +123,7 @@
     "advanced": "고급 필터",
     "language": "언어",
     "allLanguages": "전체 언어",
-    "difficulty": "난이도",
+    "labels": "라벨",
     "maintainerScore": "메인테이너 친절도",
     "starsRange": "스타",
     "forksRange": "포크",
@@ -155,12 +155,6 @@
       "3m": "지난 3달",
       "6m": "지난 6달"
     }
-  },
-  "difficulty": {
-    "beginner": "초급",
-    "intermediate": "중급",
-    "advanced": "고급",
-    "estimated": "추정"
   },
   "maintainer": {
     "gradeA": "친절함",

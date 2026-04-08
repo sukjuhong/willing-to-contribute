@@ -27,10 +27,6 @@ vi.mock('@octokit/rest', () => {
   };
 });
 
-vi.mock('../../app/api/recommended/difficulty', () => ({
-  estimateDifficulty: vi.fn().mockReturnValue('beginner'),
-}));
-
 import { GET } from '../../app/api/search/route';
 import { Octokit } from '@octokit/rest';
 
@@ -139,7 +135,11 @@ describe('GET /api/search', () => {
         data: { items: [], total_count: 0 },
       });
 
-      const req = makeRequest({ type: 'issues', q: uniqueQ('react'), language: 'TypeScript' });
+      const req = makeRequest({
+        type: 'issues',
+        q: uniqueQ('react'),
+        language: 'TypeScript',
+      });
       await GET(req);
 
       expect(mockSearchIssues).toHaveBeenCalledWith(

@@ -123,7 +123,7 @@
     "advanced": "Advanced Filters",
     "language": "Language",
     "allLanguages": "All Languages",
-    "difficulty": "Difficulty",
+    "labels": "Labels",
     "maintainerScore": "Maintainer Score",
     "starsRange": "Stars",
     "forksRange": "Forks",
@@ -155,12 +155,6 @@
       "3m": "Past 3 Months",
       "6m": "Past 6 Months"
     }
-  },
-  "difficulty": {
-    "beginner": "Beginner",
-    "intermediate": "Intermediate",
-    "advanced": "Advanced",
-    "estimated": "Estimated"
   },
   "maintainer": {
     "gradeA": "Responsive",
