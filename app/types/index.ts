@@ -42,7 +42,7 @@ export interface Issue {
 }
 
 // Saved (picked) issue types
-export interface SavedIssue {
+export interface PickedIssue {
   id: string; // GitHub issue ID
   number: number;
   title: string;
@@ -62,7 +62,7 @@ export interface SavedIssue {
 
 // User settings types
 export interface UserSettings {
-  savedIssues: SavedIssue[];
+  pickedIssues: PickedIssue[];
   notificationFrequency: 'hourly' | '6hours' | 'daily' | 'never';
   hideClosedIssues: boolean;
   lastCheckedAt?: string;

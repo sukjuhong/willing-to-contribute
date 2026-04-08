@@ -1,3 +1,3 @@
--- Add saved_issues column (backward-compatible, keeps repositories for now)
+-- Add picked_issues column (backward-compatible, keeps repositories for now)
 alter table user_settings
-  add column if not exists saved_issues jsonb default '[]';
+  add column if not exists picked_issues jsonb default '[]';

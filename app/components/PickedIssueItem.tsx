@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { SavedIssue } from '../types';
+import { PickedIssue } from '../types';
 import { FaGithub, FaBookmark, FaTimes, FaTag, FaPlus } from 'react-icons/fa';
 import { useTranslations } from 'next-intl';
 import { Card } from '@/components/ui/card';
@@ -10,15 +10,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 
-interface SavedIssueItemProps {
-  issue: SavedIssue;
-  onUnsave: (issueId: string) => Promise<void>;
+interface PickedIssueItemProps {
+  issue: PickedIssue;
+  onUnpick: (issueId: string) => Promise<void>;
   onUpdateTags: (issueId: string, tags: string[]) => Promise<void>;
 }
 
-const SavedIssueItem: React.FC<SavedIssueItemProps> = ({
+const PickedIssueItem: React.FC<PickedIssueItemProps> = ({
   issue,
-  onUnsave,
+  onUnpick,
   onUpdateTags,
 }) => {
   const t = useTranslations();
@@ -173,7 +173,7 @@ const SavedIssueItem: React.FC<SavedIssueItemProps> = ({
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => onUnsave(issue.id)}
+          onClick={() => onUnpick(issue.id)}
           className="flex-shrink-0 text-primary hover:text-destructive"
           title={t('picked.unpick')}
         >
@@ -184,4 +184,4 @@ const SavedIssueItem: React.FC<SavedIssueItemProps> = ({
   );
 };
 
-export default SavedIssueItem;
+export default PickedIssueItem;

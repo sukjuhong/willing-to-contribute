@@ -33,11 +33,11 @@ export const migrateLocalStorageKeys = (): void => {
     localStorage.removeItem(oldKey);
   }
 
-  // Migrate old settings shape (repositories → savedIssues)
+  // Migrate old settings shape (repositories → pickedIssues)
   migrateSettingsShape();
 };
 
-// Convert old settings with repositories[] to new shape with savedIssues[]
+// Convert old settings with repositories[] to new shape with pickedIssues[]
 const migrateSettingsShape = (): void => {
   const raw = localStorage.getItem(SETTINGS_KEY);
   if (!raw) return;
@@ -45,9 +45,9 @@ const migrateSettingsShape = (): void => {
   try {
     const parsed = JSON.parse(raw);
     // Old shape had 'repositories' and 'customLabels'
-    if (parsed.repositories && !parsed.savedIssues) {
+    if (parsed.repositories && !parsed.pickedIssues) {
       const migrated: UserSettings = {
-        savedIssues: [],
+        pickedIssues: [],
         notificationFrequency: parsed.notificationFrequency ?? 'daily',
         hideClosedIssues: parsed.hideClosedIssues ?? true,
         lastCheckedAt: parsed.lastCheckedAt,
@@ -87,7 +87,7 @@ export const clearAllUserData = (): void => {
 
 // Default settings
 export const defaultSettings: UserSettings = {
-  savedIssues: [],
+  pickedIssues: [],
   notificationFrequency: 'daily',
   hideClosedIssues: true,
   lastCheckedAt: new Date().toISOString(),
@@ -106,7 +106,7 @@ export const loadSettings = (): UserSettings => {
     if (settings) {
       const parsed = JSON.parse(settings);
       // Guard against loading old shape
-      if (parsed.savedIssues) return parsed;
+      if (parsed.pickedIssues) return parsed;
     }
   }
   return defaultSettings;

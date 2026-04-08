@@ -1,21 +1,15 @@
 'use client';
 
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  useCallback,
-} from 'react';
+import React, { createContext, useContext, useEffect, useCallback } from 'react';
 import useSupabaseAuth from '../hooks/useSupabaseAuth';
 import useSettings from '../hooks/useSettings';
-import useSavedIssues from '../hooks/useSavedIssues';
-import type { StateChange } from '../hooks/useSavedIssues';
+import usePickedIssues from '../hooks/usePickedIssues';
+import type { StateChange } from '../hooks/usePickedIssues';
 import useRecommendedIssues from '../hooks/useRecommendedIssues';
 import useUserProfile from '../hooks/useUserProfile';
 import { checkNotificationPermission } from '../utils/notifications';
 import { migrateLocalStorageKeys } from '../utils/localStorage';
-import { UserSettings, Issue } from '../types';
+import { Issue } from '../types';
 
 interface AppContextType {
   // Auth
@@ -27,19 +21,19 @@ interface AppContextType {
   settings: ReturnType<typeof useSettings>['settings'];
   settingsLoading: boolean;
   settingsError: string | null;
-  saveIssue: (issue: Issue) => Promise<boolean>;
-  unsaveIssue: (issueId: string) => Promise<void>;
+  pickIssue: (issue: Issue) => Promise<boolean>;
+  unpickIssue: (issueId: string) => Promise<void>;
   updateIssueTags: (issueId: string, tags: string[]) => Promise<void>;
   updateNotificationFrequency: ReturnType<
     typeof useSettings
   >['updateNotificationFrequency'];
   toggleHideClosedIssues: ReturnType<typeof useSettings>['toggleHideClosedIssues'];
 
-  // Saved Issues
-  savedIssues: ReturnType<typeof useSavedIssues>['savedIssues'];
-  savedIssuesLoading: boolean;
-  savedIssuesError: string | null;
-  refreshSavedIssues: () => Promise<StateChange[]>;
+  // Picked Issues
+  pickedIssues: ReturnType<typeof usePickedIssues>['pickedIssues'];
+  pickedIssuesLoading: boolean;
+  pickedIssuesError: string | null;
+  refreshPickedIssues: () => Promise<StateChange[]>;
 
   // Recommended Issues
   recommendedIssues: ReturnType<typeof useRecommendedIssues>['recommendedIssues'];
@@ -69,64 +63,51 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     settings,
     loading: settingsLoading,
     error: settingsError,
-    saveIssue,
-    unsaveIssue,
+    pickIssue,
+    unpickIssue,
     updateIssueTags,
     updateNotificationFrequency,
     toggleHideClosedIssues,
     updateLastCheckedAt,
+    saveUserSettings,
   } = useSettings(authState.isLoggedIn, authState.userId);
 
-  // Internal settings state setter for useSavedIssues to update saved issue states
-  const [settingsOverride, setSettingsOverride] = useState<UserSettings | null>(null);
-  const effectiveSettings = settingsOverride ?? settings;
-
-  // Sync override when settings change from useSettings
-  useEffect(() => {
-    setSettingsOverride(null);
-  }, [settings]);
-
-  const handleSetSettings = useCallback(
-    (fn: (prev: UserSettings) => UserSettings) => {
-      setSettingsOverride(prev => fn(prev ?? settings));
-    },
-    [settings],
-  );
-
-  // Saved issues state
+  // Picked issues state — uses saveUserSettings for persistence (localStorage + Supabase)
   const {
-    savedIssues,
-    loading: savedIssuesLoading,
-    error: savedIssuesError,
-    refreshSavedIssues: _refreshSavedIssues,
-  } = useSavedIssues(effectiveSettings, handleSetSettings, authState.accessToken);
+    pickedIssues,
+    loading: pickedIssuesLoading,
+    error: pickedIssuesError,
+    refreshPickedIssues: _refreshPickedIssues,
+  } = usePickedIssues(settings, saveUserSettings, authState.accessToken);
 
-  // Wrap refreshSavedIssues to also show notifications
-  const refreshSavedIssues = useCallback(async () => {
-    const changes = await _refreshSavedIssues();
+  // Wrap refreshPickedIssues to show aggregated notifications
+  const refreshPickedIssues = useCallback(async () => {
+    const changes = await _refreshPickedIssues();
 
     if (changes.length > 0) {
       const hasPermission = await checkNotificationPermission();
       if (hasPermission) {
-        for (const change of changes) {
-          const repo = `${change.issue.repository.owner}/${change.issue.repository.name}`;
-          let message: string;
-          if (change.field === 'state') {
-            message = `Issue #${change.issue.number} in ${repo} was ${change.to}`;
-          } else {
-            message = change.to
-              ? `Issue #${change.issue.number} in ${repo} was assigned to @${change.to}`
-              : `Issue #${change.issue.number} in ${repo} was unassigned`;
-          }
+        const stateChanges = changes.filter(c => c.field === 'state');
+        const assigneeChanges = changes.filter(c => c.field === 'assignee');
 
-          try {
-            new Notification(`Pickssue: ${repo}#${change.issue.number}`, {
-              body: message,
-              icon: '/favicon.ico',
-            });
-          } catch {
-            // Notification not supported
-          }
+        const lines: string[] = [];
+        if (stateChanges.length > 0) {
+          const closed = stateChanges.filter(c => c.to === 'closed').length;
+          const opened = stateChanges.filter(c => c.to === 'open').length;
+          if (closed > 0) lines.push(`${closed} issue(s) closed`);
+          if (opened > 0) lines.push(`${opened} issue(s) reopened`);
+        }
+        if (assigneeChanges.length > 0) {
+          lines.push(`${assigneeChanges.length} issue(s) assignee changed`);
+        }
+
+        try {
+          new Notification('Pickssue: Issue Updates', {
+            body: lines.join(', '),
+            icon: '/favicon.ico',
+          });
+        } catch {
+          // Notification not supported
         }
       }
 
@@ -134,7 +115,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
 
     return changes;
-  }, [_refreshSavedIssues, updateLastCheckedAt]);
+  }, [_refreshPickedIssues, updateLastCheckedAt]);
 
   // Recommended issues state
   const {
@@ -163,22 +144,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Setup periodic checks for saved issue state changes
+  // Setup periodic checks for picked issue state changes
   useEffect(() => {
     if (settings.notificationFrequency === 'never') return;
-    if (settings.savedIssues.length === 0) return;
+    if (settings.pickedIssues.length === 0) return;
 
     let interval: NodeJS.Timeout;
 
     switch (settings.notificationFrequency) {
       case 'hourly':
-        interval = setInterval(() => refreshSavedIssues(), 60 * 60 * 1000);
+        interval = setInterval(() => refreshPickedIssues(), 60 * 60 * 1000);
         break;
       case '6hours':
-        interval = setInterval(() => refreshSavedIssues(), 6 * 60 * 60 * 1000);
+        interval = setInterval(() => refreshPickedIssues(), 6 * 60 * 60 * 1000);
         break;
       case 'daily':
-        interval = setInterval(() => refreshSavedIssues(), 24 * 60 * 60 * 1000);
+        interval = setInterval(() => refreshPickedIssues(), 24 * 60 * 60 * 1000);
         break;
       default:
         break;
@@ -187,24 +168,24 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [settings.notificationFrequency, settings.savedIssues.length, refreshSavedIssues]);
+  }, [settings.notificationFrequency, settings.pickedIssues.length, refreshPickedIssues]);
 
   const value: AppContextType = {
     authState,
     login,
     logout,
-    settings: effectiveSettings,
+    settings,
     settingsLoading,
     settingsError,
-    saveIssue,
-    unsaveIssue,
+    pickIssue,
+    unpickIssue,
     updateIssueTags,
     updateNotificationFrequency,
     toggleHideClosedIssues,
-    savedIssues,
-    savedIssuesLoading,
-    savedIssuesError,
-    refreshSavedIssues,
+    pickedIssues,
+    pickedIssuesLoading,
+    pickedIssuesError,
+    refreshPickedIssues,
     recommendedIssues,
     recommendedLoading,
     recommendedError,

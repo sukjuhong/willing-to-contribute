@@ -42,8 +42,8 @@ export default function RecommendedIssues() {
   const t = useTranslations();
   const {
     settings,
-    saveIssue,
-    unsaveIssue,
+    pickIssue,
+    unpickIssue,
     authState,
     profile,
     syncProfile,
@@ -70,7 +70,7 @@ export default function RecommendedIssues() {
   const [isPersonalized, setIsPersonalized] = useState(false);
 
   // Track which issues are already picked
-  const pickedIssueIds = new Set(settings.savedIssues.map(s => s.id));
+  const pickedIssueIds = new Set(settings.pickedIssues.map(s => s.id));
 
   const fetchFromApi = useCallback(
     async (currentPage: number, append: boolean) => {
@@ -160,9 +160,9 @@ export default function RecommendedIssues() {
     setPickingIssues(prev => new Set(prev).add(issue.id));
     try {
       if (isPicked) {
-        await unsaveIssue(issue.id);
+        await unpickIssue(issue.id);
       } else {
-        await saveIssue(issue);
+        await pickIssue(issue);
       }
     } finally {
       setPickingIssues(prev => {

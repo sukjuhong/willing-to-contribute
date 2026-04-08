@@ -40,7 +40,7 @@ export interface Database {
           user_id: string;
           repositories: Json;
           custom_labels: Json;
-          saved_issues: Json;
+          picked_issues: Json;
           notification_frequency: string;
           hide_closed_issues: boolean;
           updated_at: string;
@@ -49,7 +49,7 @@ export interface Database {
           user_id: string;
           repositories?: Json;
           custom_labels?: Json;
-          saved_issues?: Json;
+          picked_issues?: Json;
           notification_frequency?: string;
           hide_closed_issues?: boolean;
           updated_at?: string;
@@ -58,7 +58,7 @@ export interface Database {
           user_id?: string;
           repositories?: Json;
           custom_labels?: Json;
-          saved_issues?: Json;
+          picked_issues?: Json;
           notification_frequency?: string;
           hide_closed_issues?: boolean;
           updated_at?: string;

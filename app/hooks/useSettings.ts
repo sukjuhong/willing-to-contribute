@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { UserSettings, Issue, SavedIssue } from '../types';
+import { UserSettings, Issue, PickedIssue } from '../types';
 import { saveSettings, loadSettings, defaultSettings } from '../utils/localStorage';
 import {
   loadUserSettings as loadFromSupabase,
@@ -78,14 +78,14 @@ const useSettings = (isLoggedIn: boolean, userId?: string) => {
   );
 
   // Save (pick) an issue
-  const saveIssue = useCallback(
+  const pickIssue = useCallback(
     async (issue: Issue): Promise<boolean> => {
       try {
-        const alreadySaved = settings.savedIssues.some(s => s.id === issue.id);
+        const alreadySaved = settings.pickedIssues.some(s => s.id === issue.id);
         if (alreadySaved) return false;
 
         const now = new Date().toISOString();
-        const saved: SavedIssue = {
+        const saved: PickedIssue = {
           id: issue.id,
           number: issue.number,
           title: issue.title,
@@ -105,7 +105,7 @@ const useSettings = (isLoggedIn: boolean, userId?: string) => {
 
         const newSettings = {
           ...settings,
-          savedIssues: [...settings.savedIssues, saved],
+          pickedIssues: [...settings.pickedIssues, saved],
         };
 
         await saveUserSettings(newSettings);
@@ -120,11 +120,11 @@ const useSettings = (isLoggedIn: boolean, userId?: string) => {
   );
 
   // Unsave (unpick) an issue
-  const unsaveIssue = useCallback(
+  const unpickIssue = useCallback(
     async (issueId: string): Promise<void> => {
       const newSettings = {
         ...settings,
-        savedIssues: settings.savedIssues.filter(s => s.id !== issueId),
+        pickedIssues: settings.pickedIssues.filter(s => s.id !== issueId),
       };
 
       await saveUserSettings(newSettings);
@@ -137,7 +137,7 @@ const useSettings = (isLoggedIn: boolean, userId?: string) => {
     async (issueId: string, tags: string[]): Promise<void> => {
       const newSettings = {
         ...settings,
-        savedIssues: settings.savedIssues.map(s =>
+        pickedIssues: settings.pickedIssues.map(s =>
           s.id === issueId ? { ...s, userTags: tags } : s,
         ),
       };
@@ -211,12 +211,13 @@ const useSettings = (isLoggedIn: boolean, userId?: string) => {
     settings,
     loading,
     error,
-    saveIssue,
-    unsaveIssue,
+    pickIssue,
+    unpickIssue,
     updateIssueTags,
     updateNotificationFrequency,
     toggleHideClosedIssues,
     updateLastCheckedAt,
+    saveUserSettings,
   };
 };
 

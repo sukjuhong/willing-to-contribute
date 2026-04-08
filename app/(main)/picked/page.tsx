@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { FaBookmark, FaSync, FaRegBookmark } from 'react-icons/fa';
 import LoginPrompt from '@/app/components/LoginPrompt';
-import SavedIssueItem from '@/app/components/SavedIssueItem';
+import PickedIssueItem from '@/app/components/PickedIssueItem';
 import { useApp } from '@/app/contexts/AppContext';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
@@ -21,11 +21,11 @@ export default function PickedPage() {
   const {
     authState,
     settings,
-    savedIssues,
-    savedIssuesLoading,
-    unsaveIssue,
+    pickedIssues,
+    pickedIssuesLoading,
+    unpickIssue,
     updateIssueTags,
-    refreshSavedIssues,
+    refreshPickedIssues,
     updateNotificationFrequency,
     toggleHideClosedIssues,
   } = useApp();
@@ -34,13 +34,13 @@ export default function PickedPage() {
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await refreshSavedIssues();
+    await refreshPickedIssues();
     setRefreshing(false);
   };
 
   const visibleIssues = settings.hideClosedIssues
-    ? savedIssues.filter(s => s.lastKnownState === 'open')
-    : savedIssues;
+    ? pickedIssues.filter(s => s.lastKnownState === 'open')
+    : pickedIssues;
 
   if (!authState.isLoggedIn) {
     return (
@@ -70,24 +70,24 @@ export default function PickedPage() {
         <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
           <FaBookmark className="text-primary" />
           {t('picked.title')}
-          {savedIssues.length > 0 && (
+          {pickedIssues.length > 0 && (
             <span className="text-sm font-normal text-muted-foreground">
-              ({savedIssues.length})
+              ({pickedIssues.length})
             </span>
           )}
         </h2>
 
-        {savedIssues.length > 0 && (
+        {pickedIssues.length > 0 && (
           <div className="flex items-center gap-3">
             <Button
               variant="outline"
               size="sm"
               onClick={handleRefresh}
-              disabled={refreshing || savedIssuesLoading}
+              disabled={refreshing || pickedIssuesLoading}
               className="text-xs"
             >
               <FaSync
-                className={refreshing || savedIssuesLoading ? 'animate-spin' : ''}
+                className={refreshing || pickedIssuesLoading ? 'animate-spin' : ''}
               />
               {t('picked.refresh')}
             </Button>
@@ -96,7 +96,7 @@ export default function PickedPage() {
       </div>
 
       {/* Options bar */}
-      {savedIssues.length > 0 && (
+      {pickedIssues.length > 0 && (
         <div className="flex items-center gap-4 flex-wrap text-sm">
           <label className="flex items-center gap-2 text-muted-foreground">
             <input
@@ -130,7 +130,7 @@ export default function PickedPage() {
       )}
 
       {/* Issue list */}
-      {savedIssuesLoading && !refreshing ? (
+      {pickedIssuesLoading && !refreshing ? (
         <div className="flex justify-center items-center p-8">
           <FaSync className="animate-spin text-primary mr-2" />
           <span className="text-muted-foreground">{t('common.loading')}</span>
@@ -151,10 +151,10 @@ export default function PickedPage() {
       ) : (
         <div className="space-y-3">
           {visibleIssues.map(issue => (
-            <SavedIssueItem
+            <PickedIssueItem
               key={issue.id}
               issue={issue}
-              onUnsave={unsaveIssue}
+              onUnpick={unpickIssue}
               onUpdateTags={updateIssueTags}
             />
           ))}
