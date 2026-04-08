@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { Issue, Label, Repository } from '../../types';
-import { estimateDifficulty } from './difficulty';
 import { calculateMaintainerScore } from './maintainerScore';
 import { getServerOctokit } from './serverOctokit';
 import { cacheGet, cacheSet } from '../../lib/cache';
@@ -67,7 +66,7 @@ export async function GET(request: Request) {
     const rawLanguage = searchParams.get('language') || '';
     const language =
       !rawLanguage && userTopLanguages.length > 0 ? userTopLanguages[0] : rawLanguage;
-    const difficulties = searchParams.getAll('difficulty');
+    const labels = searchParams.getAll('label');
     const minStars = parseInt(searchParams.get('minStars') || '500', 10);
     const maxStarsRaw = parseInt(searchParams.get('maxStars') || '', 10);
     const maxStars = isNaN(maxStarsRaw) ? null : maxStarsRaw;
@@ -84,7 +83,7 @@ export async function GET(request: Request) {
     const cacheKey = JSON.stringify({
       userId: sessionUserId,
       language,
-      difficulties,
+      labels,
       minStars,
       maxStars,
       maintainerGrades,
@@ -103,7 +102,11 @@ export async function GET(request: Request) {
 
     const dateStr = getFreshnessDate(freshness);
 
-    let query = `is:issue is:open label:"good first issue" stars:>${minStars} pushed:>${dateStr}`;
+    const queryLabels = labels.length > 0 ? labels : ['good first issue'];
+    let query = `is:issue is:open stars:>${minStars} pushed:>${dateStr}`;
+    for (const ql of queryLabels) {
+      query += ` label:"${ql}"`;
+    }
     if (maxStars) query += ` stars:<${maxStars}`;
     if (language) query += ` language:${language}`;
     if (label) query += ` label:"${label}"`;
@@ -131,24 +134,6 @@ export async function GET(request: Request) {
         const parts = repoUrl.split('/');
         const repoName = parts[parts.length - 1];
         const repoOwner = parts[parts.length - 2];
-
-        const itemDifficulty = estimateDifficulty(
-          item.labels
-            .filter(
-              (
-                l,
-              ): l is {
-                id: number;
-                name: string;
-                color: string;
-                description: string | null;
-                default: boolean;
-                node_id: string;
-                url: string;
-              } => typeof l === 'object' && l !== null && 'name' in l,
-            )
-            .map(l => ({ name: l.name ?? '' })),
-        );
 
         const maintainerScore = await calculateMaintainerScore(repoOwner, repoName);
 
@@ -216,7 +201,6 @@ export async function GET(request: Request) {
           updatedAt: item.updated_at,
           state: item.state as 'open' | 'closed',
           repository,
-          difficulty: itemDifficulty,
         };
 
         return { issue, maintainerScore };
@@ -224,12 +208,6 @@ export async function GET(request: Request) {
     );
 
     let filtered = issuesWithMeta;
-
-    if (difficulties.length > 0) {
-      filtered = filtered.filter(
-        ({ issue }) => issue.difficulty && difficulties.includes(issue.difficulty),
-      );
-    }
 
     if (maintainerGrades.length > 0) {
       filtered = filtered.filter(({ maintainerScore }) =>

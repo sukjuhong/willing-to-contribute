@@ -38,7 +38,6 @@ export interface Issue {
   state: 'open' | 'closed';
   repository: Repository;
   isNew?: boolean;
-  difficulty?: 'beginner' | 'intermediate' | 'advanced';
 }
 
 // Saved (picked) issue types

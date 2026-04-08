@@ -21,7 +21,7 @@ import { cn } from '@/lib/utils';
 
 export interface FilterState {
   language: string;
-  difficulties: ('beginner' | 'intermediate' | 'advanced')[];
+  labels: string[];
   maintainerGrades: ('A' | 'B' | 'C')[];
   minStars: number | null;
   minForks: number | null;
@@ -48,7 +48,13 @@ const LANGUAGES = [
   'PHP',
 ];
 
-const DIFFICULTIES = ['beginner', 'intermediate', 'advanced'] as const;
+const LABEL_PRESETS = [
+  'good first issue',
+  'help wanted',
+  'bug',
+  'enhancement',
+  'documentation',
+] as const;
 const MAINTAINER_GRADES = ['A', 'B', 'C'] as const;
 
 const STARS_PRESETS = [
@@ -78,7 +84,7 @@ const FRESHNESS_PRESETS = [
 
 export const DEFAULT_FILTER_STATE: FilterState = {
   language: 'all',
-  difficulties: [],
+  labels: [],
   maintainerGrades: [],
   minStars: null,
   minForks: null,
@@ -92,18 +98,17 @@ export default function IssueFilters({
   profileLanguage,
 }: IssueFiltersProps) {
   const t = useTranslations();
-  const tDifficulty = useTranslations('difficulty');
   const tMaintainer = useTranslations('maintainer');
   const tStarsPreset = useTranslations('filters.starsPreset');
   const tForksPreset = useTranslations('filters.forksPreset');
   const tFreshnessPreset = useTranslations('filters.freshnessPreset');
   const [showAdvanced, setShowAdvanced] = useState(false);
 
-  const toggleDifficulty = (d: (typeof DIFFICULTIES)[number]) => {
-    const next = filters.difficulties.includes(d)
-      ? filters.difficulties.filter(v => v !== d)
-      : [...filters.difficulties, d];
-    onFilterChange({ ...filters, difficulties: next });
+  const toggleLabel = (l: string) => {
+    const next = filters.labels.includes(l)
+      ? filters.labels.filter(v => v !== l)
+      : [...filters.labels, l];
+    onFilterChange({ ...filters, labels: next });
   };
 
   const toggleGrade = (g: (typeof MAINTAINER_GRADES)[number]) => {
@@ -127,7 +132,7 @@ export default function IssueFilters({
 
   const hasActiveFilters =
     filters.language !== 'all' ||
-    filters.difficulties.length > 0 ||
+    filters.labels.length > 0 ||
     filters.maintainerGrades.length > 0 ||
     filters.minStars !== null ||
     filters.minForks !== null ||
@@ -166,17 +171,17 @@ export default function IssueFilters({
 
         <div className="flex items-center gap-2">
           <label className="text-xs text-muted-foreground whitespace-nowrap">
-            {t('filters.difficulty')}
+            {t('filters.labels')}
           </label>
-          <div className="flex gap-1.5">
-            {DIFFICULTIES.map(d => (
+          <div className="flex gap-1.5 flex-wrap">
+            {LABEL_PRESETS.map(l => (
               <Button
-                key={d}
+                key={l}
                 variant="ghost"
-                onClick={() => toggleDifficulty(d)}
-                className={chipClass(filters.difficulties.includes(d))}
+                onClick={() => toggleLabel(l)}
+                className={chipClass(filters.labels.includes(l))}
               >
-                {tDifficulty(d)}
+                {l}
               </Button>
             ))}
           </div>
