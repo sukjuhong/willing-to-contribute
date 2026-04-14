@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Issue } from '../types';
 import { FaGithub, FaClock, FaStar, FaCodeBranch } from 'react-icons/fa';
-import { LuShield, LuCircleDot, LuUsers, LuFlame } from 'react-icons/lu';
+import { LuShield, LuCircleDot, LuUsers, LuFlame, LuShare2 } from 'react-icons/lu';
 import { useTranslations } from 'next-intl';
 import { useLocaleSwitch } from '@/app/providers/IntlProvider';
 import { Card } from '@/components/ui/card';
@@ -92,14 +92,86 @@ const CompetitionBadge: React.FC<CompetitionBadgeProps> = ({
   </Badge>
 );
 
+interface ShareButtonProps {
+  onClick: (e: React.MouseEvent) => void;
+  label: string;
+  copied: boolean;
+  copiedLabel: string;
+  compact?: boolean;
+}
+
+const ShareButton: React.FC<ShareButtonProps> = ({
+  onClick,
+  label,
+  copied,
+  copiedLabel,
+  compact,
+}) => (
+  <div className="relative">
+    <button
+      onClick={onClick}
+      title={label}
+      className={cn(
+        'inline-flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors rounded',
+        compact ? 'p-0.5' : 'p-1',
+      )}
+      aria-label={label}
+    >
+      <LuShare2 className={compact ? 'size-3' : 'size-3.5'} />
+    </button>
+    {copied && (
+      <span className="absolute right-0 bottom-full mb-1 whitespace-nowrap rounded bg-foreground px-1.5 py-0.5 text-[10px] text-background">
+        {copiedLabel}
+      </span>
+    )}
+  </div>
+);
+
 const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
   const t = useTranslations();
   const tCommon = useTranslations('common');
   const tMaintainer = useTranslations('maintainer');
   const tIssue = useTranslations('issue');
   const { locale } = useLocaleSwitch();
+  const [copied, setCopied] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
 
   const competitionStatus = getCompetitionStatus(issue.comments, issue.assignee);
+
+  const shareUrl = `${issue.url}?utm_source=pickssue&utm_medium=share`;
+  const shareTitle = `${issue.title} - ${issue.repository.owner}/${issue.repository.name} #${issue.number}`;
+  const shareText = `${shareTitle}\n${tCommon('shareText')}`;
+
+  const handleShare = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title: shareTitle,
+          text: shareText,
+          url: shareUrl,
+        });
+      } catch {
+        // user cancelled or error — no action needed
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+        setCopied(true);
+        if (timerRef.current) clearTimeout(timerRef.current);
+        timerRef.current = setTimeout(() => setCopied(false), 2000);
+      } catch {
+        // clipboard not available
+      }
+    }
+  };
 
   if (compact) {
     return (
@@ -206,6 +278,13 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
                   {t('common.new')}
                 </Badge>
               )}
+              <ShareButton
+                onClick={handleShare}
+                label={tCommon('share')}
+                copied={copied}
+                copiedLabel={tCommon('copied')}
+                compact
+              />
             </div>
           </div>
         </div>
@@ -325,15 +404,23 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
               </span>
             </div>
 
-            <a
-              href={issue.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center text-primary hover:text-primary/80 transition-colors ml-auto text-xs"
-            >
-              <FaGithub className="mr-1" />
-              <span>{t('common.viewIssue')}</span>
-            </a>
+            <div className="flex items-center gap-2 ml-auto">
+              <a
+                href={issue.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center text-primary hover:text-primary/80 transition-colors text-xs"
+              >
+                <FaGithub className="mr-1" />
+                <span>{t('common.viewIssue')}</span>
+              </a>
+              <ShareButton
+                onClick={handleShare}
+                label={tCommon('share')}
+                copied={copied}
+                copiedLabel={tCommon('copied')}
+              />
+            </div>
           </div>
         </div>
       </div>
