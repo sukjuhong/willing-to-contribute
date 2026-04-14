@@ -27,7 +27,10 @@
     "minutesAgo": "{minutes}분 전",
     "hoursAgo": "{hours}시간 전",
     "daysAgo": "{days}일 전",
-    "loading": "불러오는 중..."
+    "loading": "불러오는 중...",
+    "share": "공유",
+    "copied": "복사됨!",
+    "shareText": "Pickssue에서 발견"
   },
   "navigation": {
     "home": "홈",

@@ -27,7 +27,10 @@
     "minutesAgo": "{minutes}m ago",
     "hoursAgo": "{hours}h ago",
     "daysAgo": "{days}d ago",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "share": "Share",
+    "copied": "Copied!",
+    "shareText": "Found on Pickssue"
   },
   "navigation": {
     "home": "Home",
