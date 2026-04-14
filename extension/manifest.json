@@ -34,8 +34,5 @@
       "run_at": "document_idle"
     }
   ],
-  "externally_connectable": {
-    "matches": ["https://pickssue.dev/*"]
-  },
   "options_page": "popup/popup.html"
 }

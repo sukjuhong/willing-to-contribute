@@ -142,7 +142,7 @@ chrome.runtime.onInstalled.addListener(async () => {
 
   // Set up context menu
   chrome.contextMenus.create({
-    id: 'wtc-track-repo',
+    id: 'pickssue-track-repo',
     title: 'Track this repo in Pickssue',
     contexts: ['link'],
     targetUrlPatterns: ['https://github.com/*/*'],
@@ -196,7 +196,7 @@ chrome.notifications.onClicked.addListener(notificationId => {
 // ---- Event: context menu clicked ----
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
-  if (info.menuItemId !== 'wtc-track-repo') return;
+  if (info.menuItemId !== 'pickssue-track-repo') return;
 
   const linkUrl = info.linkUrl;
   const parsed = parseRepoUrl(linkUrl);

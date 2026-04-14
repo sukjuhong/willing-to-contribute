@@ -102,4 +102,4 @@ English, Korean
 
 ## Support URL
 
-<https://github.com/sukjuhong/willing-to-contribute/issues>
+<https://github.com/sukjuhong/pickssue/issues>
