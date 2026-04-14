@@ -5,6 +5,26 @@ export const metadata: Metadata = {
   title: 'Frequently Asked Questions',
   description:
     'Answers to common questions about Pickssue and open source contribution — from getting started to advancing your career.',
+  openGraph: {
+    title: 'Frequently Asked Questions | Pickssue',
+    description:
+      'Answers to common questions about Pickssue and open source contribution — from getting started to advancing your career.',
+    url: 'https://pickssue.dev/faq',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Pickssue FAQ',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Frequently Asked Questions | Pickssue',
+    description:
+      'Answers to common questions about Pickssue and open source contribution — from getting started to advancing your career.',
+  },
 };
 
 type FAQItem = {
@@ -121,6 +141,77 @@ const contributionQuestions: FAQItem[] = [
   },
 ];
 
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is Pickssue?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Pickssue is a free tool that helps developers discover beginner-friendly GitHub issues across multiple repositories in one place. You add the repositories you care about, and the platform surfaces open issues labeled good first issue, help wanted, and similar tags.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is Pickssue free to use?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes, completely free. There are no paid plans, no premium tiers, and no hidden costs. The platform is itself an open source project, so the code is publicly available for anyone to inspect, fork, or self-host.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Do I need to log in with GitHub to use the app?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'No. You can browse issues without signing in. Anonymous usage is fully supported, though you will be subject to GitHub API rate limits. Signing in with GitHub unlocks additional features including cross-device sync, browser notifications, and a higher API rate limit.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What data does Pickssue collect?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: "When you sign in with GitHub, Pickssue stores your repository list and preferences in a secure cloud database tied to your account. In anonymous mode, settings are saved only in your browser's localStorage. We do not share your data with third parties.",
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How does cross-device settings sync work?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'When you are signed in with GitHub, your repository list and preferences are automatically saved to a secure cloud database. When you open the app on another device and sign in with the same account, your settings are restored automatically.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do browser notifications work?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'If you enable browser notifications in the Settings panel, the app will periodically check your tracked repositories for new beginner-friendly issues and send a browser notification when it finds any. Notifications require browser permission and only work while the app is open.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can beginners with no professional experience contribute to open source?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Absolutely. Many of the most welcoming open source projects actively seek contributors who are just learning to code. A first contribution does not need to be a complex new feature — fixing a typo in documentation, improving an error message, or adding a test case are all genuinely valuable.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Does open source contribution help with getting a job?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes, significantly. Open source contributions create a public, verifiable portfolio of real-world work. Recruiters and engineering managers look at GitHub profiles when evaluating candidates. A history of merged pull requests demonstrates that you can read unfamiliar codebases, communicate with a team, follow conventions, and ship working code.',
+      },
+    },
+  ],
+};
+
 function FAQSection({ title, items }: { title: string; items: FAQItem[] }) {
   return (
     <section className="mb-16">
@@ -145,6 +236,10 @@ function FAQSection({ title, items }: { title: string; items: FAQItem[] }) {
 export default function FAQPage() {
   return (
     <article className="text-foreground">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       {/* Hero Section */}
       <section className="text-center mb-16">
         <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 font-[family-name:var(--font-mono)]">

@@ -3,6 +3,24 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Privacy Policy',
   description: 'Privacy Policy for Pickssue - Learn how we handle your data.',
+  openGraph: {
+    title: 'Privacy Policy | Pickssue',
+    description: 'Privacy Policy for Pickssue - Learn how we handle your data.',
+    url: 'https://pickssue.dev/privacy',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Pickssue Privacy Policy',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Privacy Policy | Pickssue',
+    description: 'Privacy Policy for Pickssue - Learn how we handle your data.',
+  },
 };
 
 export default function PrivacyPolicy() {
