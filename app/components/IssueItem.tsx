@@ -63,9 +63,9 @@ const competitionStatusStyles: Record<CompetitionStatus, string> = {
 };
 
 const competitionStatusIcons: Record<CompetitionStatus, React.ReactNode> = {
-  available: <LuCircleDot className="shrink-0" size={10} />,
-  inProgress: <LuUsers className="shrink-0" size={10} />,
-  hot: <LuFlame className="shrink-0" size={10} />,
+  available: <LuCircleDot className="shrink-0 size-2.5" />,
+  inProgress: <LuUsers className="shrink-0 size-2.5" />,
+  hot: <LuFlame className="shrink-0 size-2.5" />,
 };
 
 interface CompetitionBadgeProps {
@@ -147,7 +147,10 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
                 </span>
               )}
               {issue.labels.length > 0 && (
-                <span className="text-muted-foreground/30 text-xs mx-0.5 select-none">
+                <span
+                  className="text-muted-foreground/30 text-xs mx-0.5 select-none"
+                  aria-hidden="true"
+                >
                   |
                 </span>
               )}
@@ -160,7 +163,7 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
                   )}
                   title={`${tMaintainer(`grade${issue.repository.maintainerScore.grade}`)} · ${tMaintainer('responseTime', { hours: Math.round(issue.repository.maintainerScore.avgResponseTimeHours) })} · ${tMaintainer('mergeRate', { rate: Math.round(issue.repository.maintainerScore.mergeRate * 100) })}`}
                 >
-                  <LuShield className="shrink-0" size={10} />
+                  <LuShield className="shrink-0 size-2.5" />
                   {tMaintainer(`grade${issue.repository.maintainerScore.grade}`)}
                 </Badge>
               )}
@@ -253,7 +256,7 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
                 )}
                 title={`${tMaintainer('responseTime', { hours: Math.round(issue.repository.maintainerScore.avgResponseTimeHours) })} · ${tMaintainer('mergeRate', { rate: Math.round(issue.repository.maintainerScore.mergeRate * 100) })}`}
               >
-                <LuShield className="shrink-0" size={11} />
+                <LuShield className="shrink-0 size-[11px]" />
                 {issue.repository.maintainerScore.grade} ·{' '}
                 {tMaintainer(`grade${issue.repository.maintainerScore.grade}`)}
               </Badge>
