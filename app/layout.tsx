@@ -55,9 +55,51 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://pickssue.dev'),
-  title: 'Pickssue',
+  title: {
+    default: 'Pickssue',
+    template: '%s | Pickssue',
+  },
   description:
     'A personalized open-source contribution curator that analyzes your GitHub activity to recommend the best issues for you.',
+  openGraph: {
+    title: 'Pickssue',
+    description:
+      'A personalized open-source contribution curator that analyzes your GitHub activity to recommend the best issues for you.',
+    url: '/',
+    siteName: 'Pickssue',
+    type: 'website',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Pickssue - Find beginner-friendly GitHub issues',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Pickssue',
+    description:
+      'A personalized open-source contribution curator that analyzes your GitHub activity to recommend the best issues for you.',
+    images: ['/og-image.png'],
+  },
+};
+
+const webApplicationJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Pickssue',
+  url: 'https://pickssue.dev',
+  description:
+    'A personalized open-source contribution curator that analyzes your GitHub activity to recommend the best issues for you.',
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -65,6 +107,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="google-adsense-account" content="ca-pub-9157231737129938" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(webApplicationJsonLd) }}
+        />
         {env.NEXT_PUBLIC_ADSENSE_CLIENT_ID && (
           <Script
             async

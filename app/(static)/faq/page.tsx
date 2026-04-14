@@ -5,6 +5,26 @@ export const metadata: Metadata = {
   title: 'Frequently Asked Questions',
   description:
     'Answers to common questions about Pickssue and open source contribution — from getting started to advancing your career.',
+  openGraph: {
+    title: 'Frequently Asked Questions | Pickssue',
+    description:
+      'Answers to common questions about Pickssue and open source contribution — from getting started to advancing your career.',
+    url: '/faq',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Pickssue FAQ',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Frequently Asked Questions | Pickssue',
+    description:
+      'Answers to common questions about Pickssue and open source contribution — from getting started to advancing your career.',
+  },
 };
 
 type FAQItem = {
@@ -121,6 +141,109 @@ const contributionQuestions: FAQItem[] = [
   },
 ];
 
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is Pickssue?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Pickssue is a free tool that helps developers discover beginner-friendly GitHub issues across multiple repositories in one place. You add the repositories you care about, and the platform surfaces open issues labeled good first issue, help wanted, and similar tags.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is Pickssue free to use?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes, completely free. There are no paid plans, no premium tiers, and no hidden costs. The platform is itself an open source project, so the code is publicly available for anyone to inspect, fork, or self-host.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Do I need to log in with GitHub to use the app?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'No. You can browse issues without signing in. Anonymous usage is fully supported, though you will be subject to GitHub API rate limits. Signing in with GitHub unlocks additional features including cross-device sync, browser notifications, and a higher API rate limit.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What data does Pickssue collect?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: "When you sign in with GitHub, Pickssue stores your repository list and preferences in a secure cloud database tied to your account. In anonymous mode, settings are saved only in your browser's localStorage. We do not share your data with third parties.",
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How does cross-device settings sync work?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'When you are signed in with GitHub, your repository list and preferences are automatically saved to a secure cloud database. When you open the app on another device and sign in with the same account, your settings are restored automatically.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do browser notifications work?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'If you enable browser notifications in the Settings panel, the app will periodically check your tracked repositories for new beginner-friendly issues and send a browser notification when it finds any. Notifications require browser permission and only work while the app is open.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can beginners with no professional experience contribute to open source?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Absolutely. Many of the most welcoming open source projects actively seek contributors who are just learning to code. A first contribution does not need to be a complex new feature — fixing a typo in documentation, improving an error message, or adding a test case are all genuinely valuable.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I choose which project to contribute to?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: "Start with software you already use and care about. If you use a tool every day, you understand its purpose, which makes it easier to judge whether a change is correct and valuable. Also consider the project's maintainer responsiveness — look at how quickly recent pull requests were reviewed.",
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What should I do if my pull request is ignored?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Wait at least one to two weeks before following up, since maintainers are often volunteers. If there is still no response after a polite follow-up comment, it is reasonable to move on to another project. Not every PR gets merged — it is not a reflection of your skill.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: "Can I contribute to open source if my English isn't strong?",
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. Most open source communication happens in writing, which gives you time to look up words, use translation tools, and compose your thoughts carefully. Clear intent matters far more than perfect grammar.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Does open source contribution help with getting a job?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes, significantly. Open source contributions create a public, verifiable portfolio of real-world work. Recruiters and engineering managers look at GitHub profiles when evaluating candidates. A history of merged pull requests demonstrates that you can read unfamiliar codebases, communicate with a team, follow conventions, and ship working code.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Are there ways to contribute to open source without writing code?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Many. Writing and improving documentation is one of the highest-impact contributions you can make. You can also triage issues, translate content, design UI/UX improvements, answer questions in community forums, or star and share projects you find valuable.',
+      },
+    },
+  ],
+};
+
 function FAQSection({ title, items }: { title: string; items: FAQItem[] }) {
   return (
     <section className="mb-16">
@@ -145,6 +268,10 @@ function FAQSection({ title, items }: { title: string; items: FAQItem[] }) {
 export default function FAQPage() {
   return (
     <article className="text-foreground">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       {/* Hero Section */}
       <section className="text-center mb-16">
         <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 font-[family-name:var(--font-mono)]">

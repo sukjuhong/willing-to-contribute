@@ -5,11 +5,88 @@ export const metadata: Metadata = {
   title: 'How to Make Your First Open Source Contribution',
   description:
     'A comprehensive guide for beginners on making your first open source contribution — from finding the right issue to getting your pull request merged.',
+  openGraph: {
+    title: 'How to Make Your First Open Source Contribution',
+    description:
+      'A comprehensive guide for beginners on making your first open source contribution — from finding the right issue to getting your pull request merged.',
+    url: '/guide',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Beginner guide to open source contributions',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'How to Make Your First Open Source Contribution',
+    description:
+      'A comprehensive guide for beginners on making your first open source contribution — from finding the right issue to getting your pull request merged.',
+  },
+};
+
+// TODO: Extract step text to shared constants shared with the UI to avoid duplication in a future refactor.
+const howToJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'How to Make Your First Open Source Contribution',
+  description:
+    'A step-by-step guide for beginners on making their first open source contribution — from finding the right issue to getting a pull request merged.',
+  step: [
+    {
+      '@type': 'HowToStep',
+      position: 1,
+      name: 'Comment on the Issue',
+      text: 'Before writing any code, leave a comment on the issue saying you would like to work on it. This prevents duplicate effort and gives the maintainer a chance to clarify requirements.',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 2,
+      name: 'Fork the Repository',
+      text: 'Click the Fork button on the GitHub repository page. This creates a copy of the entire repository under your GitHub account with full write access.',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 3,
+      name: 'Clone Your Fork Locally',
+      text: 'Run git clone to download the repository to your computer. Then run the project locally following the instructions in the README to confirm everything works.',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 4,
+      name: 'Create a New Branch',
+      text: 'Never work directly on the main branch. Create a descriptive branch for your change using git checkout -b.',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 5,
+      name: 'Write Your Code',
+      text: 'Make the smallest change that solves the problem. Read the existing code carefully and match the style. Run the existing test suite to confirm nothing is broken.',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 6,
+      name: 'Commit with a Clear Message',
+      text: 'Write a commit message that explains what you changed and why. Many projects follow the Conventional Commits format.',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 7,
+      name: 'Push and Open a Pull Request',
+      text: 'Push your branch to your fork, then go to the original repository on GitHub and open a pull request. Fill in the PR template and submit.',
+    },
+  ],
 };
 
 export default function GuidePage() {
   return (
     <article className="text-foreground">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }}
+      />
       {/* Hero Section */}
       <section className="text-center mb-16">
         <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 font-[family-name:var(--font-mono)]">
