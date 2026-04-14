@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { Octokit } from '@octokit/rest';
 import { Issue, Label, Repository } from '../../types';
-import { estimateDifficulty } from '../recommended/difficulty';
 import { cacheGet, cacheSet } from '../../lib/cache';
 
 const CACHE_TTL_SECONDS = 300; // 5 minutes
@@ -40,7 +39,9 @@ export async function GET(request: Request) {
       page,
       authenticated: !!userToken,
     });
-    const cached = await cacheGet<{ results: Issue[] | Repository[]; total: number }>(cacheKey);
+    const cached = await cacheGet<{ results: Issue[] | Repository[]; total: number }>(
+      cacheKey,
+    );
     if (cached) {
       return NextResponse.json(cached);
     }
@@ -91,24 +92,6 @@ export async function GET(request: Request) {
         const repoName = parts[parts.length - 1];
         const repoOwner = parts[parts.length - 2];
 
-        const itemDifficulty = estimateDifficulty(
-          item.labels
-            .filter(
-              (
-                l,
-              ): l is {
-                id: number;
-                name: string;
-                color: string;
-                description: string | null;
-                default: boolean;
-                node_id: string;
-                url: string;
-              } => typeof l === 'object' && l !== null && 'name' in l,
-            )
-            .map(l => ({ name: l.name ?? '' })),
-        );
-
         const labels: Label[] = item.labels
           .filter(
             (
@@ -147,7 +130,6 @@ export async function GET(request: Request) {
           updatedAt: item.updated_at,
           state: item.state as 'open' | 'closed',
           repository,
-          difficulty: itemDifficulty,
         };
       });
 

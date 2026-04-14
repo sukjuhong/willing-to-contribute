@@ -38,12 +38,6 @@ const formatRelativeTime = (
   }
 };
 
-const difficultyStyles = {
-  beginner: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
-  intermediate: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
-  advanced: 'bg-red-500/15 text-red-400 border-red-500/30',
-};
-
 const maintainerGradeStyles = {
   A: 'bg-emerald-500/15 text-emerald-400',
   B: 'bg-amber-500/15 text-amber-400',
@@ -53,7 +47,6 @@ const maintainerGradeStyles = {
 const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
   const t = useTranslations();
   const tCommon = useTranslations('common');
-  const tDifficulty = useTranslations('difficulty');
   const tMaintainer = useTranslations('maintainer');
   const { locale } = useLocaleSwitch();
 
@@ -101,18 +94,6 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
                 <span className="text-xs text-muted-foreground">
                   +{issue.labels.length - 3}
                 </span>
-              )}
-              {issue.difficulty && (
-                <Badge
-                  variant="outline"
-                  className={cn(
-                    'text-xs px-1.5 py-0.5 rounded border',
-                    difficultyStyles[issue.difficulty],
-                  )}
-                  title={t('difficulty.estimated')}
-                >
-                  {tDifficulty(issue.difficulty)}
-                </Badge>
               )}
               {issue.repository.maintainerScore && (
                 <Badge
@@ -198,19 +179,6 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
                 className="bg-amber-500/10 text-amber-400 border-amber-500/20 text-xs font-mono px-2.5 py-0.5 rounded"
               >
                 {t('common.new')}
-              </Badge>
-            )}
-
-            {issue.difficulty && (
-              <Badge
-                variant="outline"
-                className={cn(
-                  'text-xs px-2 py-0.5 rounded border',
-                  difficultyStyles[issue.difficulty],
-                )}
-                title={t('difficulty.estimated')}
-              >
-                {tDifficulty(issue.difficulty)}
               </Badge>
             )}
 

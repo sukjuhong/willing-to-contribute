@@ -79,7 +79,7 @@ export default function RecommendedIssues() {
       try {
         const params = new URLSearchParams();
         if (filters.language !== 'all') params.set('language', filters.language);
-        filters.difficulties.forEach(d => params.append('difficulty', d));
+        if (filters.label_preset) params.set('labelPreset', filters.label_preset);
         filters.maintainerGrades.forEach(g => params.append('maintainerGrade', g));
         if (filters.minStars) params.set('minStars', String(filters.minStars));
         if (filters.minForks) params.set('minForks', String(filters.minForks));
@@ -121,7 +121,7 @@ export default function RecommendedIssues() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       filters.language,
-      filters.difficulties,
+      filters.label_preset,
       filters.maintainerGrades,
       filters.minStars,
       filters.minForks,
@@ -131,7 +131,7 @@ export default function RecommendedIssues() {
   );
 
   // Serialize array filters for stable dependency tracking
-  const difficultiesKey = filters.difficulties.join(',');
+  const labelPresetKey = filters.label_preset;
   const gradesKey = filters.maintainerGrades.join(',');
 
   // Fetch on mount and when filters/search change
@@ -141,7 +141,7 @@ export default function RecommendedIssues() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     filters.language,
-    difficultiesKey,
+    labelPresetKey,
     gradesKey,
     filters.minStars,
     filters.minForks,
@@ -236,7 +236,7 @@ export default function RecommendedIssues() {
                 // Reset override when clearing all filters
                 if (
                   newFilters.language === DEFAULT_FILTER_STATE.language &&
-                  newFilters.difficulties.length === 0 &&
+                  newFilters.label_preset === '' &&
                   newFilters.maintainerGrades.length === 0 &&
                   newFilters.minStars === null &&
                   newFilters.minForks === null &&
