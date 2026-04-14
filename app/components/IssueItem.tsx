@@ -1,6 +1,7 @@
 import React from 'react';
 import { Issue } from '../types';
 import { FaGithub, FaClock, FaStar, FaCodeBranch } from 'react-icons/fa';
+import { LuShield, LuCircleDot, LuUsers, LuFlame } from 'react-icons/lu';
 import { useTranslations } from 'next-intl';
 import { useLocaleSwitch } from '@/app/providers/IntlProvider';
 import { Card } from '@/components/ui/card';
@@ -61,6 +62,12 @@ const competitionStatusStyles: Record<CompetitionStatus, string> = {
   hot: 'bg-red-500/15 text-red-400 border-red-500/20',
 };
 
+const competitionStatusIcons: Record<CompetitionStatus, React.ReactNode> = {
+  available: <LuCircleDot className="shrink-0" size={10} />,
+  inProgress: <LuUsers className="shrink-0" size={10} />,
+  hot: <LuFlame className="shrink-0" size={10} />,
+};
+
 interface CompetitionBadgeProps {
   status: CompetitionStatus;
   label: string;
@@ -75,11 +82,12 @@ const CompetitionBadge: React.FC<CompetitionBadgeProps> = ({
   <Badge
     variant="outline"
     className={cn(
-      'text-xs py-0.5 rounded',
-      compact ? 'px-1.5' : 'px-2.5',
+      'inline-flex items-center gap-1 text-xs py-0.5 rounded font-medium',
+      compact ? 'px-1.5' : 'px-2',
       competitionStatusStyles[status],
     )}
   >
+    {competitionStatusIcons[status]}
     {label}
   </Badge>
 );
@@ -119,12 +127,12 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
               </a>
             </h3>
 
-            <div className="flex flex-wrap gap-1 mt-1">
+            <div className="flex flex-wrap items-center gap-1 mt-1">
               {issue.labels.slice(0, 3).map(label => (
                 <Badge
                   key={label.id}
                   variant="outline"
-                  className="text-xs px-1.5 py-0.5 rounded border-none"
+                  className="text-xs px-1.5 py-0.5 rounded-full border-none"
                   style={{
                     backgroundColor: `#${label.color}15`,
                     color: `#${label.color}`,
@@ -138,15 +146,21 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
                   +{issue.labels.length - 3}
                 </span>
               )}
+              {issue.labels.length > 0 && (
+                <span className="text-muted-foreground/30 text-xs mx-0.5 select-none">
+                  |
+                </span>
+              )}
               {issue.repository.maintainerScore && (
                 <Badge
                   variant="outline"
                   className={cn(
-                    'text-xs px-1.5 py-0.5 rounded border-none',
+                    'inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded border-none',
                     maintainerGradeStyles[issue.repository.maintainerScore.grade],
                   )}
                   title={`${tMaintainer(`grade${issue.repository.maintainerScore.grade}`)} · ${tMaintainer('responseTime', { hours: Math.round(issue.repository.maintainerScore.avgResponseTimeHours) })} · ${tMaintainer('mergeRate', { rate: Math.round(issue.repository.maintainerScore.mergeRate * 100) })}`}
                 >
+                  <LuShield className="shrink-0" size={10} />
                   {tMaintainer(`grade${issue.repository.maintainerScore.grade}`)}
                 </Badge>
               )}
@@ -234,11 +248,12 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
               <Badge
                 variant="outline"
                 className={cn(
-                  'text-xs px-2 py-0.5 rounded border-none',
+                  'inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded border-none',
                   maintainerGradeStyles[issue.repository.maintainerScore.grade],
                 )}
                 title={`${tMaintainer('responseTime', { hours: Math.round(issue.repository.maintainerScore.avgResponseTimeHours) })} · ${tMaintainer('mergeRate', { rate: Math.round(issue.repository.maintainerScore.mergeRate * 100) })}`}
               >
+                <LuShield className="shrink-0" size={11} />
                 {issue.repository.maintainerScore.grade} ·{' '}
                 {tMaintainer(`grade${issue.repository.maintainerScore.grade}`)}
               </Badge>
