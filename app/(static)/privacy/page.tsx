@@ -183,9 +183,9 @@ export default function PrivacyPolicy() {
                 <p className="text-foreground leading-relaxed">
                   When you sign in with GitHub, your profile and preferences are stored in
                   a secure cloud database (Supabase) tied to your account. This enables
-                  cross-device sync. If you use the service without signing in, no data is
-                  stored on our servers. Row-level security ensures only you can read or
-                  write your own data.
+                  cross-device sync. If you use the service without signing in, no
+                  personal information or preferences are stored on our servers. Row-level
+                  security ensures only you can read or write your own data.
                 </p>
               </div>
 
@@ -506,7 +506,7 @@ export default function PrivacyPolicy() {
               <li>
                 <strong className="text-foreground">Row-Level Security:</strong> Our cloud
                 database enforces row-level security so only you can access your own data.
-                Anonymous usage stores nothing server-side.
+                Anonymous usage stores no personal information server-side.
               </li>
               <li>
                 <strong className="text-foreground">OAuth Security:</strong> We use
