@@ -1,7 +1,7 @@
 /**
  * Web App ↔ Extension Bridge
  *
- * Injected on willing-to-contribute.vercel.app to sync auth tokens
+ * Injected on pickssue.dev to sync auth tokens
  * and settings between the web app's localStorage and the extension's
  * chrome.storage. Sync is bidirectional:
  *

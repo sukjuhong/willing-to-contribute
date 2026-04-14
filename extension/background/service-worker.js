@@ -1,5 +1,5 @@
 /**
- * Service Worker for Willing to Contribute Chrome Extension
+ * Service Worker for Pickssue Chrome Extension
  * Manifest V3 - handles background polling, notifications, and context menus
  */
 
@@ -143,7 +143,7 @@ chrome.runtime.onInstalled.addListener(async () => {
   // Set up context menu
   chrome.contextMenus.create({
     id: 'wtc-track-repo',
-    title: 'Track this repo in WTC',
+    title: 'Track this repo in Pickssue',
     contexts: ['link'],
     targetUrlPatterns: ['https://github.com/*/*'],
   });

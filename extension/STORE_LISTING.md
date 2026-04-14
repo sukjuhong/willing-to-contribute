@@ -2,7 +2,7 @@
 
 ## Name
 
-Willing to Contribute - Open Source Issue Finder
+Pickssue - Open Source Issue Finder
 
 ## Short Description (132자 이내)
 
@@ -10,7 +10,7 @@ Find beginner-friendly GitHub issues, track repos, and get notified — all from
 
 ## Detailed Description (English)
 
-**Willing to Contribute** helps developers of all levels discover and track beginner-friendly GitHub issues without leaving their browser.
+**Pickssue** helps developers of all levels discover and track beginner-friendly GitHub issues without leaving their browser.
 
 ### Key Features
 
@@ -34,7 +34,7 @@ Find beginner-friendly GitHub issues, track repos, and get notified — all from
 
 All data is stored locally on your device using `chrome.storage.local` and `chrome.storage.sync`. No data is sent to external servers. GitHub API calls are made directly from your browser using your own token.
 
-Full privacy policy: <https://willing-to-contribute.vercel.app/privacy>
+Full privacy policy: <https://pickssue.dev/privacy>
 
 ## Category
 
@@ -48,7 +48,7 @@ English, Korean
 
 ## 한국어 설명
 
-**Willing to Contribute**는 개발자들이 입문자 친화적인 GitHub 이슈를 브라우저에서 바로 탐색하고 추적할 수 있도록 도와주는 확장 프로그램입니다.
+**Pickssue**는 개발자들이 입문자 친화적인 GitHub 이슈를 브라우저에서 바로 탐색하고 추적할 수 있도록 도와주는 확장 프로그램입니다.
 
 ### 주요 기능
 
@@ -72,7 +72,7 @@ English, Korean
 
 모든 데이터는 `chrome.storage.local` 및 `chrome.storage.sync`를 통해 기기에 로컬로 저장됩니다. 외부 서버로 데이터를 전송하지 않으며, GitHub API는 사용자의 토큰으로 브라우저에서 직접 호출합니다.
 
-전체 개인정보처리방침: <https://willing-to-contribute.vercel.app/privacy>
+전체 개인정보처리방침: <https://pickssue.dev/privacy>
 
 ---
 
@@ -94,11 +94,11 @@ English, Korean
 
 ## Privacy Policy URL
 
-<https://willing-to-contribute.vercel.app/privacy>
+<https://pickssue.dev/privacy>
 
 ## Website URL
 
-<https://willing-to-contribute.vercel.app>
+<https://pickssue.dev>
 
 ## Support URL
 
