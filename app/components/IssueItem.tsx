@@ -44,11 +44,54 @@ const maintainerGradeStyles = {
   C: 'bg-muted text-muted-foreground',
 };
 
+type CompetitionStatus = 'available' | 'inProgress' | 'hot';
+
+const getCompetitionStatus = (
+  comments: number | undefined,
+  assignee: string | null | undefined,
+): CompetitionStatus => {
+  if (assignee) return 'inProgress';
+  if ((comments ?? 0) >= 3) return 'hot';
+  return 'available';
+};
+
+const competitionStatusStyles: Record<CompetitionStatus, string> = {
+  available: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20',
+  inProgress: 'bg-amber-500/15 text-amber-400 border-amber-500/20',
+  hot: 'bg-red-500/15 text-red-400 border-red-500/20',
+};
+
+interface CompetitionBadgeProps {
+  status: CompetitionStatus;
+  label: string;
+  compact?: boolean;
+}
+
+const CompetitionBadge: React.FC<CompetitionBadgeProps> = ({
+  status,
+  label,
+  compact,
+}) => (
+  <Badge
+    variant="outline"
+    className={cn(
+      'text-xs py-0.5 rounded',
+      compact ? 'px-1.5' : 'px-2.5',
+      competitionStatusStyles[status],
+    )}
+  >
+    {label}
+  </Badge>
+);
+
 const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
   const t = useTranslations();
   const tCommon = useTranslations('common');
   const tMaintainer = useTranslations('maintainer');
+  const tIssue = useTranslations('issue');
   const { locale } = useLocaleSwitch();
+
+  const competitionStatus = getCompetitionStatus(issue.comments, issue.assignee);
 
   if (compact) {
     return (
@@ -107,6 +150,11 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
                   {tMaintainer(`grade${issue.repository.maintainerScore.grade}`)}
                 </Badge>
               )}
+              <CompetitionBadge
+                status={competitionStatus}
+                label={tIssue(`status.${competitionStatus}`)}
+                compact
+              />
             </div>
           </div>
 
@@ -195,6 +243,11 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
                 {tMaintainer(`grade${issue.repository.maintainerScore.grade}`)}
               </Badge>
             )}
+
+            <CompetitionBadge
+              status={competitionStatus}
+              label={tIssue(`status.${competitionStatus}`)}
+            />
           </div>
 
           <div className="flex flex-wrap gap-1.5 mt-2">

@@ -177,6 +177,8 @@ interface GithubIssue {
   created_at: string;
   updated_at: string;
   state: 'open' | 'closed';
+  comments: number;
+  assignee: { login: string } | null;
 }
 
 // Shared helper to convert a GitHub API label (object or string) to our Label type
@@ -212,6 +214,8 @@ const processIssueData = (data: unknown[], repository: Repository): Issue[] => {
       updatedAt: issue.updated_at,
       state: issue.state,
       repository,
+      comments: issue.comments,
+      assignee: issue.assignee?.login ?? null,
     };
   });
 };
@@ -296,6 +300,8 @@ export const getRecommendedIssues = async (language?: string): Promise<Issue[]> 
           name: repoName,
           url: `https://github.com/${repoOwner}/${repoName}`,
         },
+        comments: item.comments,
+        assignee: (item.assignee as { login: string } | null)?.login ?? null,
       };
     });
 
@@ -378,4 +384,3 @@ export const searchRepositories = async (query: string): Promise<Repository[]> =
     return [];
   }
 };
-

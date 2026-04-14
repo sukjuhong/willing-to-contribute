@@ -156,6 +156,13 @@
       "6m": "Past 6 Months"
     }
   },
+  "issue": {
+    "status": {
+      "available": "Available",
+      "inProgress": "In Progress",
+      "hot": "Hot"
+    }
+  },
   "maintainer": {
     "gradeA": "Responsive",
     "gradeB": "Moderate",
