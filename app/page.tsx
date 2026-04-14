@@ -126,10 +126,8 @@ export default function LandingPage() {
               <p className="text-muted-foreground text-sm mt-1">Free to Use</p>
             </div>
             <div>
-              <p className="text-3xl font-bold text-primary">0</p>
-              <p className="text-muted-foreground text-sm mt-1">
-                Data Stored Server-Side
-              </p>
+              <p className="text-3xl font-bold text-primary">Opt-In</p>
+              <p className="text-muted-foreground text-sm mt-1">Cloud Sync</p>
             </div>
             <div>
               <p className="text-3xl font-bold text-primary">Open</p>
