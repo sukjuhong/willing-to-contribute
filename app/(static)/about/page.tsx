@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     title: 'About Pickssue',
     description:
       'Learn about Pickssue - a platform that helps developers discover beginner-friendly GitHub issues and start their open source journey.',
-    url: 'https://pickssue.dev/about',
+    url: '/about',
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'About Pickssue' }],
   },
   twitter: {

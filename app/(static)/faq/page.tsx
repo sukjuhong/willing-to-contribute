@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     title: 'Frequently Asked Questions | Pickssue',
     description:
       'Answers to common questions about Pickssue and open source contribution — from getting started to advancing your career.',
-    url: 'https://pickssue.dev/faq',
+    url: '/faq',
     images: [
       {
         url: '/og-image.png',
@@ -203,10 +203,42 @@ const faqJsonLd = {
     },
     {
       '@type': 'Question',
+      name: 'How do I choose which project to contribute to?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: "Start with software you already use and care about. If you use a tool every day, you understand its purpose, which makes it easier to judge whether a change is correct and valuable. Also consider the project's maintainer responsiveness — look at how quickly recent pull requests were reviewed.",
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What should I do if my pull request is ignored?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Wait at least one to two weeks before following up, since maintainers are often volunteers. If there is still no response after a polite follow-up comment, it is reasonable to move on to another project. Not every PR gets merged — it is not a reflection of your skill.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: "Can I contribute to open source if my English isn't strong?",
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. Most open source communication happens in writing, which gives you time to look up words, use translation tools, and compose your thoughts carefully. Clear intent matters far more than perfect grammar.',
+      },
+    },
+    {
+      '@type': 'Question',
       name: 'Does open source contribution help with getting a job?',
       acceptedAnswer: {
         '@type': 'Answer',
         text: 'Yes, significantly. Open source contributions create a public, verifiable portfolio of real-world work. Recruiters and engineering managers look at GitHub profiles when evaluating candidates. A history of merged pull requests demonstrates that you can read unfamiliar codebases, communicate with a team, follow conventions, and ship working code.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Are there ways to contribute to open source without writing code?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Many. Writing and improving documentation is one of the highest-impact contributions you can make. You can also triage issues, translate content, design UI/UX improvements, answer questions in community forums, or star and share projects you find valuable.',
       },
     },
   ],

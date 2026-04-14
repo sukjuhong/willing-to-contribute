@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Privacy Policy | Pickssue',
     description: 'Privacy Policy for Pickssue - Learn how we handle your data.',
-    url: 'https://pickssue.dev/privacy',
+    url: '/privacy',
     images: [
       {
         url: '/og-image.png',

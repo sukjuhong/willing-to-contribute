@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     title: 'How to Make Your First Open Source Contribution',
     description:
       'A comprehensive guide for beginners on making your first open source contribution — from finding the right issue to getting your pull request merged.',
-    url: 'https://pickssue.dev/guide',
+    url: '/guide',
     images: [
       {
         url: '/og-image.png',
@@ -27,6 +27,7 @@ export const metadata: Metadata = {
   },
 };
 
+// TODO: Extract step text to shared constants shared with the UI to avoid duplication in a future refactor.
 const howToJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'HowTo',

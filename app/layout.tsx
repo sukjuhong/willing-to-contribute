@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     title: 'Pickssue',
     description:
       'A personalized open-source contribution curator that analyzes your GitHub activity to recommend the best issues for you.',
-    url: 'https://pickssue.dev',
+    url: '/',
     siteName: 'Pickssue',
     type: 'website',
     images: [

@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Terms of Service | Pickssue',
     description: 'Terms of Service for Pickssue.',
-    url: 'https://pickssue.dev/terms',
+    url: '/terms',
     images: [
       {
         url: '/og-image.png',
