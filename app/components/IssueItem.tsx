@@ -44,11 +44,31 @@ const maintainerGradeStyles = {
   C: 'bg-muted text-muted-foreground',
 };
 
+type CompetitionStatus = 'available' | 'inProgress' | 'hot';
+
+const getCompetitionStatus = (
+  comments: number | undefined,
+  assignee: string | null | undefined,
+): CompetitionStatus => {
+  if (assignee) return 'inProgress';
+  if ((comments ?? 0) >= 5) return 'hot';
+  return 'available';
+};
+
+const competitionStatusStyles: Record<CompetitionStatus, string> = {
+  available: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20',
+  inProgress: 'bg-amber-500/15 text-amber-400 border-amber-500/20',
+  hot: 'bg-red-500/15 text-red-400 border-red-500/20',
+};
+
 const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
   const t = useTranslations();
   const tCommon = useTranslations('common');
   const tMaintainer = useTranslations('maintainer');
+  const tIssue = useTranslations('issue');
   const { locale } = useLocaleSwitch();
+
+  const competitionStatus = getCompetitionStatus(issue.comments, issue.assignee);
 
   if (compact) {
     return (
@@ -107,6 +127,15 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
                   {tMaintainer(`grade${issue.repository.maintainerScore.grade}`)}
                 </Badge>
               )}
+              <Badge
+                variant="outline"
+                className={cn(
+                  'text-xs px-1.5 py-0.5 rounded',
+                  competitionStatusStyles[competitionStatus],
+                )}
+              >
+                {tIssue(`status.${competitionStatus}`)}
+              </Badge>
             </div>
           </div>
 
@@ -195,6 +224,16 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
                 {tMaintainer(`grade${issue.repository.maintainerScore.grade}`)}
               </Badge>
             )}
+
+            <Badge
+              variant="outline"
+              className={cn(
+                'text-xs px-2.5 py-0.5 rounded',
+                competitionStatusStyles[competitionStatus],
+              )}
+            >
+              {tIssue(`status.${competitionStatus}`)}
+            </Badge>
           </div>
 
           <div className="flex flex-wrap gap-1.5 mt-2">

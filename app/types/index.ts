@@ -38,6 +38,8 @@ export interface Issue {
   state: 'open' | 'closed';
   repository: Repository;
   isNew?: boolean;
+  comments?: number;
+  assignee?: string | null;
 }
 
 // Saved (picked) issue types

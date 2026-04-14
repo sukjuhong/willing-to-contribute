@@ -156,6 +156,13 @@
       "6m": "지난 6달"
     }
   },
+  "issue": {
+    "status": {
+      "available": "참여 가능",
+      "inProgress": "진행 중",
+      "hot": "경쟁 중"
+    }
+  },
   "maintainer": {
     "gradeA": "친절함",
     "gradeB": "보통",
