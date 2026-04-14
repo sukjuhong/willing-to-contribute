@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Issue } from '../types';
 import { FaGithub, FaClock, FaStar, FaCodeBranch } from 'react-icons/fa';
 import { LuShield, LuCircleDot, LuUsers, LuFlame, LuShare2 } from 'react-icons/lu';
@@ -92,6 +92,41 @@ const CompetitionBadge: React.FC<CompetitionBadgeProps> = ({
   </Badge>
 );
 
+interface ShareButtonProps {
+  onClick: (e: React.MouseEvent) => void;
+  label: string;
+  copied: boolean;
+  copiedLabel: string;
+  compact?: boolean;
+}
+
+const ShareButton: React.FC<ShareButtonProps> = ({
+  onClick,
+  label,
+  copied,
+  copiedLabel,
+  compact,
+}) => (
+  <div className="relative">
+    <button
+      onClick={onClick}
+      title={label}
+      className={cn(
+        'inline-flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors rounded',
+        compact ? 'p-0.5' : 'p-1',
+      )}
+      aria-label={label}
+    >
+      <LuShare2 className={compact ? 'size-3' : 'size-3.5'} />
+    </button>
+    {copied && (
+      <span className="absolute right-0 bottom-full mb-1 whitespace-nowrap rounded bg-foreground px-1.5 py-0.5 text-[10px] text-background">
+        {copiedLabel}
+      </span>
+    )}
+  </div>
+);
+
 const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
   const t = useTranslations();
   const tCommon = useTranslations('common');
@@ -99,6 +134,13 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
   const tIssue = useTranslations('issue');
   const { locale } = useLocaleSwitch();
   const [copied, setCopied] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
 
   const competitionStatus = getCompetitionStatus(issue.comments, issue.assignee);
 
@@ -113,7 +155,7 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
       try {
         await navigator.share({
           title: shareTitle,
-          text: tCommon('shareText'),
+          text: shareText,
           url: shareUrl,
         });
       } catch {
@@ -123,7 +165,8 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
       try {
         await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
         setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+        if (timerRef.current) clearTimeout(timerRef.current);
+        timerRef.current = setTimeout(() => setCopied(false), 2000);
       } catch {
         // clipboard not available
       }
@@ -235,21 +278,13 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
                   {t('common.new')}
                 </Badge>
               )}
-              <div className="relative">
-                <button
-                  onClick={handleShare}
-                  title={tCommon('share')}
-                  className="inline-flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors p-0.5 rounded"
-                  aria-label={tCommon('share')}
-                >
-                  <LuShare2 className="size-3" />
-                </button>
-                {copied && (
-                  <span className="absolute right-0 bottom-full mb-1 whitespace-nowrap rounded bg-foreground px-1.5 py-0.5 text-[10px] text-background">
-                    {tCommon('copied')}
-                  </span>
-                )}
-              </div>
+              <ShareButton
+                onClick={handleShare}
+                label={tCommon('share')}
+                copied={copied}
+                copiedLabel={tCommon('copied')}
+                compact
+              />
             </div>
           </div>
         </div>
@@ -379,21 +414,12 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
                 <FaGithub className="mr-1" />
                 <span>{t('common.viewIssue')}</span>
               </a>
-              <div className="relative">
-                <button
-                  onClick={handleShare}
-                  title={tCommon('share')}
-                  className="inline-flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors p-1 rounded"
-                  aria-label={tCommon('share')}
-                >
-                  <LuShare2 className="size-3.5" />
-                </button>
-                {copied && (
-                  <span className="absolute right-0 bottom-full mb-1 whitespace-nowrap rounded bg-foreground px-1.5 py-0.5 text-[10px] text-background">
-                    {tCommon('copied')}
-                  </span>
-                )}
-              </div>
+              <ShareButton
+                onClick={handleShare}
+                label={tCommon('share')}
+                copied={copied}
+                copiedLabel={tCommon('copied')}
+              />
             </div>
           </div>
         </div>
