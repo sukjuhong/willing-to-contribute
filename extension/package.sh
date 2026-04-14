@@ -20,7 +20,7 @@ if [ -z "$VERSION" ]; then
 fi
 
 DIST_DIR="$SCRIPT_DIR/dist"
-OUTPUT_FILE="$DIST_DIR/willing-to-contribute-extension-v${VERSION}.zip"
+OUTPUT_FILE="$DIST_DIR/pickssue-extension-v${VERSION}.zip"
 
 mkdir -p "$DIST_DIR"
 

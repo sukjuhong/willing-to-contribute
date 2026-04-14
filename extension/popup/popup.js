@@ -1,5 +1,5 @@
 /**
- * Popup UI controller for Willing to Contribute Chrome Extension
+ * Popup UI controller for Pickssue Chrome Extension
  */
 
 // ============================================================

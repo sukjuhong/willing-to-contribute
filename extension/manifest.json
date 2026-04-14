@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Willing to Contribute",
+  "name": "Pickssue",
   "version": "1.0.0",
-  "description": "Discover beginner-friendly GitHub issues. Track repositories, get notifications, and start your open source journey.",
+  "description": "Discover beginner-friendly GitHub issues. Track repositories, get notifications, and pick your first open source issue.",
   "permissions": ["storage", "alarms", "notifications", "contextMenus"],
   "host_permissions": ["https://api.github.com/*"],
   "background": {
@@ -29,10 +29,7 @@
       "run_at": "document_idle"
     },
     {
-      "matches": [
-        "https://willing-to-contribute.vercel.app/*",
-        "http://localhost:3000/*"
-      ],
+      "matches": ["https://pickssue.dev/*", "http://localhost:3000/*"],
       "js": ["content/webapp-bridge.js"],
       "run_at": "document_idle"
     }

@@ -1,6 +1,6 @@
 /**
- * Content Script for Willing to Contribute
- * Injected into GitHub pages to show "Track in WTC" floating button
+ * Content Script for Pickssue
+ * Injected into GitHub pages to show "Track in Pickssue" floating button
  */
 
 (function () {
@@ -52,7 +52,7 @@
       btn = document.createElement('button');
       btn.id = 'wtc-float-btn';
       btn.className = 'wtc-float-btn';
-      btn.setAttribute('aria-label', 'Track in Willing to Contribute');
+      btn.setAttribute('aria-label', 'Track in Pickssue');
       document.body.appendChild(btn);
     }
     return btn;
