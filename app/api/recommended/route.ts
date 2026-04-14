@@ -66,7 +66,7 @@ export async function GET(request: Request) {
     const rawLanguage = searchParams.get('language') || '';
     const language =
       !rawLanguage && userTopLanguages.length > 0 ? userTopLanguages[0] : rawLanguage;
-    const labels = searchParams.getAll('label');
+    const labelPreset = searchParams.get('labelPreset') || '';
     const minStars = parseInt(searchParams.get('minStars') || '500', 10);
     const maxStarsRaw = parseInt(searchParams.get('maxStars') || '', 10);
     const maxStars = isNaN(maxStarsRaw) ? null : maxStarsRaw;
@@ -83,7 +83,7 @@ export async function GET(request: Request) {
     const cacheKey = JSON.stringify({
       userId: sessionUserId,
       language,
-      labels,
+      labelPreset,
       minStars,
       maxStars,
       maintainerGrades,
@@ -102,11 +102,8 @@ export async function GET(request: Request) {
 
     const dateStr = getFreshnessDate(freshness);
 
-    const queryLabels = labels.length > 0 ? labels : ['good first issue'];
-    let query = `is:issue is:open stars:>${minStars} pushed:>${dateStr}`;
-    for (const ql of queryLabels) {
-      query += ` label:"${ql}"`;
-    }
+    const queryLabel = labelPreset || 'good first issue';
+    let query = `is:issue is:open label:"${queryLabel}" stars:>${minStars} pushed:>${dateStr}`;
     if (maxStars) query += ` stars:<${maxStars}`;
     if (language) query += ` language:${language}`;
     if (label) query += ` label:"${label}"`;

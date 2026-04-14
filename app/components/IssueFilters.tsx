@@ -21,7 +21,7 @@ import { cn } from '@/lib/utils';
 
 export interface FilterState {
   language: string;
-  labels: string[];
+  label_preset: string;
   maintainerGrades: ('A' | 'B' | 'C')[];
   minStars: number | null;
   minForks: number | null;
@@ -84,7 +84,7 @@ const FRESHNESS_PRESETS = [
 
 export const DEFAULT_FILTER_STATE: FilterState = {
   language: 'all',
-  labels: [],
+  label_preset: '',
   maintainerGrades: [],
   minStars: null,
   minForks: null,
@@ -104,11 +104,9 @@ export default function IssueFilters({
   const tFreshnessPreset = useTranslations('filters.freshnessPreset');
   const [showAdvanced, setShowAdvanced] = useState(false);
 
-  const toggleLabel = (l: string) => {
-    const next = filters.labels.includes(l)
-      ? filters.labels.filter(v => v !== l)
-      : [...filters.labels, l];
-    onFilterChange({ ...filters, labels: next });
+  const toggleLabelPreset = (l: string) => {
+    const next = filters.label_preset === l ? '' : l;
+    onFilterChange({ ...filters, label_preset: next });
   };
 
   const toggleGrade = (g: (typeof MAINTAINER_GRADES)[number]) => {
@@ -132,7 +130,7 @@ export default function IssueFilters({
 
   const hasActiveFilters =
     filters.language !== 'all' ||
-    filters.labels.length > 0 ||
+    filters.label_preset !== '' ||
     filters.maintainerGrades.length > 0 ||
     filters.minStars !== null ||
     filters.minForks !== null ||
@@ -178,8 +176,8 @@ export default function IssueFilters({
               <Button
                 key={l}
                 variant="ghost"
-                onClick={() => toggleLabel(l)}
-                className={chipClass(filters.labels.includes(l))}
+                onClick={() => toggleLabelPreset(l)}
+                className={chipClass(filters.label_preset === l)}
               >
                 {l}
               </Button>
