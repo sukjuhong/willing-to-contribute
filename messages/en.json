@@ -278,6 +278,13 @@
     "rateLimitExceeded": "GitHub API rate limit reached. Please try again later or log in for higher limits.",
     "rateLimitExceededLoggedIn": "GitHub API rate limit reached. Please try again later."
   },
+  "weeklyPicks": {
+    "title": "Weekly Picks",
+    "subtitle": "Top beginner-friendly issues for Week {week}, {year}",
+    "generatedAt": "Generated on {date}",
+    "noIssues": "No weekly picks available yet. Check back soon!",
+    "autoRefresh": "This page is automatically refreshed every week with fresh picks."
+  },
   "sync": {
     "localRepositories": "Local Repositories",
     "gistRepositories": "Cloud Repositories",
