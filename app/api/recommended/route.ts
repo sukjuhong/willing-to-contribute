@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Issue, Label, Repository } from '../../types';
 import { calculateMaintainerScore } from './maintainerScore';
-import { calculateSkillMatchScore } from './skillMatch';
+import { calculateMatchScore } from '../../utils/skillMatcher';
 import { getServerOctokit } from './serverOctokit';
 import { cacheGet, cacheSet } from '../../lib/cache';
 import { createClient } from '@/app/lib/supabase/server';
@@ -192,10 +192,9 @@ export async function GET(request: Request) {
           }));
 
         const matchScore = isPersonalized
-          ? calculateSkillMatchScore({
+          ? calculateMatchScore({
               userLanguages: userTopLanguages,
-              userTopics,
-              contributedRepoCount: userContributedRepos.size,
+              userCategories: userTopics,
               repoLanguage,
               issueLabels: labels.map(l => l.name),
             })
