@@ -16,7 +16,7 @@ export async function loadUserSettings(userId: string): Promise<UserSettings | n
   if (error || !data) return null;
 
   return {
-    pickedIssues: (data.picked_issues as unknown as UserSettings['pickedIssues']) ?? [],
+    pickedIssues: [],
     notificationFrequency:
       (data.notification_frequency as UserSettings['notificationFrequency']) ?? 'daily',
     hideClosedIssues: data.hide_closed_issues ?? true,
@@ -30,8 +30,6 @@ export async function saveUserSettings(
   const supabase = createClient();
   const row: UserSettingsInsert = {
     user_id: userId,
-    picked_issues:
-      settings.pickedIssues as unknown as UserSettingsInsert['picked_issues'],
     notification_frequency: settings.notificationFrequency,
     hide_closed_issues: settings.hideClosedIssues,
     updated_at: new Date().toISOString(),
