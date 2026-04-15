@@ -123,6 +123,36 @@ Uses Next.js recommended configs:
 - **Octokit** (@octokit/rest) for GitHub API
 - **SWR** for client-side data fetching (not heavily used, mostly direct Octokit calls)
 
+## Issue & Roadmap Management
+
+### Priority Labels
+
+- `P0: now` — 즉시 실행. 고유 가치 생성, 의존성 없음
+- `P1: next` — 다음 차례. P0 완료 후 또는 병렬 가능
+- `P2: later` — 전제조건 미충족 (사용자 수, 인프라, 의사결정 필요)
+- `P3: revisit` — 효과 불확실, 재검토 필요
+
+### Scope Labels
+
+- `scope: unique-data` — Pickssue 고유 데이터 (GitHub에 없는 것)
+- `scope: infra` — 후속 기능의 전제조건
+- `scope: retention` — 재방문 유도
+- `scope: seo` — 검색 유입
+
+### Feature-based Milestones
+
+마일스톤은 기간이 아닌 기능 단위로 구성:
+
+- 데이터 인프라 / 개인화 & 매칭 / 큐레이션 콘텐츠 / 기여 추적
+- 소셜 & 커뮤니티 / 게이미피케이션 / 프로필 & 공유 / SEO & i18n
+
+### Prioritization Principles
+
+1. **고유 데이터 우선**: GitHub 정보 복제보다 Pickssue만의 데이터를 만드는 기능이 우선
+2. **SEO는 고유 데이터 확보 후**: 현재 /issues는 CSR이라 크롤러가 빈 HTML만 봄. SSR 전환 + 고유 콘텐츠가 선행되어야 SEO 효과 있음
+3. **소셜 기능은 DAU 기반 게이팅**: 빈 피드/리더보드는 역효과. 최소 사용자 임계치 도달 후 활성화
+4. **새 이슈 생성 시**: 반드시 P0~P3 우선순위 + scope 라벨 부여
+
 ## Important Notes
 
 - All code is client-side (`'use client'` in page.tsx) due to state management needs
