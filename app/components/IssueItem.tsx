@@ -45,6 +45,12 @@ const maintainerGradeStyles = {
   C: 'bg-muted text-muted-foreground',
 };
 
+const getMatchScoreStyle = (score: number): string => {
+  if (score >= 70) return 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20';
+  if (score >= 40) return 'bg-amber-500/15 text-amber-400 border-amber-500/20';
+  return 'bg-muted text-muted-foreground border-border';
+};
+
 type CompetitionStatus = 'available' | 'inProgress' | 'hot';
 
 const getCompetitionStatus = (
@@ -244,6 +250,18 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
                 label={tIssue(`status.${competitionStatus}`)}
                 compact
               />
+              {issue.matchScore != null && (
+                <Badge
+                  variant="outline"
+                  className={cn(
+                    'inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded font-medium',
+                    getMatchScoreStyle(issue.matchScore),
+                  )}
+                  title={tIssue('matchScoreTooltip')}
+                >
+                  {tIssue('matchScore', { score: issue.matchScore })}
+                </Badge>
+              )}
             </div>
           </div>
 
@@ -345,6 +363,19 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
               status={competitionStatus}
               label={tIssue(`status.${competitionStatus}`)}
             />
+
+            {issue.matchScore != null && (
+              <Badge
+                variant="outline"
+                className={cn(
+                  'inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded font-medium',
+                  getMatchScoreStyle(issue.matchScore),
+                )}
+                title={tIssue('matchScoreTooltip')}
+              >
+                {tIssue('matchScore', { score: issue.matchScore })}
+              </Badge>
+            )}
           </div>
 
           <div className="flex flex-wrap gap-1.5 mt-2">

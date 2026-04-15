@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Issue, Label, Repository } from '../../types';
 import { calculateMaintainerScore } from './maintainerScore';
+import { calculateSkillMatchScore } from './skillMatch';
 import { getServerOctokit } from './serverOctokit';
 import { cacheGet, cacheSet } from '../../lib/cache';
 import { createClient } from '@/app/lib/supabase/server';
@@ -34,6 +35,7 @@ export async function GET(request: Request) {
 
     // Personalization: load user profile if session exists
     let userTopLanguages: string[] = [];
+    let userTopics: string[] = [];
     let userContributedRepos: Set<string> = new Set();
     let isPersonalized = false;
     let sessionUserId: string | null = null;
@@ -46,14 +48,16 @@ export async function GET(request: Request) {
         sessionUserId = session.user.id;
         const { data: profile } = await supabase
           .from('user_profiles')
-          .select('top_languages, contributed_repos')
+          .select('top_languages, contributed_repos, starred_categories')
           .eq('id', session.user.id)
           .maybeSingle<{
             top_languages: string[] | null;
             contributed_repos: string[] | null;
+            starred_categories: string[] | null;
           }>();
         if (profile) {
           userTopLanguages = profile.top_languages ?? [];
+          userTopics = profile.starred_categories ?? [];
           userContributedRepos = new Set(profile.contributed_repos ?? []);
           isPersonalized = true;
         }
@@ -187,6 +191,16 @@ export async function GET(request: Request) {
             color: l.color ?? '',
           }));
 
+        const matchScore = isPersonalized
+          ? calculateSkillMatchScore({
+              userLanguages: userTopLanguages,
+              userTopics,
+              contributedRepoCount: userContributedRepos.size,
+              repoLanguage,
+              issueLabels: labels.map(l => l.name),
+            })
+          : undefined;
+
         const issue: Issue = {
           id: String(item.id),
           number: item.number,
@@ -198,6 +212,7 @@ export async function GET(request: Request) {
           updatedAt: item.updated_at,
           state: item.state as 'open' | 'closed',
           repository,
+          matchScore,
         };
 
         return { issue, maintainerScore };

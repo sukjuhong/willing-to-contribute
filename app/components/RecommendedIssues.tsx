@@ -72,6 +72,12 @@ export default function RecommendedIssues() {
   // Track which issues are already picked
   const pickedIssueIds = new Set(settings.pickedIssues.map(s => s.id));
 
+  // Client-side sort by match score when selected
+  const sortedIssues =
+    filters.sort === 'matchScore'
+      ? [...issues].sort((a, b) => (b.matchScore ?? 0) - (a.matchScore ?? 0))
+      : issues;
+
   const fetchFromApi = useCallback(
     async (currentPage: number, append: boolean) => {
       setLoading(true);
@@ -250,6 +256,7 @@ export default function RecommendedIssues() {
               profileLanguage={
                 !userOverrodeLanguage ? (profile?.top_languages?.[0] ?? null) : null
               }
+              isPersonalized={isPersonalized}
             />
 
             {/* Profile CTA: logged in but no profile analyzed yet */}
@@ -314,7 +321,7 @@ export default function RecommendedIssues() {
             ) : (
               <>
                 <div className="space-y-2">
-                  {issues.map(issue => {
+                  {sortedIssues.map(issue => {
                     const isPicked = pickedIssueIds.has(issue.id);
                     const isPicking = pickingIssues.has(issue.id);
 

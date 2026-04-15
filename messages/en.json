@@ -157,14 +157,19 @@
       "1m": "Past Month",
       "3m": "Past 3 Months",
       "6m": "Past 6 Months"
-    }
+    },
+    "sortBy": "Sort",
+    "sortDefault": "Relevance",
+    "sortMatchScore": "Match Score"
   },
   "issue": {
     "status": {
       "available": "Available",
       "inProgress": "In Progress",
       "hot": "Hot"
-    }
+    },
+    "matchScore": "Match {score}%",
+    "matchScoreTooltip": "Skill matching score based on your GitHub profile"
   },
   "maintainer": {
     "gradeA": "Responsive",

@@ -19,6 +19,8 @@ import {
 } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
 
+export type SortOption = 'default' | 'matchScore';
+
 export interface FilterState {
   language: string;
   label_preset: string;
@@ -27,12 +29,14 @@ export interface FilterState {
   minForks: number | null;
   freshness: string | null;
   label: string;
+  sort: SortOption;
 }
 
 export interface IssueFiltersProps {
   filters: FilterState;
   onFilterChange: (filters: FilterState) => void;
   profileLanguage?: string | null;
+  isPersonalized?: boolean;
 }
 
 const LANGUAGES = [
@@ -90,12 +94,14 @@ export const DEFAULT_FILTER_STATE: FilterState = {
   minForks: null,
   freshness: null,
   label: '',
+  sort: 'default',
 };
 
 export default function IssueFilters({
   filters,
   onFilterChange,
   profileLanguage,
+  isPersonalized,
 }: IssueFiltersProps) {
   const t = useTranslations();
   const tMaintainer = useTranslations('maintainer');
@@ -135,7 +141,8 @@ export default function IssueFilters({
     filters.minStars !== null ||
     filters.minForks !== null ||
     filters.freshness !== null ||
-    filters.label !== '';
+    filters.label !== '' ||
+    filters.sort !== 'default';
 
   return (
     <div className="space-y-3">
@@ -166,6 +173,30 @@ export default function IssueFilters({
             </span>
           )}
         </div>
+
+        {isPersonalized && (
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-muted-foreground whitespace-nowrap">
+              {t('filters.sortBy')}
+            </label>
+            <Select
+              value={filters.sort}
+              onValueChange={value =>
+                onFilterChange({ ...filters, sort: value as SortOption })
+              }
+            >
+              <SelectTrigger className="text-sm h-9 w-auto min-w-[140px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="default">{t('filters.sortDefault')}</SelectItem>
+                <SelectItem value="matchScore">
+                  {t('filters.sortMatchScore')}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
 
         <div className="flex items-center gap-2">
           <label className="text-xs text-muted-foreground whitespace-nowrap">
