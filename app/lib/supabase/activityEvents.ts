@@ -21,7 +21,11 @@ export async function logActivityEvent(
       event_type: eventType,
       payload,
     };
-    const { error } = await supabase.from('user_activity_events').insert(row);
+    // `as never` is required because the hand-written Database type in
+    // app/types/supabase.ts does not fully satisfy supabase-js's insert
+    // overload generics (same pattern as pickedIssues.ts). Row is still
+    // statically typed as ActivityEventInsert above.
+    const { error } = await supabase.from('user_activity_events').insert(row as never);
     if (error) {
       console.error('[activityEvents] insert failed:', error);
     }
