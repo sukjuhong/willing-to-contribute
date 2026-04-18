@@ -46,10 +46,10 @@ The app uses Next.js 15 App Router with route groups and Supabase authentication
   - **about/, faq/, guide/, privacy/, terms/**: Information pages
 - **app/layout.tsx**: Root layout with SEO metadata, IntlProvider wrapper, and JSON-LD structured data
 - **app/api/auth/callback/**: Supabase OAuth callback handler (GitHub provider)
-- **app/api/recommended/**: Server endpoint for personalized issue recommendations
-- **app/api/profile/analyze/**: Server endpoint for GitHub profile analysis (top languages, contributions)
-- **app/api/v1/score/**: Maintainer scoring API
-- **app/api/search/**: Issue search endpoint
+- **app/api/recommended**: Server endpoint for personalized issue recommendations
+- **app/api/profile/analyze**: Server endpoint for GitHub profile analysis (top languages, contributions)
+- **app/api/v1/score**: Maintainer scoring API
+- **app/api/search**: Issue search endpoint
 
 ### State Management Pattern
 
@@ -58,8 +58,8 @@ The application uses a hook-based architecture coordinated via `AppContext`:
 1. **useSupabaseAuth** - Supabase GitHub OAuth login/logout, session management, GitHub access token persistence
 2. **useSettings** - User settings (notification frequency, hide closed issues), picked issues list, Supabase + localStorage persistence
 3. **usePickedIssues** - Fetches and manages bookmarked issues, tracks state changes (open/closed), periodically refreshes status
-4. **useRecommendedIssues** - Fetches personalized issue recommendations from `/api/recommended/`, caches by language filter
-5. **useUserProfile** - GitHub profile analysis (top languages, contributed repos), syncs weekly via `/api/profile/analyze/`
+4. **useRecommendedIssues** - Fetches personalized issue recommendations from `/api/recommended`, caches by language filter
+5. **useUserProfile** - GitHub profile analysis (top languages, contributed repos), syncs weekly via `/api/profile/analyze`
 
 Data flows:
 
@@ -148,7 +148,7 @@ GITHUB_APP_INSTALLATION_ID=your_installation_id     # Optional
 Supabase must be configured with:
 
 - GitHub OAuth provider (for sign-in)
-- `user_profiles`, `user_settings`, `saved_issues` tables (see supabase/migrations/)
+- `user_profiles`, `user_settings` tables (see supabase/migrations/)
 - Public schema for RLS policies
 
 ## Code Style
@@ -179,7 +179,7 @@ Uses Next.js recommended configs:
 - **React 19**
 - **TypeScript**
 - **TailwindCSS 4** for styling
-- **shadcn/ui** + **Radix UI** for UI components (replaced DaisyUI in PR #28)
+- **shadcn/ui** + **Radix UI** for UI components (replaced DaisyUI)
 - **Supabase** (@supabase/supabase-js, @supabase/ssr) for auth and database
 - **Octokit** (@octokit/rest, @octokit/auth-app) for GitHub API
 - **SWR** for client-side data fetching
