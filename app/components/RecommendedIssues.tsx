@@ -73,10 +73,10 @@ export default function RecommendedIssues() {
   const pickedIssueIds = new Set(settings.pickedIssues.map(s => s.id));
 
   // Client-side sort by match score when selected
-  const sortedIssues =
-    filters.sort === 'matchScore'
-      ? [...issues].sort((a, b) => (b.matchScore ?? 0) - (a.matchScore ?? 0))
-      : issues;
+  const sortedIssues = React.useMemo(() => {
+    if (filters.sort !== 'matchScore') return issues;
+    return [...issues].sort((a, b) => (b.matchScore ?? 0) - (a.matchScore ?? 0));
+  }, [issues, filters.sort]);
 
   const fetchFromApi = useCallback(
     async (currentPage: number, append: boolean) => {

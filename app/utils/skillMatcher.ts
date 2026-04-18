@@ -47,7 +47,8 @@ function languageScore(
 function categoryScore(userCategories: string[], issueLabels: string[]): number {
   if (userCategories.length === 0 || issueLabels.length === 0) return 0;
   const lowerCategories = new Set(userCategories.map(c => c.toLowerCase()));
-  const matchCount = issueLabels.filter(l => lowerCategories.has(l.toLowerCase())).length;
+  const uniqueLowerLabels = new Set(issueLabels.map(l => l.toLowerCase()));
+  const matchCount = [...uniqueLowerLabels].filter(l => lowerCategories.has(l)).length;
   return Math.round(Math.min(matchCount / 3, 1) * 40);
 }
 
