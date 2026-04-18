@@ -305,6 +305,12 @@
     "saving": "저장 중...",
     "saveError": "프라이버시 설정 저장에 실패했습니다"
   },
+  "daily": {
+    "title": "오늘의 발견",
+    "subtitle": "나를 위한 큐레이션 — 매일 새로 고침",
+    "refreshNote": "오늘 하루 동안 동일한 이슈가 표시됩니다. 내일 다시 방문하면 새로운 이슈를 만나보세요.",
+    "empty": "오늘 추천할 이슈가 없습니다. 내일 다시 확인해보세요!"
+  },
   "sync": {
     "localRepositories": "로컬 저장소",
     "gistRepositories": "클라우드 저장소",
