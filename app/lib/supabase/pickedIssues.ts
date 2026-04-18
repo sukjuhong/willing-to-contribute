@@ -56,7 +56,9 @@ export async function pickIssue(userId: string, issue: PickedIssue): Promise<boo
     last_checked_at: issue.lastCheckedAt,
   };
 
-  const { error } = await supabase.from('picked_issues').upsert(row as never);
+  const { error } = await supabase
+    .from('picked_issues')
+    .upsert(row as never, { onConflict: 'user_id,issue_id' });
   return !error;
 }
 
@@ -120,7 +122,9 @@ export async function bulkUpdatePickedIssues(
       }) satisfies PickedIssueInsert,
   );
 
-  const { error } = await supabase.from('picked_issues').upsert(rows as never);
+  const { error } = await supabase
+    .from('picked_issues')
+    .upsert(rows as never, { onConflict: 'user_id,issue_id' });
   return !error;
 }
 

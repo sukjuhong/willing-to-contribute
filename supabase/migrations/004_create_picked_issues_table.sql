@@ -54,10 +54,10 @@ create view picked_issues_counts as
     issue_url,
     repository_owner,
     repository_name,
-    title,
+    max(title) as title,
     count(*) as pick_count
   from picked_issues
-  group by issue_url, repository_owner, repository_name, title;
+  group by issue_url, repository_owner, repository_name;
 
 -- Allow all authenticated users to read aggregate counts
 grant select on picked_issues_counts to authenticated;

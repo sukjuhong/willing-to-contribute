@@ -33,4 +33,4 @@ select
 from user_settings us,
   jsonb_array_elements(us.picked_issues) as pi
 where jsonb_array_length(us.picked_issues) > 0
-on conflict (user_id, (pi->>'id')) do nothing;
+on conflict (user_id, issue_id) do nothing;
