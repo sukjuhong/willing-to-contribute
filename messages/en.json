@@ -164,6 +164,13 @@
       "available": "Available",
       "inProgress": "In Progress",
       "hot": "Hot"
+    },
+    "quality": {
+      "label": "Quality",
+      "gradeA": "A",
+      "gradeB": "B",
+      "gradeC": "C",
+      "tooltip": "Quality {grade} · {score}/100"
     }
   },
   "maintainer": {
