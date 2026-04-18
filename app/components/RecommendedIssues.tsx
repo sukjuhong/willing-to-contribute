@@ -12,8 +12,9 @@ import {
 import IssueItem from './IssueItem';
 import IssueFilters, { DEFAULT_FILTER_STATE, type FilterState } from './IssueFilters';
 import ProfileAnalysisModal from './ProfileAnalysisModal';
-import { useApp } from '../contexts/AppContext';
+import { useAuth, usePicked, useProfile } from '../contexts/AppContext';
 import { useTranslations } from 'next-intl';
+import { useLocaleSwitch } from '@/app/providers/IntlProvider';
 import type { Issue } from '../types';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -23,33 +24,15 @@ import {
   CollapsibleTrigger,
   CollapsibleContent,
 } from '@/components/ui/collapsible';
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function formatRelativeTime(isoString: string | null, t: any): string {
-  if (!isoString) return '';
-  const time = new Date(isoString).getTime();
-  if (isNaN(time)) return '';
-  const diffMs = Date.now() - time;
-  if (diffMs < 0) return t('common.justNow');
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-  const diffDays = Math.floor(diffHours / 24);
-  if (diffDays > 0) return t('common.daysAgo', { days: diffDays });
-  if (diffHours > 0) return t('common.hoursAgo', { hours: diffHours });
-  return t('common.justNow');
-}
+import { formatRelativeTime } from '../utils/formatRelativeTime';
 
 export default function RecommendedIssues() {
   const t = useTranslations();
-  const {
-    pickedIssues,
-    pickIssue,
-    unpickIssue,
-    authState,
-    profile,
-    syncProfile,
-    profileLoading,
-    profileError,
-  } = useApp();
+  const tCommon = useTranslations('common');
+  const { locale } = useLocaleSwitch();
+  const { authState } = useAuth();
+  const { pickedIssues, pickIssue, unpickIssue } = usePicked();
+  const { profile, profileLoading, profileError, syncProfile } = useProfile();
   const [collapsed, setCollapsed] = useState(false);
   const [pickingIssues, setPickingIssues] = useState<Set<string>>(new Set());
   const [showAnalysisModal, setShowAnalysisModal] = useState(false);
@@ -205,7 +188,7 @@ export default function RecommendedIssues() {
                       aria-label={t('recommended.resync')}
                       className="text-muted-foreground hover:text-primary transition-colors p-1 disabled:opacity-50"
                       title={t('recommended.lastSynced', {
-                        time: formatRelativeTime(profile.last_synced_at, t),
+                        time: formatRelativeTime(profile.last_synced_at, tCommon, locale),
                       })}
                     >
                       <FaSync

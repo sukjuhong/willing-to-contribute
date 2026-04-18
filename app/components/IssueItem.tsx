@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Issue } from '../types';
+import { Issue, Label } from '../types';
 import { FaGithub, FaClock, FaStar, FaCodeBranch } from 'react-icons/fa';
 import {
   LuShield,
@@ -14,37 +14,12 @@ import { useLocaleSwitch } from '@/app/providers/IntlProvider';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { formatRelativeTime } from '../utils/formatRelativeTime';
 
 interface IssueItemProps {
   issue: Issue;
   compact?: boolean;
 }
-
-const formatRelativeTime = (
-  dateString: string,
-  tCommon: ReturnType<typeof useTranslations<'common'>>,
-  locale: string,
-): string => {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffInMs = now.getTime() - date.getTime();
-  const diffInSecs = Math.floor(diffInMs / 1000);
-  const diffInMins = Math.floor(diffInSecs / 60);
-  const diffInHours = Math.floor(diffInMins / 60);
-  const diffInDays = Math.floor(diffInHours / 24);
-
-  if (diffInSecs < 60) {
-    return tCommon('justNow');
-  } else if (diffInMins < 60) {
-    return tCommon('minutesAgo', { minutes: diffInMins });
-  } else if (diffInHours < 24) {
-    return tCommon('hoursAgo', { hours: diffInHours });
-  } else if (diffInDays < 30) {
-    return tCommon('daysAgo', { days: diffInDays });
-  } else {
-    return new Intl.DateTimeFormat(locale === 'ko' ? 'ko-KR' : 'en-US').format(date);
-  }
-};
 
 const maintainerGradeStyles = {
   A: 'bg-emerald-500/15 text-emerald-400',
@@ -66,12 +41,14 @@ const qualityGradeStyles: Record<'A' | 'B' | 'C', string> = {
 
 type CompetitionStatus = 'available' | 'inProgress' | 'hot';
 
+const COMPETITION_HOT_COMMENT_THRESHOLD = 3;
+
 const getCompetitionStatus = (
   comments: number | undefined,
   assignee: string | null | undefined,
 ): CompetitionStatus => {
   if (assignee) return 'inProgress';
-  if ((comments ?? 0) >= 3) return 'hot';
+  if ((comments ?? 0) >= COMPETITION_HOT_COMMENT_THRESHOLD) return 'hot';
   return 'available';
 };
 
@@ -146,12 +123,119 @@ const ShareButton: React.FC<ShareButtonProps> = ({
   </div>
 );
 
-const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
-  const t = useTranslations();
-  const tCommon = useTranslations('common');
+const IssueBadges: React.FC<{ issue: Issue; compact: boolean }> = ({
+  issue,
+  compact,
+}) => {
   const tMaintainer = useTranslations('maintainer');
   const tIssue = useTranslations('issue');
   const tQuality = useTranslations('issue.quality');
+
+  const competitionStatus = getCompetitionStatus(issue.comments, issue.assignee);
+  const padding = compact ? 'px-1.5 py-0.5' : 'px-2 py-0.5';
+  const iconSize = compact ? 'size-2.5' : 'size-[11px]';
+
+  return (
+    <>
+      {issue.repository.maintainerScore && (
+        <Badge
+          variant="outline"
+          className={cn(
+            'inline-flex items-center gap-1 text-xs rounded border-none',
+            padding,
+            maintainerGradeStyles[issue.repository.maintainerScore.grade],
+          )}
+          title={`${tMaintainer(`grade${issue.repository.maintainerScore.grade}`)} · ${tMaintainer('responseTime', { hours: Math.round(issue.repository.maintainerScore.avgResponseTimeHours) })} · ${tMaintainer('mergeRate', { rate: Math.round(issue.repository.maintainerScore.mergeRate * 100) })}`}
+        >
+          <LuShield className={cn('shrink-0', iconSize)} />
+          {compact
+            ? tMaintainer(`grade${issue.repository.maintainerScore.grade}`)
+            : `${issue.repository.maintainerScore.grade} · ${tMaintainer(`grade${issue.repository.maintainerScore.grade}`)}`}
+        </Badge>
+      )}
+
+      {issue.qualityScore && (
+        <Badge
+          variant="outline"
+          className={cn(
+            'inline-flex items-center gap-1 text-xs rounded',
+            padding,
+            qualityGradeStyles[issue.qualityScore.grade],
+          )}
+          title={tQuality('tooltip', {
+            grade: issue.qualityScore.grade,
+            score: issue.qualityScore.score,
+          })}
+        >
+          <LuAward className={cn('shrink-0', iconSize)} />
+          {tQuality('label')} {issue.qualityScore.grade}
+        </Badge>
+      )}
+
+      <CompetitionBadge
+        status={competitionStatus}
+        label={tIssue(`status.${competitionStatus}`)}
+        compact={compact}
+      />
+
+      {issue.matchScore != null && (
+        <Badge
+          variant="outline"
+          className={cn(
+            'inline-flex items-center gap-1 text-xs rounded font-medium',
+            padding,
+            getMatchScoreStyle(issue.matchScore),
+          )}
+          title={tIssue('matchScoreTooltip')}
+        >
+          {tIssue('matchScore', { score: issue.matchScore })}
+        </Badge>
+      )}
+    </>
+  );
+};
+
+const COMPACT_LABEL_LIMIT = 3;
+
+const IssueLabels: React.FC<{ labels: Label[]; compact: boolean }> = ({
+  labels,
+  compact,
+}) => {
+  const visible = compact ? labels.slice(0, COMPACT_LABEL_LIMIT) : labels;
+  const overflow = compact ? labels.length - COMPACT_LABEL_LIMIT : 0;
+  const padding = compact ? 'px-1.5 py-0.5' : 'px-2.5 py-0.5';
+
+  return (
+    <>
+      {visible.map(label => (
+        <Badge
+          key={label.id}
+          variant="outline"
+          className={cn('text-xs rounded-full border-none', padding)}
+          style={
+            compact
+              ? {
+                  backgroundColor: `#${label.color}15`,
+                  color: `#${label.color}`,
+                }
+              : {
+                  backgroundColor: `#${label.color}25`,
+                  color: `#${label.color}`,
+                  border: `1px solid #${label.color}50`,
+                }
+          }
+        >
+          {label.name}
+        </Badge>
+      ))}
+      {overflow > 0 && <span className="text-xs text-muted-foreground">+{overflow}</span>}
+    </>
+  );
+};
+
+const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
+  const t = useTranslations();
+  const tCommon = useTranslations('common');
   const { locale } = useLocaleSwitch();
   const [copied, setCopied] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -161,8 +245,6 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
   }, []);
-
-  const competitionStatus = getCompetitionStatus(issue.comments, issue.assignee);
 
   const shareUrl = `${issue.url}?utm_source=pickssue&utm_medium=share`;
   const shareTitle = `${issue.title} - ${issue.repository.owner}/${issue.repository.name} #${issue.number}`;
@@ -179,7 +261,7 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
           url: shareUrl,
         });
       } catch {
-        // user cancelled or error — no action needed
+        // user cancelled
       }
     } else {
       try {
@@ -193,16 +275,18 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
     }
   };
 
+  const borderColor = issue.isNew
+    ? 'border-amber-400'
+    : issue.state === 'open'
+      ? 'border-[color:var(--color-success)]'
+      : 'border-[color:var(--color-danger)]';
+
   if (compact) {
     return (
       <div
         className={cn(
           'bg-card rounded p-2 hover:bg-accent transition-colors border-l-2',
-          issue.isNew
-            ? 'border-amber-400'
-            : issue.state === 'open'
-              ? 'border-[color:var(--color-success)]'
-              : 'border-[color:var(--color-danger)]',
+          borderColor,
         )}
       >
         <div className="flex items-center justify-between">
@@ -220,24 +304,7 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
             </h3>
 
             <div className="flex flex-wrap items-center gap-1 mt-1">
-              {issue.labels.slice(0, 3).map(label => (
-                <Badge
-                  key={label.id}
-                  variant="outline"
-                  className="text-xs px-1.5 py-0.5 rounded-full border-none"
-                  style={{
-                    backgroundColor: `#${label.color}15`,
-                    color: `#${label.color}`,
-                  }}
-                >
-                  {label.name}
-                </Badge>
-              ))}
-              {issue.labels.length > 3 && (
-                <span className="text-xs text-muted-foreground">
-                  +{issue.labels.length - 3}
-                </span>
-              )}
+              <IssueLabels labels={issue.labels} compact />
               {issue.labels.length > 0 && (
                 <span
                   className="text-muted-foreground/30 text-xs mx-0.5 select-none"
@@ -246,52 +313,7 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
                   |
                 </span>
               )}
-              {issue.repository.maintainerScore && (
-                <Badge
-                  variant="outline"
-                  className={cn(
-                    'inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded border-none',
-                    maintainerGradeStyles[issue.repository.maintainerScore.grade],
-                  )}
-                  title={`${tMaintainer(`grade${issue.repository.maintainerScore.grade}`)} · ${tMaintainer('responseTime', { hours: Math.round(issue.repository.maintainerScore.avgResponseTimeHours) })} · ${tMaintainer('mergeRate', { rate: Math.round(issue.repository.maintainerScore.mergeRate * 100) })}`}
-                >
-                  <LuShield className="shrink-0 size-2.5" />
-                  {tMaintainer(`grade${issue.repository.maintainerScore.grade}`)}
-                </Badge>
-              )}
-              {issue.qualityScore && (
-                <Badge
-                  variant="outline"
-                  className={cn(
-                    'inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded',
-                    qualityGradeStyles[issue.qualityScore.grade],
-                  )}
-                  title={tQuality('tooltip', {
-                    grade: issue.qualityScore.grade,
-                    score: issue.qualityScore.score,
-                  })}
-                >
-                  <LuAward className="shrink-0 size-2.5" />
-                  {tQuality('label')} {issue.qualityScore.grade}
-                </Badge>
-              )}
-              <CompetitionBadge
-                status={competitionStatus}
-                label={tIssue(`status.${competitionStatus}`)}
-                compact
-              />
-              {issue.matchScore != null && (
-                <Badge
-                  variant="outline"
-                  className={cn(
-                    'inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded font-medium',
-                    getMatchScoreStyle(issue.matchScore),
-                  )}
-                  title={tIssue('matchScoreTooltip')}
-                >
-                  {tIssue('matchScore', { score: issue.matchScore })}
-                </Badge>
-              )}
+              <IssueBadges issue={issue} compact />
             </div>
           </div>
 
@@ -344,11 +366,7 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
     <Card
       className={cn(
         'rounded-lg border-border p-4 hover:border-border/80 transition-colors border-l-2 gap-0',
-        issue.isNew
-          ? 'border-amber-400'
-          : issue.state === 'open'
-            ? 'border-[color:var(--color-success)]'
-            : 'border-[color:var(--color-danger)]',
+        borderColor,
       )}
     >
       <div className="flex items-start">
@@ -374,72 +392,11 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
               </Badge>
             )}
 
-            {issue.repository.maintainerScore && (
-              <Badge
-                variant="outline"
-                className={cn(
-                  'inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded border-none',
-                  maintainerGradeStyles[issue.repository.maintainerScore.grade],
-                )}
-                title={`${tMaintainer('responseTime', { hours: Math.round(issue.repository.maintainerScore.avgResponseTimeHours) })} · ${tMaintainer('mergeRate', { rate: Math.round(issue.repository.maintainerScore.mergeRate * 100) })}`}
-              >
-                <LuShield className="shrink-0 size-[11px]" />
-                {issue.repository.maintainerScore.grade} ·{' '}
-                {tMaintainer(`grade${issue.repository.maintainerScore.grade}`)}
-              </Badge>
-            )}
-
-            {issue.qualityScore && (
-              <Badge
-                variant="outline"
-                className={cn(
-                  'inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded',
-                  qualityGradeStyles[issue.qualityScore.grade],
-                )}
-                title={tQuality('tooltip', {
-                  grade: issue.qualityScore.grade,
-                  score: issue.qualityScore.score,
-                })}
-              >
-                <LuAward className="shrink-0 size-[11px]" />
-                {tQuality('label')} {issue.qualityScore.grade}
-              </Badge>
-            )}
-
-            <CompetitionBadge
-              status={competitionStatus}
-              label={tIssue(`status.${competitionStatus}`)}
-            />
-
-            {issue.matchScore != null && (
-              <Badge
-                variant="outline"
-                className={cn(
-                  'inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded font-medium',
-                  getMatchScoreStyle(issue.matchScore),
-                )}
-                title={tIssue('matchScoreTooltip')}
-              >
-                {tIssue('matchScore', { score: issue.matchScore })}
-              </Badge>
-            )}
+            <IssueBadges issue={issue} compact={false} />
           </div>
 
           <div className="flex flex-wrap gap-1.5 mt-2">
-            {issue.labels.map(label => (
-              <Badge
-                key={label.id}
-                variant="outline"
-                className="text-xs px-2.5 py-0.5 rounded-full border-none"
-                style={{
-                  backgroundColor: `#${label.color}25`,
-                  color: `#${label.color}`,
-                  border: `1px solid #${label.color}50`,
-                }}
-              >
-                {label.name}
-              </Badge>
-            ))}
+            <IssueLabels labels={issue.labels} compact={false} />
           </div>
 
           <div className="flex items-center mt-3 text-sm text-muted-foreground flex-wrap gap-y-1">

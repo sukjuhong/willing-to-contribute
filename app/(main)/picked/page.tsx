@@ -5,7 +5,12 @@ import { FaBookmark, FaSync, FaRegBookmark } from 'react-icons/fa';
 import LoginPrompt from '@/app/components/LoginPrompt';
 import PickedIssueItem from '@/app/components/PickedIssueItem';
 import PrivacyToggle from '@/app/components/PrivacyToggle';
-import { useApp } from '@/app/contexts/AppContext';
+import {
+  useAuth,
+  useAppSettings,
+  usePicked,
+  useProfile,
+} from '@/app/contexts/AppContext';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import {
@@ -19,19 +24,17 @@ import Link from 'next/link';
 
 export default function PickedPage() {
   const t = useTranslations();
+  const { authState } = useAuth();
+  const { settings, updateNotificationFrequency, toggleHideClosedIssues } =
+    useAppSettings();
   const {
-    authState,
-    settings,
     pickedIssues,
     pickedIssuesLoading,
     unpickIssue,
     updateIssueTags,
     refreshPickedIssues,
-    updateNotificationFrequency,
-    toggleHideClosedIssues,
-    profile,
-    updatePrivacySettings,
-  } = useApp();
+  } = usePicked();
+  const { profile, updatePrivacySettings } = useProfile();
 
   const [refreshing, setRefreshing] = useState(false);
 

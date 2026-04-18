@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { FaSync, FaBookmark, FaRegBookmark } from 'react-icons/fa';
 import { Sparkles } from 'lucide-react';
 import IssueItem from './IssueItem';
-import { useApp } from '../contexts/AppContext';
+import { useAuth, usePicked } from '../contexts/AppContext';
 import { useTranslations } from 'next-intl';
 import type { Issue } from '../types';
 import { Card } from '@/components/ui/card';
@@ -24,7 +24,8 @@ interface DailyCacheEntry {
 
 export default function DailyDiscoveries() {
   const t = useTranslations();
-  const { pickedIssues, pickIssue, unpickIssue, authState } = useApp();
+  const { authState } = useAuth();
+  const { pickedIssues, pickIssue, unpickIssue } = usePicked();
 
   const [issues, setIssues] = useState<Issue[]>([]);
   const [loading, setLoading] = useState(true);
