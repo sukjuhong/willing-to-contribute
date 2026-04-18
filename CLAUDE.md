@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-"Willing to Contribute" is a Next.js 15 application that helps developers discover and track beginner-friendly GitHub issues across multiple repositories. It features GitHub OAuth authentication, cross-device syncing via GitHub Gists, browser notifications, and i18n support (English/Korean).
+"Pickssue" is a Next.js 15 application that helps developers discover and track beginner-friendly GitHub issues across multiple repositories. It features Supabase authentication (GitHub OAuth), cloud sync via Supabase, personalized issue recommendations with GitHub activity analysis, browser notifications, and i18n support (English/Korean).
 
 ## Development Commands
 
@@ -36,61 +36,120 @@ Git commits automatically trigger `lint-staged` which runs:
 
 ### Application Structure
 
-The app uses Next.js 15 App Router with client-side state management:
+The app uses Next.js 15 App Router with route groups and Supabase authentication:
 
-- **app/page.tsx**: Main application entry point - manages tabs (Issues/Repositories/Settings), coordinates between hooks, and handles GitHub OAuth callback
-- **app/layout.tsx**: Root layout with SEO metadata, LanguageProvider wrapper, and JSON-LD structured data
-- **app/api/github/**: Next.js API routes for GitHub OAuth token exchange (keeps secrets server-side)
+- **app/page.tsx**: Landing page with feature overview and SEO metadata
+- **app/(main)/** - Route group for authenticated features:
+  - **issues/page.tsx**: Browse recommended issues, filtered by language/skills
+  - **picked/page.tsx**: View and manage bookmarked issues (requires auth)
+- **(static)/** - Route group for static pages:
+  - **about/, faq/, guide/, privacy/, terms/**: Information pages
+- **app/layout.tsx**: Root layout with SEO metadata, IntlProvider wrapper, and JSON-LD structured data
+- **app/api/auth/callback/**: Supabase OAuth callback handler (GitHub provider)
+- **app/api/recommended**: Server endpoint for personalized issue recommendations
+- **app/api/profile/analyze**: Server endpoint for GitHub profile analysis (top languages, contributions)
+- **app/api/v1/score**: Maintainer scoring API
+- **app/api/search**: Issue search endpoint
 
 ### State Management Pattern
 
-The application uses a hook-based architecture where `page.tsx` coordinates three main custom hooks:
+The application uses a hook-based architecture coordinated via `AppContext`:
 
-1. **useGithubAuth** - GitHub OAuth login/logout, token management, user info
-2. **useSettings** - Repository list, notification preferences, Gist sync, localStorage persistence
-3. **useIssues** - Fetches issues from tracked repositories using GitHub API (via Octokit), applies label filters
+1. **useSupabaseAuth** - Supabase GitHub OAuth login/logout, session management, GitHub access token persistence
+2. **useSettings** - User settings (notification frequency, hide closed issues), picked issues list, Supabase + localStorage persistence
+3. **usePickedIssues** - Fetches and manages bookmarked issues, tracks state changes (open/closed), periodically refreshes status
+4. **useRecommendedIssues** - Fetches personalized issue recommendations from `/api/recommended`, caches by language filter
+5. **useUserProfile** - GitHub profile analysis (top languages, contributed repos), syncs weekly via `/api/profile/analyze`
 
-Data flows: `useSettings` → `useIssues` (settings determine which repos/labels to fetch)
+Data flows:
 
-### Key Utilities
+- **Auth**: `useSupabaseAuth` → GitHub token in sessionStorage
+- **Settings**: `useSettings` persists to Supabase + localStorage (fallback)
+- **Picked Issues**: `usePickedIssues` depends on `useSettings` list
+- **Recommended**: `useRecommendedIssues` fetches curated list (independent)
+- **Profile**: `useUserProfile` auto-syncs on first login and weekly
 
-- **app/utils/github.ts**: All GitHub API interactions via Octokit (repository fetching, issue queries, Gist save/load)
-- **app/utils/localStorage.ts**: Client-side persistence for settings, auth tokens
-- **app/utils/notifications.ts**: Browser notification permission and display
+### Key Utilities and Libraries
+
+**GitHub & Data Fetching:**
+
+- **app/utils/github.ts**: GitHub API interactions via Octokit (issue queries, profile analysis)
+- **app/lib/github/profileAnalyzer.ts**: Analyze GitHub profile (top languages, contributed repos)
+- **app/lib/cache.ts**: In-memory caching for API responses
+
+**Authentication & Sync:**
+
+- **app/lib/supabase/client.ts**: Supabase browser client (createClient)
+- **app/lib/supabase/server.ts**: Supabase server-side client for API routes
+- **app/lib/supabase/settings.ts**: User settings persistence (Supabase tables)
+- **app/lib/supabase/middleware.ts**: Auth middleware for server routes
+
+**Client Storage & Utilities:**
+
+- **app/utils/localStorage.ts**: Client-side persistence (settings, cache, migration of legacy keys)
+- **app/utils/notifications.ts**: Browser notification permission checking and display
+
+**Environment & Configuration:**
+
+- **app/lib/env.ts**: Validated environment variables via @t3-oss/env-nextjs
 
 ### Internationalization
 
-Custom i18n implementation without external library:
+Uses `next-intl` for i18n:
 
 - Translation files: `messages/en.json`, `messages/ko.json`
-- **app/contexts/LanguageContext.tsx**: Language state (stored in localStorage)
-- **app/hooks/useTranslation.ts**: `t(key, params)` function with dot notation path lookup
+- **app/providers/IntlProvider.tsx**: IntlProvider wrapper from next-intl
+- **useTranslations()** hook: i18n function imported from `next-intl` (used in client components)
 
 ### Components
 
-All UI components are in `app/components/`:
+All UI components are in `app/components/` (shadcn/ui + Radix UI primitives):
+
+**Layout & Navigation:**
 
 - **Header.tsx**: Navigation, auth status, language switcher
-- **AddRepositoryForm.tsx**: Add repositories by URL or owner/name
-- **RepositoryItem.tsx**: Display tracked repository with removal option
-- **RepositoryIssueList.tsx**: Issue list with filtering/sorting
-- **IssueItem.tsx**: Individual issue card with labels, metadata
-- **SettingsPanel.tsx**: Notification frequency, custom labels, hide closed issues
-- **SyncModal.tsx**: Gist sync conflict resolution UI
+- **Navigation.tsx**: Tabs/menu navigation between Issues and Picked sections
+- **Footer.tsx**: Site footer
+- **AdSidebar.tsx**: Google AdSense sidebar
+
+**Auth & User:**
+
+- **LoginPrompt.tsx**: Call-to-action for GitHub login
+- **ProfileAnalysisModal.tsx**: Display user profile analysis (top languages, contributions)
+
+**Issue Display:**
+
+- **IssueItem.tsx**: Individual issue card (recommended) with labels, metadata, pick/unpick button
+- **PickedIssueItem.tsx**: Bookmarked issue card with state, custom tags, unpick button
+- **RecommendedIssues.tsx**: Main issues feed with language filter, recommendations display
+
+**Filtering & Settings:**
+
+- **IssueFilters.tsx**: Language/label filtering for recommendations
 
 ## Environment Configuration
 
-Required for GitHub OAuth features (optional for basic usage):
+Required for full functionality:
 
 ```bash
-# .env.local
-GITHUB_CLIENT_ID=your_github_client_id
-GITHUB_CLIENT_SECRET=your_github_client_secret
-NEXT_PUBLIC_GITHUB_CLIENT_ID=your_github_client_id
-NEXT_PUBLIC_GITHUB_REDIRECT_URI=http://localhost:3000
+# .env.local (Public - loaded in client)
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=your_anon_key
+NEXT_PUBLIC_BASE_URL=http://localhost:3000          # Optional, for canonical URLs
+NEXT_PUBLIC_ADSENSE_CLIENT_ID=ca-pub-xxx           # Optional, for Google AdSense
+NEXT_PUBLIC_ADSENSE_SLOT_ID=xxx                     # Optional, for Google AdSense
+
+# .env.local (Server-only)
+GITHUB_APP_ID=your_github_app_id                    # Optional, for GitHub App auth
+GITHUB_APP_PRIVATE_KEY=-----BEGIN PRIVATE KEY-----... # Optional
+GITHUB_APP_INSTALLATION_ID=your_installation_id     # Optional
 ```
 
-Without these, the app runs in anonymous mode with GitHub API rate limits.
+Supabase must be configured with:
+
+- GitHub OAuth provider (for sign-in)
+- `user_profiles`, `user_settings` tables (see supabase/migrations/)
+- Public schema for RLS policies
 
 ## Code Style
 
@@ -119,9 +178,15 @@ Uses Next.js recommended configs:
 - **Next.js 15** (App Router, React Server Components)
 - **React 19**
 - **TypeScript**
-- **TailwindCSS 4** + **DaisyUI** for UI components
-- **Octokit** (@octokit/rest) for GitHub API
-- **SWR** for client-side data fetching (not heavily used, mostly direct Octokit calls)
+- **TailwindCSS 4** for styling
+- **shadcn/ui** + **Radix UI** for UI components (replaced DaisyUI)
+- **Supabase** (@supabase/supabase-js, @supabase/ssr) for auth and database
+- **Octokit** (@octokit/rest, @octokit/auth-app) for GitHub API
+- **SWR** for client-side data fetching
+- **next-intl** for internationalization
+- **Upstash Redis** (@upstash/redis) for distributed caching
+- **react-icons** for icon library
+- **Lucide React** for additional icons
 
 ## Issue & Roadmap Management
 
@@ -155,7 +220,12 @@ Uses Next.js recommended configs:
 
 ## Important Notes
 
-- All code is client-side (`'use client'` in page.tsx) due to state management needs
-- GitHub API calls use authenticated Octokit when token available, anonymous otherwise
-- Settings sync via private GitHub Gist (requires OAuth)
-- Browser notifications require user permission (requested on settings change)
+- Authentication requires Supabase with GitHub OAuth provider configured
+- GitHub access token from Supabase OAuth is stored in sessionStorage (not persisted across browser restart)
+- Settings and picked issues sync via Supabase database (with localStorage fallback when offline)
+- User profiles auto-sync on first login and weekly thereafter
+- Recommended issues caching uses localStorage + optional Upstash Redis for distributed caching
+- Browser notifications require explicit user permission (checked on app load)
+- Notification checks run on intervals (hourly, 6-hourly, daily) based on user preference
+- Issue state tracking periodically fetches from GitHub API to detect status changes (open/closed/assignee)
+- SSR: Landing page (/) and static pages are server-rendered; authenticated pages (/issues, /picked) use CSR
