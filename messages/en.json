@@ -169,7 +169,14 @@
       "hot": "Hot"
     },
     "matchScore": "Match {score}%",
-    "matchScoreTooltip": "Skill matching score based on your GitHub profile"
+    "matchScoreTooltip": "Skill matching score based on your GitHub profile",
+    "quality": {
+      "label": "Quality",
+      "gradeA": "A",
+      "gradeB": "B",
+      "gradeC": "C",
+      "tooltip": "Quality {grade} · {score}/100"
+    }
   },
   "maintainer": {
     "gradeA": "Responsive",
@@ -282,6 +289,13 @@
     "failedToRemoveCustomLabel": "Failed to remove custom label",
     "rateLimitExceeded": "GitHub API rate limit reached. Please try again later or log in for higher limits.",
     "rateLimitExceededLoggedIn": "GitHub API rate limit reached. Please try again later."
+  },
+  "weeklyPicks": {
+    "title": "Weekly Picks",
+    "subtitle": "Top beginner-friendly issues for Week {week}, {year}",
+    "generatedAt": "Generated on {date}",
+    "noIssues": "No weekly picks available yet. Check back soon!",
+    "autoRefresh": "This page is automatically refreshed every week with fresh picks."
   },
   "sync": {
     "localRepositories": "Local Repositories",

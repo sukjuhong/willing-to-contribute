@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { UserSettings, Issue, PickedIssue } from '../types';
+import { UserSettings } from '../types';
 import { saveSettings, loadSettings, defaultSettings } from '../utils/localStorage';
 import {
   loadUserSettings as loadFromSupabase,
   saveUserSettings as saveToSupabase,
 } from '../lib/supabase/settings';
 
-// Custom hook for managing user settings
+// Custom hook for managing user settings (no longer manages picked issues)
 const useSettings = (isLoggedIn: boolean, userId?: string) => {
   const [settings, setSettings] = useState<UserSettings>(defaultSettings);
   const [loading, setLoading] = useState<boolean>(true);
@@ -77,76 +77,6 @@ const useSettings = (isLoggedIn: boolean, userId?: string) => {
     [isLoggedIn, userId],
   );
 
-  // Save (pick) an issue
-  const pickIssue = useCallback(
-    async (issue: Issue): Promise<boolean> => {
-      try {
-        const alreadySaved = settings.pickedIssues.some(s => s.id === issue.id);
-        if (alreadySaved) return false;
-
-        const now = new Date().toISOString();
-        const saved: PickedIssue = {
-          id: issue.id,
-          number: issue.number,
-          title: issue.title,
-          url: issue.url,
-          state: issue.state,
-          repository: {
-            owner: issue.repository.owner,
-            name: issue.repository.name,
-          },
-          labels: issue.labels,
-          savedAt: now,
-          userTags: [],
-          lastKnownState: issue.state,
-          lastCheckedAt: now,
-          assignee: undefined,
-        };
-
-        const newSettings = {
-          ...settings,
-          pickedIssues: [...settings.pickedIssues, saved],
-        };
-
-        await saveUserSettings(newSettings);
-        return true;
-      } catch (err) {
-        console.error('Error saving issue:', err);
-        setError('Failed to save issue');
-        return false;
-      }
-    },
-    [settings, saveUserSettings],
-  );
-
-  // Unsave (unpick) an issue
-  const unpickIssue = useCallback(
-    async (issueId: string): Promise<void> => {
-      const newSettings = {
-        ...settings,
-        pickedIssues: settings.pickedIssues.filter(s => s.id !== issueId),
-      };
-
-      await saveUserSettings(newSettings);
-    },
-    [settings, saveUserSettings],
-  );
-
-  // Update user tags on a saved issue
-  const updateIssueTags = useCallback(
-    async (issueId: string, tags: string[]): Promise<void> => {
-      const newSettings = {
-        ...settings,
-        pickedIssues: settings.pickedIssues.map(s =>
-          s.id === issueId ? { ...s, userTags: tags } : s,
-        ),
-      };
-
-      await saveUserSettings(newSettings);
-    },
-    [settings, saveUserSettings],
-  );
-
   // Update notification frequency
   const updateNotificationFrequency = useCallback(
     async (frequency: 'hourly' | '6hours' | 'daily' | 'never'): Promise<boolean> => {
@@ -211,9 +141,6 @@ const useSettings = (isLoggedIn: boolean, userId?: string) => {
     settings,
     loading,
     error,
-    pickIssue,
-    unpickIssue,
-    updateIssueTags,
     updateNotificationFrequency,
     toggleHideClosedIssues,
     updateLastCheckedAt,

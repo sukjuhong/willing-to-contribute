@@ -169,7 +169,14 @@
       "hot": "경쟁 중"
     },
     "matchScore": "매칭 {score}%",
-    "matchScoreTooltip": "GitHub 프로필 기반 스킬 매칭 점수"
+    "matchScoreTooltip": "GitHub 프로필 기반 스킬 매칭 점수",
+    "quality": {
+      "label": "품질",
+      "gradeA": "A",
+      "gradeB": "B",
+      "gradeC": "C",
+      "tooltip": "품질 {grade}등급 · {score}/100"
+    }
   },
   "maintainer": {
     "gradeA": "친절함",
@@ -282,6 +289,13 @@
     "failedToRemoveCustomLabel": "사용자 정의 라벨 제거에 실패했습니다",
     "rateLimitExceeded": "GitHub API 요청 한도에 도달했습니다. 잠시 후 다시 시도하거나 로그인하여 한도를 늘려보세요.",
     "rateLimitExceededLoggedIn": "GitHub API 요청 한도에 도달했습니다. 잠시 후 다시 시도해주세요."
+  },
+  "weeklyPicks": {
+    "title": "주간 추천",
+    "subtitle": "{year}년 {week}주차 추천 이슈",
+    "generatedAt": "생성일: {date}",
+    "noIssues": "아직 주간 추천이 없습니다. 곧 업데이트됩니다!",
+    "autoRefresh": "이 페이지는 매주 자동으로 새로운 추천 이슈로 갱신됩니다."
   },
   "sync": {
     "localRepositories": "로컬 저장소",

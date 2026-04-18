@@ -1,7 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Issue } from '../types';
 import { FaGithub, FaClock, FaStar, FaCodeBranch } from 'react-icons/fa';
-import { LuShield, LuCircleDot, LuUsers, LuFlame, LuShare2 } from 'react-icons/lu';
+import {
+  LuShield,
+  LuCircleDot,
+  LuUsers,
+  LuFlame,
+  LuShare2,
+  LuAward,
+} from 'react-icons/lu';
 import { useTranslations } from 'next-intl';
 import { useLocaleSwitch } from '@/app/providers/IntlProvider';
 import { Card } from '@/components/ui/card';
@@ -49,6 +56,12 @@ const getMatchScoreStyle = (score: number): string => {
   if (score >= 70) return 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20';
   if (score >= 40) return 'bg-amber-500/15 text-amber-400 border-amber-500/20';
   return 'bg-muted text-muted-foreground border-border';
+};
+
+const qualityGradeStyles: Record<'A' | 'B' | 'C', string> = {
+  A: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20',
+  B: 'bg-amber-500/15 text-amber-400 border-amber-500/20',
+  C: 'bg-muted text-muted-foreground border-border',
 };
 
 type CompetitionStatus = 'available' | 'inProgress' | 'hot';
@@ -138,6 +151,7 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
   const tCommon = useTranslations('common');
   const tMaintainer = useTranslations('maintainer');
   const tIssue = useTranslations('issue');
+  const tQuality = useTranslations('issue.quality');
   const { locale } = useLocaleSwitch();
   const [copied, setCopied] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -243,6 +257,22 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
                 >
                   <LuShield className="shrink-0 size-2.5" />
                   {tMaintainer(`grade${issue.repository.maintainerScore.grade}`)}
+                </Badge>
+              )}
+              {issue.qualityScore && (
+                <Badge
+                  variant="outline"
+                  className={cn(
+                    'inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded',
+                    qualityGradeStyles[issue.qualityScore.grade],
+                  )}
+                  title={tQuality('tooltip', {
+                    grade: issue.qualityScore.grade,
+                    score: issue.qualityScore.score,
+                  })}
+                >
+                  <LuAward className="shrink-0 size-2.5" />
+                  {tQuality('label')} {issue.qualityScore.grade}
                 </Badge>
               )}
               <CompetitionBadge
@@ -356,6 +386,23 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
                 <LuShield className="shrink-0 size-[11px]" />
                 {issue.repository.maintainerScore.grade} ·{' '}
                 {tMaintainer(`grade${issue.repository.maintainerScore.grade}`)}
+              </Badge>
+            )}
+
+            {issue.qualityScore && (
+              <Badge
+                variant="outline"
+                className={cn(
+                  'inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded',
+                  qualityGradeStyles[issue.qualityScore.grade],
+                )}
+                title={tQuality('tooltip', {
+                  grade: issue.qualityScore.grade,
+                  score: issue.qualityScore.score,
+                })}
+              >
+                <LuAward className="shrink-0 size-[11px]" />
+                {tQuality('label')} {issue.qualityScore.grade}
               </Badge>
             )}
 

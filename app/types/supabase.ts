@@ -64,8 +64,71 @@ export interface Database {
           updated_at?: string;
         };
       };
+      picked_issues: {
+        Row: {
+          id: string;
+          user_id: string;
+          issue_id: string;
+          issue_number: number;
+          issue_url: string;
+          repository_owner: string;
+          repository_name: string;
+          title: string;
+          state: string;
+          labels: Json;
+          assignee: string | null;
+          user_tags: Json;
+          picked_at: string;
+          last_known_state: string;
+          last_checked_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          issue_id: string;
+          issue_number: number;
+          issue_url: string;
+          repository_owner: string;
+          repository_name: string;
+          title: string;
+          state?: string;
+          labels?: Json;
+          assignee?: string | null;
+          user_tags?: Json;
+          picked_at?: string;
+          last_known_state?: string;
+          last_checked_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          issue_id?: string;
+          issue_number?: number;
+          issue_url?: string;
+          repository_owner?: string;
+          repository_name?: string;
+          title?: string;
+          state?: string;
+          labels?: Json;
+          assignee?: string | null;
+          user_tags?: Json;
+          picked_at?: string;
+          last_known_state?: string;
+          last_checked_at?: string;
+        };
+      };
     };
-    Views: Record<string, never>;
+    Views: {
+      picked_issues_counts: {
+        Row: {
+          issue_url: string;
+          repository_owner: string;
+          repository_name: string;
+          title: string;
+          pick_count: number;
+        };
+      };
+    };
     Functions: Record<string, never>;
     Enums: Record<string, never>;
   };
