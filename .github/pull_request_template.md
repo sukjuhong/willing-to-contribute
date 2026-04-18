@@ -4,7 +4,7 @@
 
 <!-- 연결된 이슈 번호를 반드시 입력하세요. (e.g. Closes #42) -->
 
-Closes #
+Closes #<이슈번호>
 
 ## Summary
 
