@@ -176,6 +176,11 @@
       "gradeB": "B",
       "gradeC": "C",
       "tooltip": "품질 {grade}등급 · {score}/100"
+    },
+    "pickCount": {
+      "few": "소수 관심",
+      "exact": "{count}명 관심",
+      "tooltip": "이 이슈를 Pick한 Pickssue 사용자 수"
     }
   },
   "maintainer": {

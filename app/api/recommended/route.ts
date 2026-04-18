@@ -8,7 +8,7 @@ import { cacheGet, cacheSet } from '../../lib/cache';
 import { createClient } from '@/app/lib/supabase/server';
 
 const CACHE_TTL_SECONDS = 900;
-const CACHE_VERSION = 'v2';
+const CACHE_VERSION = 'v3';
 const RESULTS_PER_PAGE = 20;
 
 type Octokit = Awaited<ReturnType<typeof getServerOctokit>>;
@@ -295,6 +295,33 @@ function buildIssue(
   };
 }
 
+async function fetchPickCounts(issueUrls: string[]): Promise<Map<string, number>> {
+  const counts = new Map<string, number>();
+  if (issueUrls.length === 0) return counts;
+
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('picked_issues_counts' as never)
+      .select('issue_url, pick_count')
+      .in('issue_url', issueUrls);
+
+    if (error || !data) return counts;
+
+    for (const row of data as unknown as Array<{
+      issue_url: string;
+      pick_count: number;
+    }>) {
+      counts.set(row.issue_url, row.pick_count);
+    }
+  } catch {
+    // If Supabase is unavailable or the view is inaccessible, silently skip —
+    // pickCount is purely additive social proof; its absence must not break recommendations.
+  }
+
+  return counts;
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -364,6 +391,12 @@ export async function GET(request: Request) {
         i => !profile.contributedRepos.has(`${i.repository.owner}/${i.repository.name}`),
       );
     }
+
+    const pickCounts = await fetchPickCounts(issues.map(i => i.url));
+    issues = issues.map(issue => ({
+      ...issue,
+      pickCount: pickCounts.get(issue.url) ?? 0,
+    }));
 
     const result = {
       issues,

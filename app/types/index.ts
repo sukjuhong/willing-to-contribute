@@ -59,6 +59,7 @@ export interface Issue {
   assignee?: string | null;
   matchScore?: number; // 0-100 skill matching score (only for logged-in users with profile)
   qualityScore?: IssueQualityScore;
+  pickCount?: number; // Number of users who have picked this issue (cross-user social proof)
 }
 
 // Saved (picked) issue types
