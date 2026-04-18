@@ -8,6 +8,7 @@ import {
   LuFlame,
   LuShare2,
   LuAward,
+  LuBookmark,
 } from 'react-icons/lu';
 import { useTranslations } from 'next-intl';
 import { useLocaleSwitch } from '@/app/providers/IntlProvider';
@@ -15,6 +16,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { formatRelativeTime } from '../utils/formatRelativeTime';
+import { resolvePickCountDisplay } from './pickCountBadge';
 
 interface IssueItemProps {
   issue: Issue;
@@ -130,8 +132,10 @@ const IssueBadges: React.FC<{ issue: Issue; compact: boolean }> = ({
   const tMaintainer = useTranslations('maintainer');
   const tIssue = useTranslations('issue');
   const tQuality = useTranslations('issue.quality');
+  const tPickCount = useTranslations('issue.pickCount');
 
   const competitionStatus = getCompetitionStatus(issue.comments, issue.assignee);
+  const pickCountDisplay = resolvePickCountDisplay(issue.pickCount);
   const padding = compact ? 'px-1.5 py-0.5' : 'px-2 py-0.5';
   const iconSize = compact ? 'size-2.5' : 'size-[11px]';
 
@@ -177,6 +181,22 @@ const IssueBadges: React.FC<{ issue: Issue; compact: boolean }> = ({
         label={tIssue(`status.${competitionStatus}`)}
         compact={compact}
       />
+
+      {pickCountDisplay.kind !== 'hidden' && (
+        <Badge
+          variant="outline"
+          className={cn(
+            'inline-flex items-center gap-1 text-xs rounded border-border bg-muted text-muted-foreground',
+            padding,
+          )}
+          title={tPickCount('tooltip')}
+        >
+          <LuBookmark className={cn('shrink-0', iconSize)} />
+          {pickCountDisplay.kind === 'few'
+            ? tPickCount('few')
+            : tPickCount('exact', { count: pickCountDisplay.count })}
+        </Badge>
+      )}
 
       {issue.matchScore != null && (
         <Badge

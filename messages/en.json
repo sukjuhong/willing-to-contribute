@@ -176,6 +176,11 @@
       "gradeB": "B",
       "gradeC": "C",
       "tooltip": "Quality {grade} · {score}/100"
+    },
+    "pickCount": {
+      "few": "A few interested",
+      "exact": "{count} interested",
+      "tooltip": "Number of Pickssue users who saved this issue"
     }
   },
   "maintainer": {
