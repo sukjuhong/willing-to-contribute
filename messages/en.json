@@ -297,6 +297,33 @@
     "noIssues": "No weekly picks available yet. Check back soon!",
     "autoRefresh": "This page is automatically refreshed every week with fresh picks."
   },
+  "guide": {
+    "languageNav": {
+      "heading": "Language-Specific Contribution Guides",
+      "description": "Want a guide tailored to your language? Each page covers recommended repositories, issue types to target, and language-specific tips for your first contribution.",
+      "viewGuide": "View guide →"
+    },
+    "javascript": {
+      "title": "JavaScript & TypeScript Open Source Contribution Guide for Beginners",
+      "intro": "The language of the web — and one of the best ecosystems to start contributing to."
+    },
+    "python": {
+      "title": "Python Open Source Contribution Guide for Beginners",
+      "intro": "Readable, versatile, and backed by one of the friendliest open source communities."
+    },
+    "go": {
+      "title": "Go (Golang) Open Source Contribution Guide for Beginners",
+      "intro": "Simple, fast, and built for production — with a toolchain that makes contributing a breeze."
+    },
+    "rust": {
+      "title": "Rust Open Source Contribution Guide for Beginners",
+      "intro": "Systems programming with memory safety — and a community known for exceptional documentation."
+    },
+    "java": {
+      "title": "Java Open Source Contribution Guide for Beginners",
+      "intro": "The backbone of enterprise software — with a vast ecosystem and decades of beginner-friendly projects."
+    }
+  },
   "privacy": {
     "toggle": {
       "title": "Public Profile",
