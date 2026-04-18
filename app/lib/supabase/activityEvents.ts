@@ -5,6 +5,7 @@ export type ActivityEventType =
   | 'issue_picked'
   | 'issue_unpicked'
   | 'contribution_verified'
+  | 'contribution_completed'
   | 'badge_earned';
 
 type ActivityEventInsert = Database['public']['Tables']['user_activity_events']['Insert'];

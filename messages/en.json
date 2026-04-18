@@ -270,6 +270,8 @@
     "unpick": "Unpick this issue",
     "addTag": "Tag",
     "tagPlaceholder": "Add tag...",
+    "contributionVerified": "Contributed",
+    "contributionVerifiedTooltip": "Your pull request closed this issue",
     "frequency": {
       "hourly": "Hour",
       "6hours": "6 Hours",

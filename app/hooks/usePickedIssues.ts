@@ -11,6 +11,8 @@ import {
   updatePickedIssue,
   bulkUpdatePickedIssues,
 } from '../lib/supabase/pickedIssues';
+import { verifyContributionForIssue } from '../lib/github/verifyContribution';
+import { logActivityEvent } from '../lib/supabase/activityEvents';
 
 interface StateChange {
   issue: PickedIssue;
@@ -34,7 +36,12 @@ async function batchProcess<T, R>(
   return results;
 }
 
-const usePickedIssues = (isLoggedIn: boolean, userId?: string, accessToken?: string) => {
+const usePickedIssues = (
+  isLoggedIn: boolean,
+  userId?: string,
+  accessToken?: string,
+  userLogin?: string,
+) => {
   const [pickedIssues, setPickedIssues] = useState<PickedIssue[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -179,7 +186,7 @@ const usePickedIssues = (isLoggedIn: boolean, userId?: string, accessToken?: str
               });
             }
 
-            return {
+            const base: PickedIssue = {
               ...picked,
               title: data.title,
               state: newState,
@@ -187,6 +194,40 @@ const usePickedIssues = (isLoggedIn: boolean, userId?: string, accessToken?: str
               assignee: newAssignee,
               lastCheckedAt: new Date().toISOString(),
             };
+
+            // Auto-verify contribution only on the open→closed transition.
+            // Without the transition gate we'd fire Timeline API on every refresh
+            // for any still-closed-but-unverified issue (e.g. closed by someone else).
+            if (
+              picked.lastKnownState === 'open' &&
+              newState === 'closed' &&
+              !picked.contributionVerifiedAt &&
+              userLogin
+            ) {
+              const result = await verifyContributionForIssue(
+                picked.url,
+                userLogin,
+                accessToken,
+                octokit,
+              );
+              if (result.verified) {
+                const verifiedAt = new Date().toISOString();
+                void logActivityEvent(userId, 'contribution_completed', {
+                  issue_id: picked.id,
+                  issue_url: picked.url,
+                  closing_pr_url: result.closingPrUrl ?? null,
+                  closing_pr_author: result.closingPrAuthor ?? null,
+                });
+                return {
+                  ...base,
+                  contributionVerifiedAt: verifiedAt,
+                  closingPrUrl: result.closingPrUrl,
+                  closingPrAuthor: result.closingPrAuthor,
+                };
+              }
+            }
+
+            return base;
           } catch {
             return picked;
           }
@@ -205,7 +246,7 @@ const usePickedIssues = (isLoggedIn: boolean, userId?: string, accessToken?: str
     }
 
     return changes;
-  }, [pickedIssues, userId, accessToken]);
+  }, [pickedIssues, userId, accessToken, userLogin]);
 
   return {
     pickedIssues,

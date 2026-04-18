@@ -270,6 +270,8 @@
     "unpick": "이 이슈 Unpick",
     "addTag": "태그",
     "tagPlaceholder": "태그 추가...",
+    "contributionVerified": "기여 완료",
+    "contributionVerifiedTooltip": "내 Pull Request가 이 이슈를 닫았습니다",
     "frequency": {
       "hourly": "매시간",
       "6hours": "6시간",

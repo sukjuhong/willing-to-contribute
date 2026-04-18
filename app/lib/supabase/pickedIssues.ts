@@ -23,6 +23,9 @@ function rowToPickedIssue(row: PickedIssueRow): PickedIssue {
     lastKnownState: row.last_known_state as 'open' | 'closed',
     lastCheckedAt: row.last_checked_at,
     assignee: row.assignee ?? undefined,
+    contributionVerifiedAt: row.contribution_verified_at ?? undefined,
+    closingPrUrl: row.closing_pr_url ?? undefined,
+    closingPrAuthor: row.closing_pr_author ?? undefined,
   };
 }
 
@@ -55,6 +58,9 @@ export async function pickIssue(userId: string, issue: PickedIssue): Promise<boo
     picked_at: issue.savedAt,
     last_known_state: issue.lastKnownState,
     last_checked_at: issue.lastCheckedAt,
+    contribution_verified_at: issue.contributionVerifiedAt ?? null,
+    closing_pr_url: issue.closingPrUrl ?? null,
+    closing_pr_author: issue.closingPrAuthor ?? null,
   };
 
   const { error } = await supabase
@@ -97,6 +103,9 @@ export async function updatePickedIssue(
       | 'user_tags'
       | 'last_known_state'
       | 'last_checked_at'
+      | 'contribution_verified_at'
+      | 'closing_pr_url'
+      | 'closing_pr_author'
     >
   >,
 ): Promise<boolean> {
@@ -131,6 +140,9 @@ export async function bulkUpdatePickedIssues(
         picked_at: issue.savedAt,
         last_known_state: issue.lastKnownState,
         last_checked_at: issue.lastCheckedAt,
+        contribution_verified_at: issue.contributionVerifiedAt ?? null,
+        closing_pr_url: issue.closingPrUrl ?? null,
+        closing_pr_author: issue.closingPrAuthor ?? null,
       }) satisfies PickedIssueInsert,
   );
 

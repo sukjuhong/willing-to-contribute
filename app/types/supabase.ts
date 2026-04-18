@@ -110,6 +110,9 @@ export interface Database {
           picked_at: string;
           last_known_state: string;
           last_checked_at: string;
+          contribution_verified_at: string | null;
+          closing_pr_url: string | null;
+          closing_pr_author: string | null;
         };
         Insert: {
           id?: string;
@@ -127,6 +130,9 @@ export interface Database {
           picked_at?: string;
           last_known_state?: string;
           last_checked_at?: string;
+          contribution_verified_at?: string | null;
+          closing_pr_url?: string | null;
+          closing_pr_author?: string | null;
         };
         Update: {
           id?: string;
@@ -144,6 +150,9 @@ export interface Database {
           picked_at?: string;
           last_known_state?: string;
           last_checked_at?: string;
+          contribution_verified_at?: string | null;
+          closing_pr_url?: string | null;
+          closing_pr_author?: string | null;
         };
       };
     };
