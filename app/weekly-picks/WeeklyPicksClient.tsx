@@ -160,6 +160,7 @@ interface WeeklyPicksClientProps {
 
 export default function WeeklyPicksClient({ data }: WeeklyPicksClientProps) {
   const t = useTranslations('weeklyPicks');
+  const { locale } = useLocaleSwitch();
 
   return (
     <div className="min-h-screen bg-background">
@@ -178,7 +179,9 @@ export default function WeeklyPicksClient({ data }: WeeklyPicksClientProps) {
           </p>
           <p className="text-muted-foreground/60 text-xs mt-1">
             {t('generatedAt', {
-              date: new Date(data.generatedAt).toLocaleDateString(),
+              date: new Intl.DateTimeFormat(locale === 'ko' ? 'ko-KR' : 'en-US').format(
+                new Date(data.generatedAt),
+              ),
             })}
           </p>
         </div>

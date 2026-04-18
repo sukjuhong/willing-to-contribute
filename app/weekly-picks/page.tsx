@@ -1,17 +1,11 @@
 import type { Metadata } from 'next';
-import { getWeeklyPicks } from '../lib/weeklyPicks';
+import { getWeeklyPicks, getIsoWeekAndYear } from '../lib/weeklyPicks';
 import WeeklyPicksClient from './WeeklyPicksClient';
 
 export const revalidate = 604800; // 1 week in seconds
 
 export async function generateMetadata(): Promise<Metadata> {
-  const now = new Date();
-  const d = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
-  const dayNum = d.getUTCDay() || 7;
-  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  const weekNumber = Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
-  const year = now.getFullYear();
+  const { weekNumber, year } = getIsoWeekAndYear(new Date());
 
   const title = `Weekly Picks - Week ${weekNumber}, ${year}`;
   const description = `Top 10 beginner-friendly open source issues curated for Week ${weekNumber}, ${year}. Find your next contribution on Pickssue.`;

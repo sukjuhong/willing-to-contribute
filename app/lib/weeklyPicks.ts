@@ -16,13 +16,16 @@ const getFreshnessDate = (freshness: '1w' | '1m'): string => {
   return now.toISOString().split('T')[0];
 };
 
-const getWeekNumber = (date: Date): number => {
+export const getIsoWeekAndYear = (date: Date): { weekNumber: number; year: number } => {
   const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
   const dayNum = d.getUTCDay() || 7;
   d.setUTCDate(d.getUTCDate() + 4 - dayNum);
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+  const weekNumber = Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+  return { weekNumber, year: d.getUTCFullYear() };
 };
+
+export const getWeekNumber = (date: Date): number => getIsoWeekAndYear(date).weekNumber;
 
 export interface WeeklyPicksData {
   issues: Issue[];
@@ -132,8 +135,7 @@ async function fetchIssuesFromGitHub(
 
 export async function getWeeklyPicks(): Promise<WeeklyPicksData> {
   const now = new Date();
-  const weekNumber = getWeekNumber(now);
-  const year = now.getFullYear();
+  const { weekNumber, year } = getIsoWeekAndYear(now);
   const weekCacheKey = `${CACHE_KEY}:${year}-W${weekNumber}`;
 
   const cached = await cacheGet<WeeklyPicksData>(weekCacheKey);
