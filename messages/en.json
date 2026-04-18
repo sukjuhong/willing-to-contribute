@@ -297,6 +297,12 @@
     "noIssues": "No weekly picks available yet. Check back soon!",
     "autoRefresh": "This page is automatically refreshed every week with fresh picks."
   },
+  "daily": {
+    "title": "Today's Discoveries",
+    "subtitle": "Curated just for you — refreshes daily",
+    "refreshNote": "These picks are personalized for today. Come back tomorrow for a new set.",
+    "empty": "No discoveries available today. Check back tomorrow!"
+  },
   "sync": {
     "localRepositories": "Local Repositories",
     "gistRepositories": "Cloud Repositories",
