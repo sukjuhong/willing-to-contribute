@@ -1,4 +1,5 @@
 import { createClient } from '@/app/lib/supabase/client';
+import { logActivityEvent } from '@/app/lib/supabase/activityEvents';
 import { PickedIssue, Label } from '@/app/types';
 import { Database } from '@/app/types/supabase';
 
@@ -59,7 +60,15 @@ export async function pickIssue(userId: string, issue: PickedIssue): Promise<boo
   const { error } = await supabase
     .from('picked_issues')
     .upsert(row as never, { onConflict: 'user_id,issue_id' });
-  return !error;
+  if (error) return false;
+
+  void logActivityEvent(userId, 'issue_picked', {
+    issue_id: issue.id,
+    issue_url: issue.url,
+    repository_owner: issue.repository.owner,
+    repository_name: issue.repository.name,
+  });
+  return true;
 }
 
 export async function unpickIssue(userId: string, issueId: string): Promise<boolean> {
@@ -69,7 +78,10 @@ export async function unpickIssue(userId: string, issueId: string): Promise<bool
     .delete()
     .eq('user_id', userId)
     .eq('issue_id', issueId);
-  return !error;
+  if (error) return false;
+
+  void logActivityEvent(userId, 'issue_unpicked', { issue_id: issueId });
+  return true;
 }
 
 export async function updatePickedIssue(
