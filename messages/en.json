@@ -297,6 +297,14 @@
     "noIssues": "No weekly picks available yet. Check back soon!",
     "autoRefresh": "This page is automatically refreshed every week with fresh picks."
   },
+  "privacy": {
+    "toggle": {
+      "title": "Public Profile",
+      "description": "Allow others to view your profile (languages, contributions). Disabled by default (opt-in)."
+    },
+    "saving": "Saving...",
+    "saveError": "Failed to save privacy settings"
+  },
   "sync": {
     "localRepositories": "Local Repositories",
     "gistRepositories": "Cloud Repositories",

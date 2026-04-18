@@ -297,6 +297,14 @@
     "noIssues": "아직 주간 추천이 없습니다. 곧 업데이트됩니다!",
     "autoRefresh": "이 페이지는 매주 자동으로 새로운 추천 이슈로 갱신됩니다."
   },
+  "privacy": {
+    "toggle": {
+      "title": "프로필 공개",
+      "description": "다른 사용자가 내 프로필(언어, 기여 이력)을 볼 수 있도록 허용합니다. 기본값은 비공개(opt-in)입니다."
+    },
+    "saving": "저장 중...",
+    "saveError": "프라이버시 설정 저장에 실패했습니다"
+  },
   "sync": {
     "localRepositories": "로컬 저장소",
     "gistRepositories": "클라우드 저장소",

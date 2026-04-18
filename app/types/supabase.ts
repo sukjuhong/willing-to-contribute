@@ -17,6 +17,8 @@ export interface Database {
           starred_categories: Json | null;
           contributed_repos: Json | null;
           last_synced_at: string | null;
+          is_public: boolean;
+          public_fields: Json | null;
         };
         Insert: {
           id: string;
@@ -25,6 +27,8 @@ export interface Database {
           starred_categories?: Json | null;
           contributed_repos?: Json | null;
           last_synced_at?: string | null;
+          is_public?: boolean;
+          public_fields?: Json | null;
         };
         Update: {
           id?: string;
@@ -33,6 +37,8 @@ export interface Database {
           starred_categories?: Json | null;
           contributed_repos?: Json | null;
           last_synced_at?: string | null;
+          is_public?: boolean;
+          public_fields?: Json | null;
         };
       };
       user_settings: {
