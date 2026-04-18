@@ -42,7 +42,7 @@ const scoreAssignee = (
   issue: GithubIssueLike,
 ): { points: number; hasAssignee: boolean } => {
   const hasAssigneesArr = Array.isArray(issue.assignees) && issue.assignees.length > 0;
-  const hasAssigneeField = issue.assignee != null && issue.assignee !== '';
+  const hasAssigneeField = issue.assignee != null;
   const hasAssignee = hasAssigneesArr || hasAssigneeField;
   return { points: hasAssignee ? 0 : 25, hasAssignee };
 };
@@ -63,7 +63,12 @@ const scoreLabels = (
     .filter(n => n.length > 0);
 
   const hasBeginnerLabel = names.some(name =>
-    BEGINNER_LABEL_PATTERNS.some(pattern => name.includes(pattern)),
+    BEGINNER_LABEL_PATTERNS.some(pattern => {
+      if (pattern.includes(' ') || pattern.includes('-')) {
+        return name.includes(pattern);
+      }
+      return name === pattern || name.split(/[- ]/).includes(pattern);
+    }),
   );
   return { points: hasBeginnerLabel ? 20 : 10, hasBeginnerLabel };
 };
