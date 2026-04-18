@@ -6,6 +6,16 @@ export interface MaintainerScore {
   mergeRate: number;
 }
 
+export interface MatchScore {
+  score: number; // 0-100
+  breakdown: {
+    languagePoints: number;
+    topicPoints: number;
+    scalePoints: number;
+  };
+  reasons: string[];
+}
+
 export interface Repository {
   id: string;
   owner: string;
@@ -40,6 +50,7 @@ export interface Issue {
   isNew?: boolean;
   comments?: number;
   assignee?: string | null;
+  matchScore?: MatchScore;
 }
 
 // Saved (picked) issue types
