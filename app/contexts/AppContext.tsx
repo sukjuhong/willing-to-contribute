@@ -21,9 +21,6 @@ interface AppContextType {
   settings: ReturnType<typeof useSettings>['settings'];
   settingsLoading: boolean;
   settingsError: string | null;
-  pickIssue: (issue: Issue) => Promise<boolean>;
-  unpickIssue: (issueId: string) => Promise<void>;
-  updateIssueTags: (issueId: string, tags: string[]) => Promise<void>;
   updateNotificationFrequency: ReturnType<
     typeof useSettings
   >['updateNotificationFrequency'];
@@ -33,6 +30,9 @@ interface AppContextType {
   pickedIssues: ReturnType<typeof usePickedIssues>['pickedIssues'];
   pickedIssuesLoading: boolean;
   pickedIssuesError: string | null;
+  pickIssue: (issue: Issue) => Promise<boolean>;
+  unpickIssue: (issueId: string) => Promise<void>;
+  updateIssueTags: (issueId: string, tags: string[]) => Promise<void>;
   refreshPickedIssues: () => Promise<StateChange[]>;
 
   // Recommended Issues
@@ -58,27 +58,26 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // Auth state via Supabase
   const { authState, login, logout } = useSupabaseAuth();
 
-  // Settings state
+  // Settings state (no longer manages picked issues)
   const {
     settings,
     loading: settingsLoading,
     error: settingsError,
-    pickIssue,
-    unpickIssue,
-    updateIssueTags,
     updateNotificationFrequency,
     toggleHideClosedIssues,
     updateLastCheckedAt,
-    saveUserSettings,
   } = useSettings(authState.isLoggedIn, authState.userId);
 
-  // Picked issues state — uses saveUserSettings for persistence (localStorage + Supabase)
+  // Picked issues state — uses its own Supabase table
   const {
     pickedIssues,
     loading: pickedIssuesLoading,
     error: pickedIssuesError,
+    pickIssue,
+    unpickIssue,
+    updateIssueTags,
     refreshPickedIssues: _refreshPickedIssues,
-  } = usePickedIssues(settings, saveUserSettings, authState.accessToken);
+  } = usePickedIssues(authState.isLoggedIn, authState.userId, authState.accessToken);
 
   // Wrap refreshPickedIssues to show aggregated notifications
   const refreshPickedIssues = useCallback(async () => {
@@ -147,7 +146,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // Setup periodic checks for picked issue state changes
   useEffect(() => {
     if (settings.notificationFrequency === 'never') return;
-    if (settings.pickedIssues.length === 0) return;
+    if (pickedIssues.length === 0) return;
 
     let interval: NodeJS.Timeout;
 
@@ -168,7 +167,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [settings.notificationFrequency, settings.pickedIssues.length, refreshPickedIssues]);
+  }, [settings.notificationFrequency, pickedIssues.length, refreshPickedIssues]);
 
   const value: AppContextType = {
     authState,
@@ -177,14 +176,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     settings,
     settingsLoading,
     settingsError,
-    pickIssue,
-    unpickIssue,
-    updateIssueTags,
     updateNotificationFrequency,
     toggleHideClosedIssues,
     pickedIssues,
     pickedIssuesLoading,
     pickedIssuesError,
+    pickIssue,
+    unpickIssue,
+    updateIssueTags,
     refreshPickedIssues,
     recommendedIssues,
     recommendedLoading,

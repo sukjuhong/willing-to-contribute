@@ -41,7 +41,7 @@ function formatRelativeTime(isoString: string | null, t: any): string {
 export default function RecommendedIssues() {
   const t = useTranslations();
   const {
-    settings,
+    pickedIssues,
     pickIssue,
     unpickIssue,
     authState,
@@ -70,7 +70,7 @@ export default function RecommendedIssues() {
   const [isPersonalized, setIsPersonalized] = useState(false);
 
   // Track which issues are already picked
-  const pickedIssueIds = new Set(settings.pickedIssues.map(s => s.id));
+  const pickedIssueIds = new Set(pickedIssues.map(s => s.id));
 
   const fetchFromApi = useCallback(
     async (currentPage: number, append: boolean) => {
