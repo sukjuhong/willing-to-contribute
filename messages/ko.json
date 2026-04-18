@@ -157,7 +157,10 @@
       "1m": "지난 1달",
       "3m": "지난 3달",
       "6m": "지난 6달"
-    }
+    },
+    "sortBy": "정렬",
+    "sortDefault": "관련도순",
+    "sortMatchScore": "매칭 점수순"
   },
   "issue": {
     "status": {
@@ -165,6 +168,8 @@
       "inProgress": "진행 중",
       "hot": "경쟁 중"
     },
+    "matchScore": "매칭 {score}%",
+    "matchScoreTooltip": "GitHub 프로필 기반 스킬 매칭 점수",
     "quality": {
       "label": "품질",
       "gradeA": "A",

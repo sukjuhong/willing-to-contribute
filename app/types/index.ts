@@ -57,6 +57,7 @@ export interface Issue {
   isNew?: boolean;
   comments?: number;
   assignee?: string | null;
+  matchScore?: number; // 0-100 skill matching score (only for logged-in users with profile)
   qualityScore?: IssueQualityScore;
 }
 
