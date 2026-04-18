@@ -4,7 +4,13 @@ import { useState } from 'react';
 import { FaBookmark, FaSync, FaRegBookmark } from 'react-icons/fa';
 import LoginPrompt from '@/app/components/LoginPrompt';
 import PickedIssueItem from '@/app/components/PickedIssueItem';
-import { useAuth, useAppSettings, usePicked } from '@/app/contexts/AppContext';
+import PrivacyToggle from '@/app/components/PrivacyToggle';
+import {
+  useAuth,
+  useAppSettings,
+  usePicked,
+  useProfile,
+} from '@/app/contexts/AppContext';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import {
@@ -28,6 +34,7 @@ export default function PickedPage() {
     updateIssueTags,
     refreshPickedIssues,
   } = usePicked();
+  const { profile, updatePrivacySettings } = useProfile();
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -126,6 +133,14 @@ export default function PickedPage() {
             </Select>
           </div>
         </div>
+      )}
+
+      {/* Privacy settings */}
+      {profile !== null && (
+        <PrivacyToggle
+          isPublic={profile.is_public ?? false}
+          onToggle={updatePrivacySettings}
+        />
       )}
 
       {/* Issue list */}

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { getAllGuides } from './[language]/content';
 
 export const metadata: Metadata = {
   title: 'How to Make Your First Open Source Contribution',
@@ -80,7 +81,12 @@ const howToJsonLd = {
   ],
 };
 
+// TODO(i18n): Once a next-intl server request config is added, wrap this page
+// with `getTranslations('guide.languageNav')` and use the keys already in
+// messages/{en,ko}.json (languageNav.heading, description, viewGuide).
 export default function GuidePage() {
+  const languageGuides = getAllGuides();
+
   return (
     <article className="text-foreground">
       <script
@@ -636,6 +642,32 @@ export default function GuidePage() {
             every major open source project started exactly where you are now — with a
             single, carefully chosen first issue.
           </p>
+        </div>
+      </section>
+
+      {/* Language-specific guides navigation */}
+      <section className="mb-16 bg-card border border-border rounded-xl p-8">
+        <h2 className="text-2xl font-bold text-foreground mb-2">
+          Language-Specific Contribution Guides
+        </h2>
+        <p className="text-muted-foreground mb-6 leading-relaxed">
+          Want a guide tailored to your language? Each page covers recommended
+          repositories, issue types to target, and language-specific tips for your first
+          contribution.
+        </p>
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+          {languageGuides.map(guide => (
+            <Link
+              key={guide.slug}
+              href={`/guide/${guide.slug}`}
+              className="flex flex-col items-center justify-center bg-background border border-border rounded-lg px-4 py-4 text-sm font-semibold text-foreground hover:border-primary/60 hover:text-primary transition-colors text-center gap-1"
+            >
+              <span>{guide.displayName}</span>
+              <span className="text-xs text-muted-foreground font-normal">
+                View guide →
+              </span>
+            </Link>
+          ))}
         </div>
       </section>
 

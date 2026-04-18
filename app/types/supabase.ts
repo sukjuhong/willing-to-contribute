@@ -17,6 +17,8 @@ export interface Database {
           starred_categories: Json | null;
           contributed_repos: Json | null;
           last_synced_at: string | null;
+          is_public: boolean;
+          public_fields: Json | null;
         };
         Insert: {
           id: string;
@@ -25,6 +27,8 @@ export interface Database {
           starred_categories?: Json | null;
           contributed_repos?: Json | null;
           last_synced_at?: string | null;
+          is_public?: boolean;
+          public_fields?: Json | null;
         };
         Update: {
           id?: string;
@@ -33,6 +37,8 @@ export interface Database {
           starred_categories?: Json | null;
           contributed_repos?: Json | null;
           last_synced_at?: string | null;
+          is_public?: boolean;
+          public_fields?: Json | null;
         };
       };
       user_settings: {
@@ -62,6 +68,29 @@ export interface Database {
           notification_frequency?: string;
           hide_closed_issues?: boolean;
           updated_at?: string;
+        };
+      };
+      user_activity_events: {
+        Row: {
+          id: string;
+          user_id: string;
+          event_type: string;
+          payload: Json;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          event_type: string;
+          payload?: Json;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          event_type?: string;
+          payload?: Json;
+          created_at?: string;
         };
       };
       picked_issues: {

@@ -49,6 +49,7 @@ type ProfileValue = {
   profileLoading: boolean;
   profileError: string | null;
   syncProfile: ReturnType<typeof useUserProfile>['syncProfile'];
+  updatePrivacySettings: ReturnType<typeof useUserProfile>['updatePrivacySettings'];
 };
 const ProfileContext = createContext<ProfileValue | undefined>(undefined);
 
@@ -162,12 +163,11 @@ function PickedIssuesProvider({ children }: { children: React.ReactNode }) {
 
 function ProfileProvider({ children }: { children: React.ReactNode }) {
   const { authState } = useAuth();
-  const { profile, profileLoading, profileError, syncProfile } = useUserProfile(
-    authState.isLoggedIn,
-  );
+  const { profile, profileLoading, profileError, syncProfile, updatePrivacySettings } =
+    useUserProfile(authState.isLoggedIn);
   const value = useMemo(
-    () => ({ profile, profileLoading, profileError, syncProfile }),
-    [profile, profileLoading, profileError, syncProfile],
+    () => ({ profile, profileLoading, profileError, syncProfile, updatePrivacySettings }),
+    [profile, profileLoading, profileError, syncProfile, updatePrivacySettings],
   );
   return <ProfileContext.Provider value={value}>{children}</ProfileContext.Provider>;
 }
