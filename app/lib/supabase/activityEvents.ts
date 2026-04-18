@@ -21,8 +21,12 @@ export async function logActivityEvent(
       event_type: eventType,
       payload,
     };
-    await supabase.from('user_activity_events').insert(row as never);
-  } catch {
-    // Logging must never disrupt the main flow.
+    const { error } = await supabase.from('user_activity_events').insert(row);
+    if (error) {
+      console.error('[activityEvents] insert failed:', error);
+    }
+  } catch (err) {
+    // Logging must never disrupt the main flow, but surface for debugging.
+    console.error('[activityEvents] unexpected error:', err);
   }
 }
