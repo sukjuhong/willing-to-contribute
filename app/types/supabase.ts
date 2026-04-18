@@ -64,6 +64,29 @@ export interface Database {
           updated_at?: string;
         };
       };
+      user_activity_events: {
+        Row: {
+          id: string;
+          user_id: string;
+          event_type: string;
+          payload: Json;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          event_type: string;
+          payload?: Json;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          event_type?: string;
+          payload?: Json;
+          created_at?: string;
+        };
+      };
       picked_issues: {
         Row: {
           id: string;
