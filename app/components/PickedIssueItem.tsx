@@ -77,6 +77,31 @@ const PickedIssueItem: React.FC<PickedIssueItemProps> = ({
             >
               {issue.lastKnownState}
             </Badge>
+            {issue.contributionVerifiedAt &&
+              (issue.closingPrUrl ? (
+                <a
+                  href={issue.closingPrUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block"
+                  title={t('picked.contributionVerifiedTooltip')}
+                >
+                  <Badge
+                    variant="outline"
+                    className="text-xs px-1.5 py-0.5 rounded bg-[color:var(--color-success)]/10 text-[color:var(--color-success)] border-[color:var(--color-success)]/20 hover:bg-[color:var(--color-success)]/20"
+                  >
+                    ✓ {t('picked.contributionVerified')}
+                  </Badge>
+                </a>
+              ) : (
+                <Badge
+                  variant="outline"
+                  className="text-xs px-1.5 py-0.5 rounded bg-[color:var(--color-success)]/10 text-[color:var(--color-success)] border-[color:var(--color-success)]/20"
+                  title={t('picked.contributionVerifiedTooltip')}
+                >
+                  ✓ {t('picked.contributionVerified')}
+                </Badge>
+              ))}
             {issue.assignee && (
               <Badge
                 variant="outline"

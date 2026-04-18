@@ -78,6 +78,9 @@ export interface PickedIssue {
   lastKnownState: 'open' | 'closed';
   lastCheckedAt: string; // ISO timestamp
   assignee?: string;
+  contributionVerifiedAt?: string; // ISO timestamp - set when user's PR closed the issue
+  closingPrUrl?: string;
+  closingPrAuthor?: string;
 }
 
 // User settings types

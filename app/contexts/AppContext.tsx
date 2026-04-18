@@ -101,7 +101,12 @@ function PickedIssuesProvider({ children }: { children: React.ReactNode }) {
     unpickIssue,
     updateIssueTags,
     refreshPickedIssues: _refreshPickedIssues,
-  } = usePickedIssues(authState.isLoggedIn, authState.userId, authState.accessToken);
+  } = usePickedIssues(
+    authState.isLoggedIn,
+    authState.userId,
+    authState.accessToken,
+    authState.user?.login,
+  );
 
   const refreshPickedIssues = useCallback(async () => {
     const changes = await _refreshPickedIssues();
