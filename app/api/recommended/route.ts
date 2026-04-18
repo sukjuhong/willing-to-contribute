@@ -124,11 +124,11 @@ function parseSearchParams(
   return {
     language,
     labelPreset: searchParams.get('labelPreset') || '',
-    minStars: parseInt(searchParams.get('minStars') || '500', 10),
+    minStars: parseInt(searchParams.get('minStars') || '500', 10) || 500,
     maxStars: isNaN(maxStarsRaw) ? null : maxStarsRaw,
     maintainerGrades: searchParams.getAll('maintainerGrade'),
     sort: searchParams.get('sort') || 'reactions-+1',
-    page: parseInt(searchParams.get('page') || '1', 10),
+    page: parseInt(searchParams.get('page') || '1', 10) || 1,
     freshness: searchParams.get('freshness') || '3m',
     label: (searchParams.get('label') || '').replace(/"/g, ''),
     minForks: isNaN(minForksRaw) ? null : minForksRaw,
@@ -317,10 +317,12 @@ export async function GET(request: Request) {
     }
 
     const octokit = await getServerOctokit();
-    const sortParam =
-      params.sort === 'reactions-+1'
-        ? 'reactions'
-        : (params.sort as 'reactions' | 'created' | 'updated' | 'comments');
+    const sortParam = params.sort as
+      | 'reactions'
+      | 'reactions-+1'
+      | 'created'
+      | 'updated'
+      | 'comments';
 
     const { data } = await octokit.search.issuesAndPullRequests({
       q: buildSearchQuery(params),
