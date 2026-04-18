@@ -28,9 +28,12 @@ export async function PATCH(req: NextRequest) {
         body.public_fields as Database['public']['Tables']['user_profiles']['Update']['public_fields'];
     }
 
+    // `as never` is required due to hand-written Database type not fully
+    // satisfying supabase-js update overload generics. updateData is still
+    // statically typed as the Update schema above.
     const { error } = await supabase
       .from('user_profiles')
-      .update(updateData)
+      .update(updateData as never)
       .eq('id', user.id);
 
     if (error) {
