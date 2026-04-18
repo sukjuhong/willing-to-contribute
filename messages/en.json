@@ -324,6 +324,14 @@
       "intro": "The backbone of enterprise software — with a vast ecosystem and decades of beginner-friendly projects."
     }
   },
+  "privacy": {
+    "toggle": {
+      "title": "Public Profile",
+      "description": "Allow others to view your profile (languages, contributions). Disabled by default (opt-in)."
+    },
+    "saving": "Saving...",
+    "saveError": "Failed to save privacy settings"
+  },
   "daily": {
     "title": "Today's Discoveries",
     "subtitle": "Curated just for you — refreshes daily",

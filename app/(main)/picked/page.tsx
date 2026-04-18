@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { FaBookmark, FaSync, FaRegBookmark } from 'react-icons/fa';
 import LoginPrompt from '@/app/components/LoginPrompt';
 import PickedIssueItem from '@/app/components/PickedIssueItem';
+import PrivacyToggle from '@/app/components/PrivacyToggle';
 import { useApp } from '@/app/contexts/AppContext';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
@@ -28,6 +29,8 @@ export default function PickedPage() {
     refreshPickedIssues,
     updateNotificationFrequency,
     toggleHideClosedIssues,
+    profile,
+    updatePrivacySettings,
   } = useApp();
 
   const [refreshing, setRefreshing] = useState(false);
@@ -127,6 +130,14 @@ export default function PickedPage() {
             </Select>
           </div>
         </div>
+      )}
+
+      {/* Privacy settings */}
+      {profile !== null && (
+        <PrivacyToggle
+          isPublic={profile.is_public ?? false}
+          onToggle={updatePrivacySettings}
+        />
       )}
 
       {/* Issue list */}
