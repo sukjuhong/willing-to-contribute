@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 import { getAllGuides } from './[language]/content';
 
 export const metadata: Metadata = {
@@ -81,8 +82,9 @@ const howToJsonLd = {
   ],
 };
 
-export default function GuidePage() {
+export default async function GuidePage() {
   const languageGuides = getAllGuides();
+  const tNav = await getTranslations('guide.languageNav');
 
   return (
     <article className="text-foreground">
@@ -644,13 +646,9 @@ export default function GuidePage() {
 
       {/* Language-specific guides navigation */}
       <section className="mb-16 bg-card border border-border rounded-xl p-8">
-        <h2 className="text-2xl font-bold text-foreground mb-2">
-          Language-Specific Contribution Guides
-        </h2>
+        <h2 className="text-2xl font-bold text-foreground mb-2">{tNav('heading')}</h2>
         <p className="text-muted-foreground mb-6 leading-relaxed">
-          Want a guide tailored to your language? Each page covers recommended
-          repositories, issue types to target, and language-specific tips for your first
-          contribution.
+          {tNav('description')}
         </p>
         <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
           {languageGuides.map(guide => (
@@ -661,7 +659,7 @@ export default function GuidePage() {
             >
               <span>{guide.displayName}</span>
               <span className="text-xs text-muted-foreground font-normal">
-                View guide →
+                {tNav('viewGuide')}
               </span>
             </Link>
           ))}

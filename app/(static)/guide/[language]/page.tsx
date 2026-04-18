@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import { getAllGuides, getGuide, SUPPORTED_LANGUAGES } from './content';
 
 type Props = {
@@ -19,27 +20,39 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://pickssue.com';
   const canonical = `${baseUrl}/guide/${guide.slug}`;
 
+  // Pull localized title/description from i18n when available, fall back to
+  // the richer English-only metaTitle/metaDescription in content.ts.
+  let title = guide.metaTitle;
+  let description = guide.metaDescription;
+  try {
+    const t = await getTranslations(`guide.${guide.slug}`);
+    title = t('title');
+    description = t('intro');
+  } catch {
+    // missing locale keys — keep content.ts fallback
+  }
+
   return {
-    title: guide.metaTitle,
-    description: guide.metaDescription,
+    title,
+    description,
     alternates: { canonical },
     openGraph: {
-      title: guide.metaTitle,
-      description: guide.metaDescription,
+      title,
+      description,
       url: `/guide/${guide.slug}`,
       images: [
         {
           url: '/og-image.png',
           width: 1200,
           height: 630,
-          alt: guide.metaTitle,
+          alt: title,
         },
       ],
     },
     twitter: {
       card: 'summary_large_image',
-      title: guide.metaTitle,
-      description: guide.metaDescription,
+      title,
+      description,
     },
   };
 }
