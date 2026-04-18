@@ -8,8 +8,9 @@ import { getServerOctokit } from '../recommended/serverOctokit';
 import { cacheGet, cacheSet } from '../../lib/cache';
 import { createClient } from '@/app/lib/supabase/server';
 
-const CACHE_TTL_SECONDS = 3600; // 1 hour — daily picks refresh once per hour max
+const POOL_CACHE_TTL_SECONDS = 3600; // 1 hour: shared candidate pool
 const DAILY_COUNT = 5;
+const SCORING_CONCURRENCY = 5;
 
 /**
  * FNV-1a 32-bit hash for deterministic seeding.
@@ -51,6 +52,116 @@ function seededShuffle<T>(arr: T[], rng: () => number): T[] {
   return result;
 }
 
+type PoolCandidate = {
+  issue: Issue;
+  maintainerGrade: string;
+};
+
+/**
+ * Candidate pool is shared across all users for a given (date, language).
+ * Per-user filtering (contributed repos, matchScore) and shuffling happens on top.
+ */
+async function loadCandidatePool(
+  language: string,
+  dateStr: string,
+): Promise<PoolCandidate[]> {
+  const poolCacheKey = `daily-pool-v1:${dateStr}:${language || 'any'}`;
+  const cached = await cacheGet<PoolCandidate[]>(poolCacheKey);
+  if (cached) return cached;
+
+  const now = new Date();
+  now.setMonth(now.getMonth() - 1);
+  const freshnessCutoff = now.toISOString().split('T')[0];
+
+  let q = `is:issue is:open label:"good first issue" no:assignee stars:>500 pushed:>${freshnessCutoff}`;
+  if (language) q += ` language:${language}`;
+
+  const octokit = await getServerOctokit();
+  const { data } = await octokit.search.issuesAndPullRequests({
+    q,
+    sort: 'reactions',
+    order: 'desc',
+    per_page: 30,
+    page: 1,
+  });
+
+  const items = data.items;
+  const candidates: PoolCandidate[] = [];
+
+  // Concurrency-limited scoring to avoid GitHub secondary rate limits.
+  // Rely on the `stars:>500` query filter for repo quality — skip octokit.repos.get.
+  for (let i = 0; i < items.length; i += SCORING_CONCURRENCY) {
+    const batch = items.slice(i, i + SCORING_CONCURRENCY);
+    const batchResults = await Promise.all(
+      batch.map(async item => {
+        const parts = item.repository_url.split('/');
+        const repoName = parts[parts.length - 1];
+        const repoOwner = parts[parts.length - 2];
+
+        const maintainerScore = await calculateMaintainerScore(repoOwner, repoName);
+
+        const labels: Label[] = item.labels
+          .filter(
+            (
+              l,
+            ): l is {
+              id: number;
+              name: string;
+              color: string;
+              description: string | null;
+              default: boolean;
+              node_id: string;
+              url: string;
+            } => typeof l === 'object' && l !== null && 'name' in l,
+          )
+          .map(l => ({
+            id: String(l.id ?? ''),
+            name: l.name ?? '',
+            color: l.color ?? '',
+          }));
+
+        const qualityScore = calculateIssueQualityScore({
+          body: item.body,
+          comments: item.comments,
+          assignees: item.assignees,
+          assignee: item.assignee,
+          labels: item.labels,
+        });
+
+        const repository: Repository = {
+          id: `${repoOwner}/${repoName}`,
+          owner: repoOwner,
+          name: repoName,
+          url: `https://github.com/${repoOwner}/${repoName}`,
+          maintainerScore,
+        };
+
+        const issue: Issue = {
+          id: String(item.id),
+          number: item.number,
+          title: item.title,
+          url: item.html_url,
+          body: item.body ?? undefined,
+          labels,
+          createdAt: item.created_at,
+          updatedAt: item.updated_at,
+          state: item.state as 'open' | 'closed',
+          repository,
+          comments: item.comments,
+          assignee: item.assignee?.login ?? null,
+          qualityScore,
+        };
+
+        return { issue, maintainerGrade: maintainerScore.grade };
+      }),
+    );
+    candidates.push(...batchResults);
+  }
+
+  await cacheSet(poolCacheKey, candidates, POOL_CACHE_TTL_SECONDS);
+  return candidates;
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -65,14 +176,14 @@ export async function GET(request: Request) {
     try {
       const supabase = await createClient();
       const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (session) {
-        sessionUserId = session.user.id;
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        sessionUserId = user.id;
         const { data: profile } = await supabase
           .from('user_profiles')
           .select('top_languages, contributed_repos, starred_categories')
-          .eq('id', session.user.id)
+          .eq('id', user.id)
           .maybeSingle<{
             top_languages: string[] | null;
             contributed_repos: string[] | null;
@@ -95,180 +206,51 @@ export async function GET(request: Request) {
     const seedHash = crypto.createHash('sha256').update(seedInput).digest('hex');
     const seed = fnv1a(seedHash);
 
-    // Language from profile or query param
     const rawLanguage = searchParams.get('language') || '';
     const language =
       !rawLanguage && userTopLanguages.length > 0 ? userTopLanguages[0] : rawLanguage;
 
-    const cacheKey = JSON.stringify({
-      v: 'daily-v1',
-      userId: sessionUserId,
-      date: dateStr,
-      language,
-    });
+    // Shared candidate pool — cached by (date, language), not by user
+    const pool = await loadCandidatePool(language, dateStr);
 
-    const cached = await cacheGet<{
-      issues: Issue[];
-      total: number;
-      personalized: boolean;
-    }>(cacheKey);
-    if (cached) {
-      return NextResponse.json(cached);
+    // Filter: A/B grade maintainers, fallback to all if too few
+    let filteredCandidates = pool.filter(c => ['A', 'B'].includes(c.maintainerGrade));
+    if (filteredCandidates.length < DAILY_COUNT) {
+      filteredCandidates = pool;
     }
 
-    // Fetch candidates: A/B grade maintainer repos, unassigned, recent 1 month
-    const now = new Date();
-    now.setMonth(now.getMonth() - 1);
-    const freshnessCutoff = now.toISOString().split('T')[0];
-
-    let query = `is:issue is:open label:"good first issue" no:assignee stars:>500 pushed:>${freshnessCutoff}`;
-    if (language) query += ` language:${language}`;
-
-    const octokit = await getServerOctokit();
-
-    const { data } = await octokit.search.issuesAndPullRequests({
-      q: query,
-      sort: 'reactions',
-      order: 'desc',
-      per_page: 30,
-      page: 1,
+    // User-specific decoration: matchScore is computed per request against the shared pool
+    let issues: Issue[] = filteredCandidates.map(({ issue }) => {
+      if (!isPersonalized) return issue;
+      const matchScore = calculateMatchScore({
+        userLanguages: userTopLanguages,
+        userCategories: userTopics,
+        repoLanguage: issue.repository.language,
+        issueLabels: issue.labels.map(l => l.name),
+      });
+      return { ...issue, matchScore };
     });
 
-    const issuesWithMeta = await Promise.all(
-      data.items.map(async item => {
-        const repoUrl = item.repository_url;
-        const parts = repoUrl.split('/');
-        const repoName = parts[parts.length - 1];
-        const repoOwner = parts[parts.length - 2];
-
-        const maintainerScore = await calculateMaintainerScore(repoOwner, repoName);
-
-        let stargazersCount: number | undefined;
-        let forksCount: number | undefined;
-        let repoLanguage: string | undefined;
-        let lastPushedAt: string | undefined;
-        let description: string | undefined;
-        try {
-          const { data: repoData } = await octokit.repos.get({
-            owner: repoOwner,
-            repo: repoName,
-          });
-          stargazersCount = repoData.stargazers_count;
-          forksCount = repoData.forks_count;
-          repoLanguage = repoData.language ?? undefined;
-          lastPushedAt = repoData.pushed_at ?? undefined;
-          description = repoData.description ?? undefined;
-        } catch {
-          // Continue without repo metadata
-        }
-
-        const repository: Repository = {
-          id: `${repoOwner}/${repoName}`,
-          owner: repoOwner,
-          name: repoName,
-          url: `https://github.com/${repoOwner}/${repoName}`,
-          description,
-          stargazersCount,
-          forksCount,
-          language: repoLanguage,
-          lastPushedAt,
-          maintainerScore,
-        };
-
-        const labels: Label[] = item.labels
-          .filter(
-            (
-              l,
-            ): l is {
-              id: number;
-              name: string;
-              color: string;
-              description: string | null;
-              default: boolean;
-              node_id: string;
-              url: string;
-            } => typeof l === 'object' && l !== null && 'name' in l,
-          )
-          .map(l => ({
-            id: String(l.id ?? ''),
-            name: l.name ?? '',
-            color: l.color ?? '',
-          }));
-
-        const matchScore = isPersonalized
-          ? calculateMatchScore({
-              userLanguages: userTopLanguages,
-              userCategories: userTopics,
-              repoLanguage,
-              issueLabels: labels.map(l => l.name),
-            })
-          : undefined;
-
-        const qualityScore = calculateIssueQualityScore({
-          body: item.body,
-          comments: item.comments,
-          assignees: item.assignees,
-          assignee: item.assignee,
-          labels: item.labels,
-        });
-
-        const issue: Issue = {
-          id: String(item.id),
-          number: item.number,
-          title: item.title,
-          url: item.html_url,
-          body: item.body ?? undefined,
-          labels,
-          createdAt: item.created_at,
-          updatedAt: item.updated_at,
-          state: item.state as 'open' | 'closed',
-          repository,
-          comments: item.comments,
-          assignee: item.assignee?.login ?? null,
-          matchScore,
-          qualityScore,
-        };
-
-        return { issue, maintainerScore };
-      }),
-    );
-
-    // Filter: only A/B grade maintainers
-    let filtered = issuesWithMeta.filter(({ maintainerScore }) =>
-      ['A', 'B'].includes(maintainerScore.grade),
-    );
-
-    // Fallback to all if not enough after filter
-    if (filtered.length < DAILY_COUNT) {
-      filtered = issuesWithMeta;
-    }
-
-    let issues = filtered.map(({ issue }) => issue);
-
-    // Exclude repos the user has already contributed to
+    // Exclude repos the user already contributed to
     if (userContributedRepos.size > 0) {
-      const filtered2 = issues.filter(
+      const pruned = issues.filter(
         issue =>
           !userContributedRepos.has(`${issue.repository.owner}/${issue.repository.name}`),
       );
-      if (filtered2.length >= DAILY_COUNT) issues = filtered2;
+      if (pruned.length >= DAILY_COUNT) issues = pruned;
     }
 
-    // Deterministic daily shuffle + pick top N
+    // Deterministic daily shuffle + top N
     const rng = seededRng(seed);
     const shuffled = seededShuffle(issues, rng);
     const dailyIssues = shuffled.slice(0, DAILY_COUNT);
 
-    const result = {
+    return NextResponse.json({
       issues: dailyIssues,
       total: dailyIssues.length,
       personalized: isPersonalized,
       date: dateStr,
-    };
-
-    await cacheSet(cacheKey, result, CACHE_TTL_SECONDS);
-
-    return NextResponse.json(result);
+    });
   } catch (error) {
     console.error('Error fetching daily picks:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
