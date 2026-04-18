@@ -302,16 +302,14 @@ async function fetchPickCounts(issueUrls: string[]): Promise<Map<string, number>
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from('picked_issues_counts' as never)
+      .from('picked_issues_counts')
       .select('issue_url, pick_count')
-      .in('issue_url', issueUrls);
+      .in('issue_url', issueUrls)
+      .returns<Array<{ issue_url: string; pick_count: number }>>();
 
     if (error || !data) return counts;
 
-    for (const row of data as unknown as Array<{
-      issue_url: string;
-      pick_count: number;
-    }>) {
+    for (const row of data) {
       counts.set(row.issue_url, row.pick_count);
     }
   } catch {
