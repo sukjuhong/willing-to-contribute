@@ -195,13 +195,20 @@ const usePickedIssues = (
               lastCheckedAt: new Date().toISOString(),
             };
 
-            // Auto-verify contribution: only when the issue is now closed,
-            // we know the user's GitHub login, and we haven't already matched.
-            if (newState === 'closed' && !picked.contributionVerifiedAt && userLogin) {
+            // Auto-verify contribution only on the open→closed transition.
+            // Without the transition gate we'd fire Timeline API on every refresh
+            // for any still-closed-but-unverified issue (e.g. closed by someone else).
+            if (
+              picked.lastKnownState === 'open' &&
+              newState === 'closed' &&
+              !picked.contributionVerifiedAt &&
+              userLogin
+            ) {
               const result = await verifyContributionForIssue(
                 picked.url,
                 userLogin,
                 accessToken,
+                octokit,
               );
               if (result.verified) {
                 const verifiedAt = new Date().toISOString();
