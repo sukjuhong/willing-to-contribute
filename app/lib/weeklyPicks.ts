@@ -141,11 +141,16 @@ export async function getWeeklyPicks(): Promise<WeeklyPicksData> {
   const cached = await cacheGet<WeeklyPicksData>(weekCacheKey);
   if (cached) return cached;
 
-  let issues = await fetchIssuesFromGitHub('1w', 10);
-
-  // Fallback: if fewer than 5 issues, relax to 1 month freshness
-  if (issues.length < 5) {
-    issues = await fetchIssuesFromGitHub('1m', 10);
+  let issues: Issue[] = [];
+  try {
+    issues = await fetchIssuesFromGitHub('1w', 10);
+    if (issues.length < 5) {
+      issues = await fetchIssuesFromGitHub('1m', 10);
+    }
+  } catch (err) {
+    // Missing GitHub App env (e.g. CI build) or transient API failure —
+    // return empty data so the page still renders. ISR will repopulate later.
+    console.warn('[weeklyPicks] falling back to empty data:', err);
   }
 
   const result: WeeklyPicksData = {
@@ -155,7 +160,9 @@ export async function getWeeklyPicks(): Promise<WeeklyPicksData> {
     generatedAt: now.toISOString(),
   };
 
-  await cacheSet(weekCacheKey, result, CACHE_TTL_SECONDS);
+  if (issues.length > 0) {
+    await cacheSet(weekCacheKey, result, CACHE_TTL_SECONDS);
+  }
 
   return result;
 }
