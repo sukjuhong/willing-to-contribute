@@ -164,6 +164,13 @@
       "available": "참여 가능",
       "inProgress": "진행 중",
       "hot": "경쟁 중"
+    },
+    "quality": {
+      "label": "품질",
+      "gradeA": "A",
+      "gradeB": "B",
+      "gradeC": "C",
+      "tooltip": "품질 {grade}등급 · {score}/100"
     }
   },
   "maintainer": {

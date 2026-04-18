@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server';
 import { Issue, Label, Repository } from '../../types';
 import { calculateMaintainerScore } from './maintainerScore';
+import { calculateIssueQualityScore } from './issueQualityScore';
 import { getServerOctokit } from './serverOctokit';
 import { cacheGet, cacheSet } from '../../lib/cache';
 import { createClient } from '@/app/lib/supabase/server';
 
 const CACHE_TTL_SECONDS = 900; // 15 minutes
+const CACHE_VERSION = 'v2'; // bump when response shape changes (added qualityScore)
 
 const getFreshnessDate = (freshness: string): string => {
   const now = new Date();
@@ -81,6 +83,7 @@ export async function GET(request: Request) {
     const maxForks = isNaN(maxForksRaw) ? null : maxForksRaw;
 
     const cacheKey = JSON.stringify({
+      v: CACHE_VERSION,
       userId: sessionUserId,
       language,
       labelPreset,
@@ -187,6 +190,14 @@ export async function GET(request: Request) {
             color: l.color ?? '',
           }));
 
+        const qualityScore = calculateIssueQualityScore({
+          body: item.body,
+          comments: item.comments,
+          assignees: item.assignees,
+          assignee: item.assignee,
+          labels: item.labels,
+        });
+
         const issue: Issue = {
           id: String(item.id),
           number: item.number,
@@ -198,6 +209,9 @@ export async function GET(request: Request) {
           updatedAt: item.updated_at,
           state: item.state as 'open' | 'closed',
           repository,
+          comments: item.comments,
+          assignee: item.assignee?.login ?? null,
+          qualityScore,
         };
 
         return { issue, maintainerScore };

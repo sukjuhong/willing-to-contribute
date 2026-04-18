@@ -6,6 +6,23 @@ export interface MaintainerScore {
   mergeRate: number;
 }
 
+export type IssueQualityGrade = 'A' | 'B' | 'C';
+
+export interface IssueQualityScore {
+  grade: IssueQualityGrade;
+  score: number; // 0-100
+  signals: {
+    bodyLength: number;
+    bodyPoints: number;
+    comments: number;
+    commentsPoints: number;
+    hasAssignee: boolean;
+    assigneePoints: number;
+    hasBeginnerLabel: boolean;
+    labelPoints: number;
+  };
+}
+
 export interface Repository {
   id: string;
   owner: string;
@@ -40,6 +57,7 @@ export interface Issue {
   isNew?: boolean;
   comments?: number;
   assignee?: string | null;
+  qualityScore?: IssueQualityScore;
 }
 
 // Saved (picked) issue types
