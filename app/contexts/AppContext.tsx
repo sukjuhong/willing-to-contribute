@@ -50,6 +50,7 @@ interface AppContextType {
   profileLoading: boolean;
   profileError: string | null;
   syncProfile: ReturnType<typeof useUserProfile>['syncProfile'];
+  updatePrivacySettings: ReturnType<typeof useUserProfile>['updatePrivacySettings'];
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -127,9 +128,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   } = useRecommendedIssues();
 
   // User profile state
-  const { profile, profileLoading, profileError, syncProfile } = useUserProfile(
-    authState.isLoggedIn,
-  );
+  const { profile, profileLoading, profileError, syncProfile, updatePrivacySettings } =
+    useUserProfile(authState.isLoggedIn);
 
   // Migrate legacy localStorage keys and request notification permission on mount
   useEffect(() => {
@@ -195,6 +195,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     profileLoading,
     profileError,
     syncProfile,
+    updatePrivacySettings,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

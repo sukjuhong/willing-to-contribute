@@ -10,6 +10,8 @@ export interface UserProfileData {
   starred_categories: string[] | null;
   contributed_repos: string[] | null;
   last_synced_at: string | null;
+  is_public?: boolean;
+  public_fields?: unknown;
 }
 
 export default function useUserProfile(isLoggedIn: boolean) {
@@ -30,6 +32,16 @@ export default function useUserProfile(isLoggedIn: boolean) {
     } finally {
       setProfileLoading(false);
     }
+  }, []);
+
+  const updatePrivacySettings = useCallback(async (isPublic: boolean): Promise<void> => {
+    const res = await fetch('/api/profile/privacy', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ is_public: isPublic }),
+    });
+    if (!res.ok) throw new Error('Failed to update privacy settings');
+    setProfile(prev => (prev ? { ...prev, is_public: isPublic } : prev));
   }, []);
 
   useEffect(() => {
@@ -56,5 +68,5 @@ export default function useUserProfile(isLoggedIn: boolean) {
       .catch(() => setProfileError('Failed to load profile'));
   }, [isLoggedIn, syncProfile]);
 
-  return { profile, profileLoading, profileError, syncProfile };
+  return { profile, profileLoading, profileError, syncProfile, updatePrivacySettings };
 }
