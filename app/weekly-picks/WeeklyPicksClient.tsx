@@ -10,6 +10,7 @@ import type { Issue } from '../types';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { formatRelativeTime } from '../utils/formatRelativeTime';
 
 type CompetitionStatus = 'available' | 'inProgress' | 'hot';
 
@@ -38,23 +39,6 @@ const maintainerGradeStyles: Record<string, string> = {
   A: 'bg-emerald-500/15 text-emerald-400',
   B: 'bg-amber-500/15 text-amber-400',
   C: 'bg-muted text-muted-foreground',
-};
-
-const formatRelativeTime = (
-  dateString: string,
-  tCommon: ReturnType<typeof useTranslations<'common'>>,
-  locale: string,
-): string => {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffInMs = now.getTime() - date.getTime();
-  const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
-  const diffInDays = Math.floor(diffInHours / 24);
-
-  if (diffInHours < 1) return tCommon('justNow');
-  if (diffInHours < 24) return tCommon('hoursAgo', { hours: diffInHours });
-  if (diffInDays < 30) return tCommon('daysAgo', { days: diffInDays });
-  return new Intl.DateTimeFormat(locale === 'ko' ? 'ko-KR' : 'en-US').format(date);
 };
 
 function WeeklyIssueCard({ issue, rank }: { issue: Issue; rank: number }) {

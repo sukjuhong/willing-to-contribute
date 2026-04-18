@@ -1,12 +1,12 @@
 import { FaGithub } from 'react-icons/fa';
 import { useTranslations } from 'next-intl';
-import { useApp } from '../contexts/AppContext';
+import { useAuth } from '../contexts/AppContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
 export default function LoginPrompt() {
   const t = useTranslations();
-  const { login } = useApp();
+  const { login } = useAuth();
 
   return (
     <Card>

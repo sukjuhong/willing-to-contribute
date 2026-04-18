@@ -1,23 +1,25 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useCallback, useMemo } from 'react';
 import useSupabaseAuth from '../hooks/useSupabaseAuth';
 import useSettings from '../hooks/useSettings';
 import usePickedIssues from '../hooks/usePickedIssues';
 import type { StateChange } from '../hooks/usePickedIssues';
-import useRecommendedIssues from '../hooks/useRecommendedIssues';
 import useUserProfile from '../hooks/useUserProfile';
 import { checkNotificationPermission } from '../utils/notifications';
 import { migrateLocalStorageKeys } from '../utils/localStorage';
 import { Issue } from '../types';
 
-interface AppContextType {
-  // Auth
+// ----- Auth -----
+type AuthValue = {
   authState: ReturnType<typeof useSupabaseAuth>['authState'];
   login: ReturnType<typeof useSupabaseAuth>['login'];
   logout: ReturnType<typeof useSupabaseAuth>['logout'];
+};
+const AuthContext = createContext<AuthValue | undefined>(undefined);
 
-  // Settings
+// ----- Settings -----
+type SettingsValue = {
   settings: ReturnType<typeof useSettings>['settings'];
   settingsLoading: boolean;
   settingsError: string | null;
@@ -25,8 +27,12 @@ interface AppContextType {
     typeof useSettings
   >['updateNotificationFrequency'];
   toggleHideClosedIssues: ReturnType<typeof useSettings>['toggleHideClosedIssues'];
+  updateLastCheckedAt: ReturnType<typeof useSettings>['updateLastCheckedAt'];
+};
+const SettingsContext = createContext<SettingsValue | undefined>(undefined);
 
-  // Picked Issues
+// ----- Picked Issues -----
+type PickedValue = {
   pickedIssues: ReturnType<typeof usePickedIssues>['pickedIssues'];
   pickedIssuesLoading: boolean;
   pickedIssuesError: string | null;
@@ -34,31 +40,26 @@ interface AppContextType {
   unpickIssue: (issueId: string) => Promise<void>;
   updateIssueTags: (issueId: string, tags: string[]) => Promise<void>;
   refreshPickedIssues: () => Promise<StateChange[]>;
+};
+const PickedContext = createContext<PickedValue | undefined>(undefined);
 
-  // Recommended Issues
-  recommendedIssues: ReturnType<typeof useRecommendedIssues>['recommendedIssues'];
-  recommendedLoading: boolean;
-  recommendedError: string | null;
-  languageFilter: string;
-  changeLanguageFilter: ReturnType<typeof useRecommendedIssues>['changeLanguageFilter'];
-  fetchRecommendedIssues: ReturnType<
-    typeof useRecommendedIssues
-  >['fetchRecommendedIssues'];
-
-  // User Profile
+// ----- Profile -----
+type ProfileValue = {
   profile: ReturnType<typeof useUserProfile>['profile'];
   profileLoading: boolean;
   profileError: string | null;
   syncProfile: ReturnType<typeof useUserProfile>['syncProfile'];
+};
+const ProfileContext = createContext<ProfileValue | undefined>(undefined);
+
+function AuthProvider({ children }: { children: React.ReactNode }) {
+  const { authState, login, logout } = useSupabaseAuth();
+  const value = useMemo(() => ({ authState, login, logout }), [authState, login, logout]);
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-const AppContext = createContext<AppContextType | undefined>(undefined);
-
-export function AppProvider({ children }: { children: React.ReactNode }) {
-  // Auth state via Supabase
-  const { authState, login, logout } = useSupabaseAuth();
-
-  // Settings state (no longer manages picked issues)
+function SettingsProvider({ children }: { children: React.ReactNode }) {
+  const { authState } = useAuth();
   const {
     settings,
     loading: settingsLoading,
@@ -67,8 +68,30 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     toggleHideClosedIssues,
     updateLastCheckedAt,
   } = useSettings(authState.isLoggedIn, authState.userId);
+  const value = useMemo(
+    () => ({
+      settings,
+      settingsLoading,
+      settingsError,
+      updateNotificationFrequency,
+      toggleHideClosedIssues,
+      updateLastCheckedAt,
+    }),
+    [
+      settings,
+      settingsLoading,
+      settingsError,
+      updateNotificationFrequency,
+      toggleHideClosedIssues,
+      updateLastCheckedAt,
+    ],
+  );
+  return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;
+}
 
-  // Picked issues state — uses its own Supabase table
+function PickedIssuesProvider({ children }: { children: React.ReactNode }) {
+  const { authState } = useAuth();
+  const { updateLastCheckedAt } = useAppSettings();
   const {
     pickedIssues,
     loading: pickedIssuesLoading,
@@ -79,7 +102,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     refreshPickedIssues: _refreshPickedIssues,
   } = usePickedIssues(authState.isLoggedIn, authState.userId, authState.accessToken);
 
-  // Wrap refreshPickedIssues to show aggregated notifications
   const refreshPickedIssues = useCallback(async () => {
     const changes = await _refreshPickedIssues();
 
@@ -109,47 +131,61 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           // Notification not supported
         }
       }
-
       await updateLastCheckedAt(new Date());
     }
 
     return changes;
   }, [_refreshPickedIssues, updateLastCheckedAt]);
 
-  // Recommended issues state
-  const {
-    recommendedIssues,
-    recommendedLoading,
-    recommendedError,
-    languageFilter,
-    changeLanguageFilter,
-    fetchRecommendedIssues,
-  } = useRecommendedIssues();
+  const value = useMemo(
+    () => ({
+      pickedIssues,
+      pickedIssuesLoading,
+      pickedIssuesError,
+      pickIssue,
+      unpickIssue,
+      updateIssueTags,
+      refreshPickedIssues,
+    }),
+    [
+      pickedIssues,
+      pickedIssuesLoading,
+      pickedIssuesError,
+      pickIssue,
+      unpickIssue,
+      updateIssueTags,
+      refreshPickedIssues,
+    ],
+  );
+  return <PickedContext.Provider value={value}>{children}</PickedContext.Provider>;
+}
 
-  // User profile state
+function ProfileProvider({ children }: { children: React.ReactNode }) {
+  const { authState } = useAuth();
   const { profile, profileLoading, profileError, syncProfile } = useUserProfile(
     authState.isLoggedIn,
   );
+  const value = useMemo(
+    () => ({ profile, profileLoading, profileError, syncProfile }),
+    [profile, profileLoading, profileError, syncProfile],
+  );
+  return <ProfileContext.Provider value={value}>{children}</ProfileContext.Provider>;
+}
 
-  // Migrate legacy localStorage keys and request notification permission on mount
+function NotificationOrchestrator({ children }: { children: React.ReactNode }) {
+  const { settings } = useAppSettings();
+  const { pickedIssues, refreshPickedIssues } = usePicked();
+
   useEffect(() => {
     migrateLocalStorageKeys();
     checkNotificationPermission();
   }, []);
 
-  // Fetch recommended issues on mount only
-  useEffect(() => {
-    fetchRecommendedIssues();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Setup periodic checks for picked issue state changes
   useEffect(() => {
     if (settings.notificationFrequency === 'never') return;
     if (pickedIssues.length === 0) return;
 
     let interval: NodeJS.Timeout;
-
     switch (settings.notificationFrequency) {
       case 'hourly':
         interval = setInterval(() => refreshPickedIssues(), 60 * 60 * 1000);
@@ -169,41 +205,51 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     };
   }, [settings.notificationFrequency, pickedIssues.length, refreshPickedIssues]);
 
-  const value: AppContextType = {
-    authState,
-    login,
-    logout,
-    settings,
-    settingsLoading,
-    settingsError,
-    updateNotificationFrequency,
-    toggleHideClosedIssues,
-    pickedIssues,
-    pickedIssuesLoading,
-    pickedIssuesError,
-    pickIssue,
-    unpickIssue,
-    updateIssueTags,
-    refreshPickedIssues,
-    recommendedIssues,
-    recommendedLoading,
-    recommendedError,
-    languageFilter,
-    changeLanguageFilter,
-    fetchRecommendedIssues,
-    profile,
-    profileLoading,
-    profileError,
-    syncProfile,
-  };
-
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+  return <>{children}</>;
 }
 
-export function useApp() {
-  const context = useContext(AppContext);
+export function AppProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <AuthProvider>
+      <SettingsProvider>
+        <PickedIssuesProvider>
+          <ProfileProvider>
+            <NotificationOrchestrator>{children}</NotificationOrchestrator>
+          </ProfileProvider>
+        </PickedIssuesProvider>
+      </SettingsProvider>
+    </AuthProvider>
+  );
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useApp must be used within an AppProvider');
+    throw new Error('useAuth must be used within an AppProvider');
+  }
+  return context;
+}
+
+export function useAppSettings() {
+  const context = useContext(SettingsContext);
+  if (context === undefined) {
+    throw new Error('useAppSettings must be used within an AppProvider');
+  }
+  return context;
+}
+
+export function usePicked() {
+  const context = useContext(PickedContext);
+  if (context === undefined) {
+    throw new Error('usePicked must be used within an AppProvider');
+  }
+  return context;
+}
+
+export function useProfile() {
+  const context = useContext(ProfileContext);
+  if (context === undefined) {
+    throw new Error('useProfile must be used within an AppProvider');
   }
   return context;
 }

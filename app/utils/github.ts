@@ -1,15 +1,41 @@
 import { Octokit } from '@octokit/rest';
 import { Issue, Repository, Label } from '../types';
 
-// Create Octokit instance with or without auth token
 const getOctokit = (token?: string) => {
   return new Octokit({ auth: token || undefined });
 };
 
-// Parse repository URL to get owner and name
+export class GitHubRateLimitError extends Error {
+  readonly isRateLimit = true as const;
+  readonly resetTime: Date;
+
+  constructor(resetTime: Date) {
+    super(`GitHub API rate limit exceeded. Reset at ${resetTime.toLocaleTimeString()}`);
+    this.name = 'GitHubRateLimitError';
+    this.resetTime = resetTime;
+  }
+}
+
+interface OctokitErrorShape {
+  status?: number;
+  response?: {
+    headers?: {
+      'x-ratelimit-remaining'?: string;
+      'x-ratelimit-reset'?: string;
+    };
+  };
+}
+
+const throwIfRateLimited = (error: unknown): void => {
+  const err = error as OctokitErrorShape;
+  if (err?.status === 403 && err?.response?.headers?.['x-ratelimit-remaining'] === '0') {
+    const resetTime = new Date(Number(err.response.headers['x-ratelimit-reset']) * 1000);
+    throw new GitHubRateLimitError(resetTime);
+  }
+};
+
 export const parseRepoUrl = (url: string): { owner: string; name: string } | null => {
   try {
-    // Handle both https://github.com/owner/repo and owner/repo formats
     const match = url.match(/(?:github\.com\/)?([^\/]+)\/([^\/]+)(?:\/)?$/);
     if (match && match.length >= 3) {
       return { owner: match[1], name: match[2] };
@@ -21,7 +47,6 @@ export const parseRepoUrl = (url: string): { owner: string; name: string } | nul
   }
 };
 
-// Get repository details
 export const getRepository = async (
   owner: string,
   name: string,
@@ -42,45 +67,14 @@ export const getRepository = async (
       stargazersCount: data.stargazers_count,
     };
   } catch (error: unknown) {
-    // Check specifically for rate limit errors
-    const err = error as {
-      status?: number;
-      response?: {
-        headers?: {
-          'x-ratelimit-remaining'?: string;
-          'x-ratelimit-reset'?: string;
-        };
-      };
-    };
-
-    if (
-      err?.status === 403 &&
-      err?.response?.headers?.['x-ratelimit-remaining'] === '0'
-    ) {
-      const resetTime = new Date(
-        Number(err?.response?.headers?.['x-ratelimit-reset']) * 1000,
-      );
-      console.error(
-        `GitHub API rate limit exceeded. Reset at ${resetTime.toLocaleTimeString()}`,
-      );
-
-      // Re-throw with rate limit information
-      throw {
-        isRateLimit: true,
-        resetTime,
-        message: `GitHub API rate limit exceeded. Reset at ${resetTime.toLocaleTimeString()}`,
-      };
-    }
-
+    throwIfRateLimited(error);
     console.error(`Error fetching repository ${owner}/${name}:`, error);
     return null;
   }
 };
 
-// Type definition for the Octokit instance
 type OctokitType = ReturnType<typeof getOctokit>;
 
-// Get issues with any of the provided labels (OR operation)
 export const getIssuesWithOrLabels = async (
   octokit: OctokitType,
   repository: Repository,
@@ -88,7 +82,6 @@ export const getIssuesWithOrLabels = async (
   state: 'open' | 'closed' | 'all',
 ): Promise<Issue[]> => {
   try {
-    // Create promises for fetching issues with each label separately
     const issuePromises = labels.map(label =>
       octokit.issues.listForRepo({
         owner: repository.owner,
@@ -99,60 +92,20 @@ export const getIssuesWithOrLabels = async (
       }),
     );
 
-    // Execute all promises in parallel
     const responses = await Promise.all(issuePromises);
-
-    // Extract data from responses
     const issuesArrays = responses.map(response => response.data);
 
-    // Track processed issues by ID to avoid duplicates
     const uniqueIssues = new Map<number, unknown>();
-
-    // Flatten and deduplicate issues
     issuesArrays.forEach(issues => {
       issues.forEach((issue: unknown) => {
         uniqueIssues.set((issue as { id: number }).id, issue);
       });
     });
 
-    // Convert to array
     const allIssues = Array.from(uniqueIssues.values());
-
-    console.log(
-      `Found ${allIssues.length} unique issues for ${repository.owner}/${repository.name} with labels: ${labels.join(', ')}`,
-    );
     return processIssueData(allIssues, repository);
   } catch (error: unknown) {
-    // Check specifically for rate limit errors
-    const err = error as {
-      status?: number;
-      response?: {
-        headers?: {
-          'x-ratelimit-remaining'?: string;
-          'x-ratelimit-reset'?: string;
-        };
-      };
-    };
-
-    if (
-      err?.status === 403 &&
-      err?.response?.headers?.['x-ratelimit-remaining'] === '0'
-    ) {
-      const resetTime = new Date(
-        Number(err?.response?.headers?.['x-ratelimit-reset']) * 1000,
-      );
-      console.error(
-        `GitHub API rate limit exceeded. Reset at ${resetTime.toLocaleTimeString()}`,
-      );
-
-      // Re-throw with rate limit information
-      throw {
-        isRateLimit: true,
-        resetTime,
-        message: `GitHub API rate limit exceeded. Reset at ${resetTime.toLocaleTimeString()}`,
-      };
-    }
-
+    throwIfRateLimited(error);
     console.error(
       `Error fetching issues for ${repository.owner}/${repository.name}:`,
       error,
@@ -181,7 +134,6 @@ interface GithubIssue {
   assignee: { login: string } | null;
 }
 
-// Shared helper to convert a GitHub API label (object or string) to our Label type
 const convertLabel = (label: GithubLabel | string): Label => {
   if (typeof label === 'string') {
     return { id: label, name: label, color: 'gray' };
@@ -193,12 +145,10 @@ const convertLabel = (label: GithubLabel | string): Label => {
   };
 };
 
-// Helper function to process GitHub API data into our Issue type
 const processIssueData = (data: unknown[], repository: Repository): Issue[] => {
   return data.map(issueData => {
     const issue = issueData as GithubIssue;
 
-    // Convert GitHub API label objects to our Label type
     const issueLabels: Label[] = (issue.labels as (GithubLabel | string)[]).map(
       convertLabel,
     );
@@ -220,7 +170,6 @@ const processIssueData = (data: unknown[], repository: Repository): Issue[] => {
   });
 };
 
-// Refactored getIssues to use the new function
 export const getIssues = async (
   repository: Repository,
   labels: string[],
@@ -236,12 +185,7 @@ export const getIssues = async (
 
     return getIssuesWithOrLabels(octokit, repository, labels, state);
   } catch (error: unknown) {
-    // Pass through rate limit errors
-    const err = error as { isRateLimit?: boolean };
-    if (err.isRateLimit) {
-      throw error;
-    }
-
+    if (error instanceof GitHubRateLimitError) throw error;
     console.error(
       `Error fetching issues for ${repository.owner}/${repository.name}:`,
       error,
@@ -250,93 +194,6 @@ export const getIssues = async (
   }
 };
 
-// Search for recommended issues from trending/popular repositories
-export const getRecommendedIssues = async (language?: string): Promise<Issue[]> => {
-  try {
-    const octokit = getOctokit();
-
-    // Build search query for beginner-friendly issues in popular repos
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const dateStr = thirtyDaysAgo.toISOString().split('T')[0];
-
-    let query = `is:issue is:open label:"good first issue" stars:>500 pushed:>${dateStr}`;
-    if (language && language !== 'all') {
-      query += ` language:${language}`;
-    }
-
-    const { data } = await octokit.search.issuesAndPullRequests({
-      q: query,
-      sort: 'reactions-+1',
-      order: 'desc',
-      per_page: 20,
-    });
-
-    // Convert search results to our Issue type
-    const issues: Issue[] = data.items.map(item => {
-      // Extract owner/repo from repository_url
-      // Format: https://api.github.com/repos/{owner}/{repo}
-      const repoUrlParts = item.repository_url.split('/');
-      const repoName = repoUrlParts[repoUrlParts.length - 1];
-      const repoOwner = repoUrlParts[repoUrlParts.length - 2];
-
-      const issueLabels: Label[] = (item.labels as (GithubLabel | string)[]).map(
-        convertLabel,
-      );
-
-      return {
-        id: item.id.toString(),
-        number: item.number,
-        title: item.title,
-        url: item.html_url,
-        body: item.body || undefined,
-        labels: issueLabels,
-        createdAt: item.created_at,
-        updatedAt: item.updated_at,
-        state: item.state as 'open' | 'closed',
-        repository: {
-          id: `${repoOwner}/${repoName}`,
-          owner: repoOwner,
-          name: repoName,
-          url: `https://github.com/${repoOwner}/${repoName}`,
-        },
-        comments: item.comments,
-        assignee: (item.assignee as { login: string } | null)?.login ?? null,
-      };
-    });
-
-    return issues;
-  } catch (error: unknown) {
-    const err = error as {
-      status?: number;
-      response?: {
-        headers?: {
-          'x-ratelimit-remaining'?: string;
-          'x-ratelimit-reset'?: string;
-        };
-      };
-    };
-
-    if (
-      err?.status === 403 &&
-      err?.response?.headers?.['x-ratelimit-remaining'] === '0'
-    ) {
-      const resetTime = new Date(
-        Number(err?.response?.headers?.['x-ratelimit-reset']) * 1000,
-      );
-      throw {
-        isRateLimit: true,
-        resetTime,
-        message: `GitHub API rate limit exceeded. Reset at ${resetTime.toLocaleTimeString()}`,
-      };
-    }
-
-    console.error('Error fetching recommended issues:', error);
-    return [];
-  }
-};
-
-// Search GitHub repositories by query
 export const searchRepositories = async (query: string): Promise<Repository[]> => {
   try {
     const octokit = getOctokit();
@@ -356,30 +213,7 @@ export const searchRepositories = async (query: string): Promise<Repository[]> =
       stargazersCount: item.stargazers_count,
     }));
   } catch (error: unknown) {
-    const err = error as {
-      status?: number;
-      response?: {
-        headers?: {
-          'x-ratelimit-remaining'?: string;
-          'x-ratelimit-reset'?: string;
-        };
-      };
-    };
-
-    if (
-      err?.status === 403 &&
-      err?.response?.headers?.['x-ratelimit-remaining'] === '0'
-    ) {
-      const resetTime = new Date(
-        Number(err?.response?.headers?.['x-ratelimit-reset']) * 1000,
-      );
-      throw {
-        isRateLimit: true,
-        resetTime,
-        message: `GitHub API rate limit exceeded. Reset at ${resetTime.toLocaleTimeString()}`,
-      };
-    }
-
+    throwIfRateLimited(error);
     console.error('Error searching repositories:', error);
     return [];
   }

@@ -7,8 +7,44 @@ import { getServerOctokit } from './serverOctokit';
 import { cacheGet, cacheSet } from '../../lib/cache';
 import { createClient } from '@/app/lib/supabase/server';
 
-const CACHE_TTL_SECONDS = 900; // 15 minutes
-const CACHE_VERSION = 'v2'; // bump when response shape changes (added qualityScore)
+const CACHE_TTL_SECONDS = 900;
+const CACHE_VERSION = 'v2';
+const RESULTS_PER_PAGE = 20;
+
+type Octokit = Awaited<ReturnType<typeof getServerOctokit>>;
+type SearchItem = Awaited<
+  ReturnType<Octokit['search']['issuesAndPullRequests']>
+>['data']['items'][number];
+
+interface UserProfileContext {
+  topLanguages: string[];
+  topics: string[];
+  contributedRepos: Set<string>;
+  sessionUserId: string | null;
+  isPersonalized: boolean;
+}
+
+interface SearchParams {
+  language: string;
+  labelPreset: string;
+  minStars: number;
+  maxStars: number | null;
+  maintainerGrades: string[];
+  sort: string;
+  page: number;
+  freshness: string;
+  label: string;
+  minForks: number | null;
+  maxForks: number | null;
+}
+
+interface RepoMeta {
+  stargazersCount?: number;
+  forksCount?: number;
+  language?: string;
+  lastPushedAt?: string;
+  description?: string;
+}
 
 const getFreshnessDate = (freshness: string): string => {
   const now = new Date();
@@ -31,227 +67,307 @@ const getFreshnessDate = (freshness: string): string => {
   return now.toISOString().split('T')[0];
 };
 
+async function loadUserProfile(): Promise<UserProfileContext> {
+  const empty: UserProfileContext = {
+    topLanguages: [],
+    topics: [],
+    contributedRepos: new Set(),
+    sessionUserId: null,
+    isPersonalized: false,
+  };
+
+  try {
+    const supabase = await createClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session) return empty;
+
+    const { data: profile } = await supabase
+      .from('user_profiles')
+      .select('top_languages, contributed_repos, starred_categories')
+      .eq('id', session.user.id)
+      .maybeSingle<{
+        top_languages: string[] | null;
+        contributed_repos: string[] | null;
+        starred_categories: string[] | null;
+      }>();
+
+    if (!profile) {
+      return { ...empty, sessionUserId: session.user.id };
+    }
+
+    return {
+      topLanguages: profile.top_languages ?? [],
+      topics: profile.starred_categories ?? [],
+      contributedRepos: new Set(profile.contributed_repos ?? []),
+      sessionUserId: session.user.id,
+      isPersonalized: true,
+    };
+  } catch {
+    return empty;
+  }
+}
+
+function parseSearchParams(
+  searchParams: URLSearchParams,
+  userTopLanguages: string[],
+): SearchParams {
+  const rawLanguage = searchParams.get('language') || '';
+  const language =
+    !rawLanguage && userTopLanguages.length > 0 ? userTopLanguages[0] : rawLanguage;
+
+  const maxStarsRaw = parseInt(searchParams.get('maxStars') || '', 10);
+  const minForksRaw = parseInt(searchParams.get('minForks') || '', 10);
+  const maxForksRaw = parseInt(searchParams.get('maxForks') || '', 10);
+
+  return {
+    language,
+    labelPreset: searchParams.get('labelPreset') || '',
+    minStars: parseInt(searchParams.get('minStars') || '500', 10),
+    maxStars: isNaN(maxStarsRaw) ? null : maxStarsRaw,
+    maintainerGrades: searchParams.getAll('maintainerGrade'),
+    sort: searchParams.get('sort') || 'reactions-+1',
+    page: parseInt(searchParams.get('page') || '1', 10),
+    freshness: searchParams.get('freshness') || '3m',
+    label: (searchParams.get('label') || '').replace(/"/g, ''),
+    minForks: isNaN(minForksRaw) ? null : minForksRaw,
+    maxForks: isNaN(maxForksRaw) ? null : maxForksRaw,
+  };
+}
+
+function buildSearchQuery(p: SearchParams): string {
+  const dateStr = getFreshnessDate(p.freshness);
+  const queryLabel = p.labelPreset || 'good first issue';
+  let q = `is:issue is:open label:"${queryLabel}" stars:>${p.minStars} pushed:>${dateStr}`;
+  if (p.maxStars) q += ` stars:<${p.maxStars}`;
+  if (p.language) q += ` language:${p.language}`;
+  if (p.label) q += ` label:"${p.label}"`;
+  if (p.minForks) q += ` forks:>${p.minForks}`;
+  if (p.maxForks) q += ` forks:<${p.maxForks}`;
+  return q;
+}
+
+function parseRepoFromUrl(repositoryUrl: string): { owner: string; name: string } {
+  const parts = repositoryUrl.split('/');
+  return {
+    name: parts[parts.length - 1],
+    owner: parts[parts.length - 2],
+  };
+}
+
+async function fetchRepoMeta(
+  octokit: Octokit,
+  owner: string,
+  name: string,
+): Promise<RepoMeta> {
+  try {
+    const { data } = await octokit.repos.get({ owner, repo: name });
+    return {
+      stargazersCount: data.stargazers_count,
+      forksCount: data.forks_count,
+      language: data.language ?? undefined,
+      lastPushedAt: data.pushed_at ?? undefined,
+      description: data.description ?? undefined,
+    };
+  } catch {
+    return {};
+  }
+}
+
+// Dedup repo lookups: many issues can share the same repo
+async function buildRepoMetaCache(
+  octokit: Octokit,
+  items: SearchItem[],
+): Promise<
+  Map<
+    string,
+    {
+      meta: RepoMeta;
+      maintainerScore: Awaited<ReturnType<typeof calculateMaintainerScore>>;
+    }
+  >
+> {
+  const uniqueRepos = new Map<string, { owner: string; name: string }>();
+  for (const item of items) {
+    const { owner, name } = parseRepoFromUrl(item.repository_url);
+    uniqueRepos.set(`${owner}/${name}`, { owner, name });
+  }
+
+  const cache = new Map<
+    string,
+    {
+      meta: RepoMeta;
+      maintainerScore: Awaited<ReturnType<typeof calculateMaintainerScore>>;
+    }
+  >();
+
+  await Promise.all(
+    Array.from(uniqueRepos.entries()).map(async ([key, { owner, name }]) => {
+      const [meta, maintainerScore] = await Promise.all([
+        fetchRepoMeta(octokit, owner, name),
+        calculateMaintainerScore(owner, name),
+      ]);
+      cache.set(key, { meta, maintainerScore });
+    }),
+  );
+
+  return cache;
+}
+
+function extractLabels(item: SearchItem): Label[] {
+  return item.labels
+    .filter(
+      (
+        l,
+      ): l is {
+        id: number;
+        name: string;
+        color: string;
+        description: string | null;
+        default: boolean;
+        node_id: string;
+        url: string;
+      } => typeof l === 'object' && l !== null && 'name' in l,
+    )
+    .map(l => ({
+      id: String(l.id ?? ''),
+      name: l.name ?? '',
+      color: l.color ?? '',
+    }));
+}
+
+function buildIssue(
+  item: SearchItem,
+  repoMeta: RepoMeta,
+  maintainerScore: Awaited<ReturnType<typeof calculateMaintainerScore>>,
+  profile: UserProfileContext,
+): Issue {
+  const { owner, name } = parseRepoFromUrl(item.repository_url);
+
+  const repository: Repository = {
+    id: `${owner}/${name}`,
+    owner,
+    name,
+    url: `https://github.com/${owner}/${name}`,
+    description: repoMeta.description,
+    stargazersCount: repoMeta.stargazersCount,
+    forksCount: repoMeta.forksCount,
+    language: repoMeta.language,
+    lastPushedAt: repoMeta.lastPushedAt,
+    maintainerScore,
+  };
+
+  const labels = extractLabels(item);
+
+  const matchScore = profile.isPersonalized
+    ? calculateMatchScore({
+        userLanguages: profile.topLanguages,
+        userCategories: profile.topics,
+        repoLanguage: repoMeta.language,
+        issueLabels: labels.map(l => l.name),
+      })
+    : undefined;
+
+  const qualityScore = calculateIssueQualityScore({
+    body: item.body,
+    comments: item.comments,
+    assignees: item.assignees,
+    assignee: item.assignee,
+    labels: item.labels,
+  });
+
+  return {
+    id: String(item.id),
+    number: item.number,
+    title: item.title,
+    url: item.html_url,
+    body: item.body ?? undefined,
+    labels,
+    createdAt: item.created_at,
+    updatedAt: item.updated_at,
+    state: item.state as 'open' | 'closed',
+    repository,
+    comments: item.comments,
+    assignee: item.assignee?.login ?? null,
+    matchScore,
+    qualityScore,
+  };
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-
-    // Personalization: load user profile if session exists
-    let userTopLanguages: string[] = [];
-    let userTopics: string[] = [];
-    let userContributedRepos: Set<string> = new Set();
-    let isPersonalized = false;
-    let sessionUserId: string | null = null;
-    try {
-      const supabase = await createClient();
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (session) {
-        sessionUserId = session.user.id;
-        const { data: profile } = await supabase
-          .from('user_profiles')
-          .select('top_languages, contributed_repos, starred_categories')
-          .eq('id', session.user.id)
-          .maybeSingle<{
-            top_languages: string[] | null;
-            contributed_repos: string[] | null;
-            starred_categories: string[] | null;
-          }>();
-        if (profile) {
-          userTopLanguages = profile.top_languages ?? [];
-          userTopics = profile.starred_categories ?? [];
-          userContributedRepos = new Set(profile.contributed_repos ?? []);
-          isPersonalized = true;
-        }
-      }
-    } catch {
-      // Session/profile fetch is best-effort — continue without personalization
-    }
-
-    // Auto-inject language from profile if not explicitly set
-    const rawLanguage = searchParams.get('language') || '';
-    const language =
-      !rawLanguage && userTopLanguages.length > 0 ? userTopLanguages[0] : rawLanguage;
-    const labelPreset = searchParams.get('labelPreset') || '';
-    const minStars = parseInt(searchParams.get('minStars') || '500', 10);
-    const maxStarsRaw = parseInt(searchParams.get('maxStars') || '', 10);
-    const maxStars = isNaN(maxStarsRaw) ? null : maxStarsRaw;
-    const maintainerGrades = searchParams.getAll('maintainerGrade');
-    const sort = searchParams.get('sort') || 'reactions-+1';
-    const page = parseInt(searchParams.get('page') || '1', 10);
-    const freshness = searchParams.get('freshness') || '3m';
-    const label = (searchParams.get('label') || '').replace(/"/g, '');
-    const minForksRaw = parseInt(searchParams.get('minForks') || '', 10);
-    const minForks = isNaN(minForksRaw) ? null : minForksRaw;
-    const maxForksRaw = parseInt(searchParams.get('maxForks') || '', 10);
-    const maxForks = isNaN(maxForksRaw) ? null : maxForksRaw;
+    const profile = await loadUserProfile();
+    const params = parseSearchParams(searchParams, profile.topLanguages);
 
     const cacheKey = JSON.stringify({
       v: CACHE_VERSION,
-      userId: sessionUserId,
-      language,
-      labelPreset,
-      minStars,
-      maxStars,
-      maintainerGrades,
-      sort,
-      page,
-      freshness,
-      label,
-      minForks,
-      maxForks,
+      userId: profile.sessionUserId,
+      ...params,
     });
 
-    const cached = await cacheGet<{ issues: Issue[]; total: number }>(cacheKey);
+    const cached = await cacheGet<{
+      issues: Issue[];
+      total: number;
+      personalized: boolean;
+    }>(cacheKey);
     if (cached) {
       return NextResponse.json(cached);
     }
 
-    const dateStr = getFreshnessDate(freshness);
-
-    const queryLabel = labelPreset || 'good first issue';
-    let query = `is:issue is:open label:"${queryLabel}" stars:>${minStars} pushed:>${dateStr}`;
-    if (maxStars) query += ` stars:<${maxStars}`;
-    if (language) query += ` language:${language}`;
-    if (label) query += ` label:"${label}"`;
-    if (minForks) query += ` forks:>${minForks}`;
-    if (maxForks) query += ` forks:<${maxForks}`;
-
-    const sortParam =
-      sort === 'reactions-+1'
-        ? 'reactions-+1'
-        : (sort as 'reactions' | 'created' | 'updated' | 'comments');
-
     const octokit = await getServerOctokit();
+    const sortParam =
+      params.sort === 'reactions-+1'
+        ? 'reactions'
+        : (params.sort as 'reactions' | 'created' | 'updated' | 'comments');
 
     const { data } = await octokit.search.issuesAndPullRequests({
-      q: query,
-      sort: sortParam === 'reactions-+1' ? 'reactions' : sortParam,
+      q: buildSearchQuery(params),
+      sort: sortParam,
       order: 'desc',
-      per_page: 20,
-      page,
+      per_page: RESULTS_PER_PAGE,
+      page: params.page,
     });
 
-    const issuesWithMeta = await Promise.all(
-      data.items.map(async item => {
-        const repoUrl = item.repository_url;
-        const parts = repoUrl.split('/');
-        const repoName = parts[parts.length - 1];
-        const repoOwner = parts[parts.length - 2];
+    const repoCache = await buildRepoMetaCache(octokit, data.items);
 
-        const maintainerScore = await calculateMaintainerScore(repoOwner, repoName);
-
-        // Fetch repo details for metadata
-        let stargazersCount: number | undefined;
-        let forksCount: number | undefined;
-        let repoLanguage: string | undefined;
-        let lastPushedAt: string | undefined;
-        let description: string | undefined;
-        try {
-          const { data: repoData } = await octokit.repos.get({
-            owner: repoOwner,
-            repo: repoName,
-          });
-          stargazersCount = repoData.stargazers_count;
-          forksCount = repoData.forks_count;
-          repoLanguage = repoData.language ?? undefined;
-          lastPushedAt = repoData.pushed_at ?? undefined;
-          description = repoData.description ?? undefined;
-        } catch {
-          // Continue without repo metadata
-        }
-
-        const repository: Repository = {
-          id: `${repoOwner}/${repoName}`,
-          owner: repoOwner,
-          name: repoName,
-          url: `https://github.com/${repoOwner}/${repoName}`,
-          description,
-          stargazersCount,
-          forksCount,
-          language: repoLanguage,
-          lastPushedAt,
-          maintainerScore,
-        };
-
-        const labels: Label[] = item.labels
-          .filter(
-            (
-              l,
-            ): l is {
-              id: number;
-              name: string;
-              color: string;
-              description: string | null;
-              default: boolean;
-              node_id: string;
-              url: string;
-            } => typeof l === 'object' && l !== null && 'name' in l,
-          )
-          .map(l => ({
-            id: String(l.id ?? ''),
-            name: l.name ?? '',
-            color: l.color ?? '',
-          }));
-
-        const matchScore = isPersonalized
-          ? calculateMatchScore({
-              userLanguages: userTopLanguages,
-              userCategories: userTopics,
-              repoLanguage,
-              issueLabels: labels.map(l => l.name),
-            })
-          : undefined;
-
-        const qualityScore = calculateIssueQualityScore({
-          body: item.body,
-          comments: item.comments,
-          assignees: item.assignees,
-          assignee: item.assignee,
-          labels: item.labels,
-        });
-
-        const issue: Issue = {
-          id: String(item.id),
-          number: item.number,
-          title: item.title,
-          url: item.html_url,
-          body: item.body ?? undefined,
-          labels,
-          createdAt: item.created_at,
-          updatedAt: item.updated_at,
-          state: item.state as 'open' | 'closed',
-          repository,
-          comments: item.comments,
-          assignee: item.assignee?.login ?? null,
-          matchScore,
-          qualityScore,
-        };
-
-        return { issue, maintainerScore };
-      }),
-    );
-
-    let filtered = issuesWithMeta;
-
-    if (maintainerGrades.length > 0) {
-      filtered = filtered.filter(({ maintainerScore }) =>
-        maintainerGrades.includes(maintainerScore.grade),
+    const allIssues = data.items.map(item => {
+      const { owner, name } = parseRepoFromUrl(item.repository_url);
+      const entry = repoCache.get(`${owner}/${name}`);
+      return buildIssue(
+        item,
+        entry?.meta ?? {},
+        entry?.maintainerScore ?? {
+          grade: 'C',
+          avgResponseTimeHours: 0,
+          avgMergeTimeHours: 0,
+          mergeRate: 0,
+        },
+        profile,
       );
-    }
+    });
 
-    let issues = filtered.map(({ issue }) => issue);
-
-    // Exclude issues from repos the user has already contributed to
-    if (userContributedRepos.size > 0) {
+    let issues = allIssues;
+    if (params.maintainerGrades.length > 0) {
       issues = issues.filter(
-        issue =>
-          !userContributedRepos.has(`${issue.repository.owner}/${issue.repository.name}`),
+        i =>
+          i.repository.maintainerScore &&
+          params.maintainerGrades.includes(i.repository.maintainerScore.grade),
       );
     }
 
-    const result = { issues, total: data.total_count, personalized: isPersonalized };
+    if (profile.contributedRepos.size > 0) {
+      issues = issues.filter(
+        i => !profile.contributedRepos.has(`${i.repository.owner}/${i.repository.name}`),
+      );
+    }
 
+    const result = {
+      issues,
+      total: data.total_count,
+      personalized: profile.isPersonalized,
+    };
     await cacheSet(cacheKey, result, CACHE_TTL_SECONDS);
 
     return NextResponse.json(result);

@@ -82,7 +82,6 @@ export interface PickedIssue {
 
 // User settings types
 export interface UserSettings {
-  pickedIssues: PickedIssue[];
   notificationFrequency: 'hourly' | '6hours' | 'daily' | 'never';
   hideClosedIssues: boolean;
   lastCheckedAt?: string;

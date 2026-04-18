@@ -1,13 +1,13 @@
 'use client';
 
-import { AppProvider, useApp } from '@/app/contexts/AppContext';
+import { AppProvider, useAuth } from '@/app/contexts/AppContext';
 import Header from '@/app/components/Header';
 import Navigation from '@/app/components/Navigation';
 import AdSidebar from '@/app/components/AdSidebar';
 import Footer from '@/app/components/Footer';
 
 function MainLayoutContent({ children }: { children: React.ReactNode }) {
-  const { authState, login, logout } = useApp();
+  const { authState, login, logout } = useAuth();
 
   return (
     <div className="min-h-screen bg-background flex flex-col">

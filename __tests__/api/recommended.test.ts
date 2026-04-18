@@ -153,13 +153,23 @@ describe('GET /api/recommended', () => {
 
   describe('maintainerGrade filter', () => {
     it('filters issues by maintainer grade', async () => {
-      mockCalculateMaintainerScore
-        .mockResolvedValueOnce({ ...mockMaintainerScore, grade: 'A' })
-        .mockResolvedValueOnce({ ...mockMaintainerScore, grade: 'C' });
+      // Use different repo URLs so dedup doesn't merge maintainer score lookups
+      mockCalculateMaintainerScore.mockImplementation(async (owner, repo) => {
+        if (owner === 'owner' && repo === 'repo') {
+          return { ...mockMaintainerScore, grade: 'A' };
+        }
+        return { ...mockMaintainerScore, grade: 'C' };
+      });
 
       const twoItems = [
         mockIssueItem,
-        { ...mockIssueItem, id: 2, number: 43, title: 'Low grade repo issue' },
+        {
+          ...mockIssueItem,
+          id: 2,
+          number: 43,
+          title: 'Low grade repo issue',
+          repository_url: 'https://api.github.com/repos/other/lowgrade',
+        },
       ];
       mockGetServerOctokit.mockResolvedValue(
         makeOctokitMock({

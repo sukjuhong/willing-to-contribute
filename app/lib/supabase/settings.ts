@@ -16,7 +16,6 @@ export async function loadUserSettings(userId: string): Promise<UserSettings | n
   if (error || !data) return null;
 
   return {
-    pickedIssues: [],
     notificationFrequency:
       (data.notification_frequency as UserSettings['notificationFrequency']) ?? 'daily',
     hideClosedIssues: data.hide_closed_issues ?? true,
