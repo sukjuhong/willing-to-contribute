@@ -353,5 +353,19 @@
     "keepLocalDesc": "Keep your current local repository list",
     "useGistDesc": "Use the repository list from your cloud backup",
     "combineDesc": "Combine both repository lists"
+  },
+  "tips": {
+    "toggle": "Tips",
+    "add": "Add a tip",
+    "countLabel": "{count} tip(s)",
+    "placeholder": "Share a tip for contributors (max 280 chars)",
+    "submit": "Post",
+    "charCount": "{count}/{max}",
+    "empty": "No tips yet. Be the first!",
+    "like": "Like",
+    "report": "Report",
+    "reported": "Reported",
+    "deleteConfirm": "Delete this tip?",
+    "loginRequired": "Sign in with GitHub to share a tip."
   }
 }
