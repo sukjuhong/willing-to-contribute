@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
         hostname: 'avatars.githubusercontent.com',
         pathname: '/u/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'github.com',
+        pathname: '/*.png',
+      },
     ],
   },
   // Performance optimizations

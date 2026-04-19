@@ -345,6 +345,20 @@
     "refreshNote": "오늘 하루 동안 동일한 이슈가 표시됩니다. 내일 다시 방문하면 새로운 이슈를 만나보세요.",
     "empty": "오늘 추천할 이슈가 없습니다. 내일 다시 확인해보세요!"
   },
+  "feed": {
+    "title": "활동 피드",
+    "subtitle": "Pickssue 커뮤니티에서 지금 일어나는 일",
+    "empty": "아직 활동이 없어요",
+    "emptyHint": "최근 24시간 동안의 공개 활동이 여기에 표시됩니다.",
+    "event": {
+      "issuePicked": "{user}님이 새 이슈를 Pick 했어요",
+      "issuePickedRepo": "{user}님이 {repo}의 이슈를 Pick 했어요",
+      "contributionCompleted": "{user}님이 기여를 완료했어요",
+      "contributionCompletedRepo": "{user}님이 {repo}에 기여를 완료했어요",
+      "badgeEarned": "{user}님이 새 뱃지를 획득했어요",
+      "badgeEarnedNamed": "{user}님이 '{badge}' 뱃지를 획득했어요"
+    }
+  },
   "sync": {
     "localRepositories": "로컬 저장소",
     "gistRepositories": "클라우드 저장소",

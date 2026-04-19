@@ -166,6 +166,16 @@ export interface Database {
           pick_count: number;
         };
       };
+      public_activity_feed: {
+        Row: {
+          id: string;
+          user_id: string;
+          event_type: string;
+          payload: Json;
+          created_at: string;
+          username: string;
+        };
+      };
     };
     Functions: Record<string, never>;
     Enums: Record<string, never>;

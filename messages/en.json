@@ -345,6 +345,20 @@
     "refreshNote": "These picks are personalized for today. Come back tomorrow for a new set.",
     "empty": "No discoveries available today. Check back tomorrow!"
   },
+  "feed": {
+    "title": "Activity Feed",
+    "subtitle": "What the Pickssue community is doing right now",
+    "empty": "No activity yet",
+    "emptyHint": "Public activity from the last 24 hours will show up here.",
+    "event": {
+      "issuePicked": "{user} picked a new issue",
+      "issuePickedRepo": "{user} picked an issue in {repo}",
+      "contributionCompleted": "{user} completed a contribution",
+      "contributionCompletedRepo": "{user} completed a contribution to {repo}",
+      "badgeEarned": "{user} earned a new badge",
+      "badgeEarnedNamed": "{user} earned the {badge} badge"
+    }
+  },
   "sync": {
     "localRepositories": "Local Repositories",
     "gistRepositories": "Cloud Repositories",
