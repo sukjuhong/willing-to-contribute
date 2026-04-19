@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import Footer from '@/app/components/Footer';
 import AdSidebar from '@/app/components/AdSidebar';
@@ -8,10 +9,21 @@ export default function StaticLayout({ children }: { children: React.ReactNode }
       <header className="bg-card border-b border-border py-4 px-6">
         <div className="container mx-auto flex justify-between items-center">
           <Link
-            href="/issues"
-            className="text-2xl font-bold text-foreground font-[family-name:var(--font-mono)] hover:text-primary transition-colors"
+            href="/"
+            className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+            aria-label="Pickssue"
           >
-            <span className="text-muted-foreground">&gt;_</span> Pickssue
+            <Image
+              src="/logo.png"
+              alt="Pickssue logo"
+              width={32}
+              height={32}
+              priority
+              className="dark:invert"
+            />
+            <span className="text-2xl font-bold text-foreground font-[family-name:var(--font-mono)]">
+              Pickssue
+            </span>
           </Link>
           <nav className="flex items-center space-x-4">
             <Link

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
@@ -25,8 +26,16 @@ export default function AboutPage() {
     <article className="text-foreground">
       {/* Hero Section */}
       <section className="text-center mb-16">
-        <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 font-[family-name:var(--font-mono)]">
-          <span className="text-primary">&gt;_</span> Pickssue
+        <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 font-[family-name:var(--font-mono)] flex items-center justify-center gap-3">
+          <Image
+            src="/logo.png"
+            alt="Pickssue logo"
+            width={56}
+            height={56}
+            priority
+            className="dark:invert"
+          />
+          Pickssue
         </h1>
         <p className="text-xl text-foreground max-w-2xl mx-auto leading-relaxed">
           Your gateway to meaningful open source contributions. Discover beginner-friendly

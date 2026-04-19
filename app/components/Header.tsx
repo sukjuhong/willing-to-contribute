@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { GithubAuthState } from '../types';
 import { FaGithub, FaSignOutAlt, FaCode } from 'react-icons/fa';
 import LanguageSwitcher from './LanguageSwitcher';
@@ -26,9 +27,23 @@ const Header: React.FC<HeaderProps> = ({
     <header className="bg-card border-b border-border py-4 px-6">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center space-x-2">
-          <h1 className="text-2xl font-bold text-foreground font-mono">
-            <span className="text-muted-foreground">&gt;_</span> {t('common.welcome')}
-          </h1>
+          <Link
+            href="/"
+            className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+            aria-label={t('common.welcome')}
+          >
+            <Image
+              src="/logo.png"
+              alt="Pickssue logo"
+              width={32}
+              height={32}
+              priority
+              className="dark:invert"
+            />
+            <h1 className="text-2xl font-bold text-foreground font-mono">
+              {t('common.welcome')}
+            </h1>
+          </Link>
           <span className="bg-primary/10 text-primary border border-primary/20 font-mono text-xs px-2 py-0.5 rounded">
             {t('common.beta')}
           </span>

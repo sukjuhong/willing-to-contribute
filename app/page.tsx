@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import Footer from '@/app/components/Footer';
 
@@ -71,9 +72,23 @@ export default function LandingPage() {
       {/* Navigation */}
       <header className="bg-card border-b border-border py-4 px-6 sticky top-0 z-10">
         <div className="container mx-auto flex justify-between items-center">
-          <span className="text-2xl font-bold text-foreground font-[family-name:var(--font-mono)]">
-            <span className="text-muted-foreground">&gt;_</span> Pickssue
-          </span>
+          <Link
+            href="/"
+            className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+            aria-label="Pickssue"
+          >
+            <Image
+              src="/logo.png"
+              alt="Pickssue logo"
+              width={32}
+              height={32}
+              priority
+              className="dark:invert"
+            />
+            <span className="text-2xl font-bold text-foreground font-[family-name:var(--font-mono)]">
+              Pickssue
+            </span>
+          </Link>
           <nav className="flex items-center gap-2 sm:gap-4">
             <Link
               href="/about"
