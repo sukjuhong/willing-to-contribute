@@ -33,10 +33,11 @@ function isFeedEventType(value: string): value is FeedEventType {
   return ALLOWED_TYPES.has(value as FeedEventType);
 }
 
-function toAvatarUrl(githubId: string): string {
-  // user_profiles.id stores the GitHub numeric ID; the static URL pattern is allowed
-  // by next.config.ts remotePatterns (avatars.githubusercontent.com/u/**).
-  return `https://avatars.githubusercontent.com/u/${githubId}?v=4`;
+function toAvatarUrl(username: string): string {
+  // user_profiles.id stores the Supabase auth UUID (despite the misleading
+  // -- github_id comment in migration 001), so we resolve avatars by username
+  // via github.com's redirect endpoint. next.config.ts must allow this host.
+  return `https://github.com/${encodeURIComponent(username)}.png?size=80`;
 }
 
 /**
@@ -80,7 +81,7 @@ export async function getPublicActivityFeed(
       id: row.id,
       userId: row.user_id,
       username: row.username,
-      avatarUrl: toAvatarUrl(row.user_id),
+      avatarUrl: toAvatarUrl(row.username),
       eventType: row.event_type as FeedEventType,
       payload: (row.payload as Record<string, unknown>) ?? {},
       createdAt: row.created_at,
