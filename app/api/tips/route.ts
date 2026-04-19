@@ -4,13 +4,24 @@ import type { Database } from '@/app/types/supabase';
 
 const MAX_CONTENT_LENGTH = 280;
 
+// Constrain `issue_url` to canonical GitHub issue/PR form so the table can't be
+// used as arbitrary key/value storage (e.g. `https://example.com/#xss`).
+const ISSUE_URL_RE = /^https:\/\/github\.com\/[\w.-]+\/[\w.-]+\/(?:issues|pull)\/\d+$/;
+
+function isValidIssueUrl(url: string): boolean {
+  return ISSUE_URL_RE.test(url);
+}
+
 type TipRow = Database['public']['Tables']['issue_tips']['Row'];
 
 export async function GET(req: NextRequest) {
   try {
     const issueUrl = req.nextUrl.searchParams.get('issueUrl');
-    if (!issueUrl) {
-      return NextResponse.json({ error: 'issueUrl is required' }, { status: 400 });
+    if (!issueUrl || !isValidIssueUrl(issueUrl)) {
+      return NextResponse.json(
+        { error: 'Valid GitHub issue or PR URL is required' },
+        { status: 400 },
+      );
     }
 
     const supabase = await createClient();
@@ -101,8 +112,11 @@ export async function POST(req: NextRequest) {
     const issueUrl = typeof body?.issueUrl === 'string' ? body.issueUrl.trim() : '';
     const content = typeof body?.content === 'string' ? body.content.trim() : '';
 
-    if (!issueUrl) {
-      return NextResponse.json({ error: 'issueUrl is required' }, { status: 400 });
+    if (!issueUrl || !isValidIssueUrl(issueUrl)) {
+      return NextResponse.json(
+        { error: 'Valid GitHub issue or PR URL is required' },
+        { status: 400 },
+      );
     }
     if (!content) {
       return NextResponse.json({ error: 'content is required' }, { status: 400 });

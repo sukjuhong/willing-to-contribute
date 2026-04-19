@@ -366,6 +366,7 @@
     "report": "Report",
     "reported": "Reported",
     "deleteConfirm": "Delete this tip?",
-    "loginRequired": "Sign in with GitHub to share a tip."
+    "loginRequired": "Sign in with GitHub to share a tip.",
+    "submitError": "Could not post your tip. Please try again."
   }
 }

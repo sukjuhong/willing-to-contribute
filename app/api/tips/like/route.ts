@@ -48,6 +48,11 @@ export async function POST(req: NextRequest) {
       .from('issue_tip_likes')
       .insert(insertRow as never);
     if (insErr) {
+      // 23505 = unique_violation. The select-then-insert toggle is racy; if a
+      // concurrent request already inserted the row, treat as success.
+      if ((insErr as { code?: string }).code === '23505') {
+        return NextResponse.json({ liked: true });
+      }
       return NextResponse.json({ error: insErr.message }, { status: 500 });
     }
     return NextResponse.json({ liked: true });

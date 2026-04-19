@@ -44,6 +44,7 @@ const IssueTips: React.FC<IssueTipsProps> = ({ issueUrl }) => {
   const [hasFetched, setHasFetched] = useState(false);
   const [draft, setDraft] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const fetchedUrlRef = useRef<string | null>(null);
 
   const fetchTips = useCallback(async () => {
@@ -78,23 +79,30 @@ const IssueTips: React.FC<IssueTipsProps> = ({ issueUrl }) => {
       const content = draft.trim();
       if (!content || content.length > MAX_CONTENT_LENGTH || submitting) return;
       setSubmitting(true);
+      setSubmitError(null);
       try {
         const res = await fetch('/api/tips', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ issueUrl, content }),
         });
-        if (!res.ok) return;
+        if (!res.ok) {
+          const err = (await res.json().catch(() => null)) as { error?: string } | null;
+          setSubmitError(err?.error ?? t('submitError'));
+          return;
+        }
         const json = (await res.json()) as { tip?: Tip };
         if (json.tip) {
           setTips(prev => [json.tip!, ...prev]);
           setDraft('');
         }
+      } catch {
+        setSubmitError(t('submitError'));
       } finally {
         setSubmitting(false);
       }
     },
-    [draft, submitting, issueUrl],
+    [draft, submitting, issueUrl, t],
   );
 
   const handleLike = useCallback(
@@ -241,6 +249,11 @@ const IssueTips: React.FC<IssueTipsProps> = ({ issueUrl }) => {
                 {t('submit')}
               </Button>
             </div>
+            {submitError && (
+              <p className="text-xs text-destructive" role="alert">
+                {submitError}
+              </p>
+            )}
           </form>
         ) : (
           <p className="text-xs text-muted-foreground">{t('loginRequired')}</p>
