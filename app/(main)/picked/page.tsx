@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { FaBookmark, FaSync, FaRegBookmark } from 'react-icons/fa';
+import BadgeGrid from '@/app/components/BadgeGrid';
 import LoginPrompt from '@/app/components/LoginPrompt';
 import PickedIssueItem from '@/app/components/PickedIssueItem';
 import PrivacyToggle from '@/app/components/PrivacyToggle';
@@ -142,6 +143,9 @@ export default function PickedPage() {
           onToggle={updatePrivacySettings}
         />
       )}
+
+      {/* Badge progress */}
+      <BadgeGrid userId={authState.userId} />
 
       {/* Issue list */}
       {pickedIssuesLoading && !refreshing ? (

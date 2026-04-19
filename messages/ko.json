@@ -279,6 +279,27 @@
       "never": "안 함"
     }
   },
+  "badge": {
+    "gridTitle": "기여자 뱃지",
+    "locked": "잠김",
+    "progress": "{earned}/{total} 획득",
+    "first_pick": {
+      "name": "첫 Pick",
+      "description": "첫 번째 이슈를 Pick했습니다"
+    },
+    "first_merge": {
+      "name": "첫 머지",
+      "description": "내 PR로 이슈를 닫았습니다"
+    },
+    "polyglot": {
+      "name": "다국어 기여자",
+      "description": "3개 이상 언어로 기여했습니다"
+    },
+    "explorer": {
+      "name": "탐험가",
+      "description": "5개 이상 저장소에 기여했습니다"
+    }
+  },
   "profile": {
     "title": "내 프로필",
     "analyzing": "GitHub 프로필 분석 중...",

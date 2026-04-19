@@ -279,6 +279,27 @@
       "never": "Never"
     }
   },
+  "badge": {
+    "gridTitle": "Contributor Badges",
+    "locked": "Locked",
+    "progress": "{earned}/{total} earned",
+    "first_pick": {
+      "name": "First Pick",
+      "description": "Picked your first issue"
+    },
+    "first_merge": {
+      "name": "First Merge",
+      "description": "Closed an issue with your own PR"
+    },
+    "polyglot": {
+      "name": "Polyglot",
+      "description": "Contributed in 3+ languages"
+    },
+    "explorer": {
+      "name": "Explorer",
+      "description": "Contributed to 5+ repositories"
+    }
+  },
   "profile": {
     "title": "Your Profile",
     "analyzing": "Analyzing your GitHub profile...",

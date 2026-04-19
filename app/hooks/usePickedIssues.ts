@@ -212,9 +212,20 @@ const usePickedIssues = (
               );
               if (result.verified) {
                 const verifiedAt = new Date().toISOString();
+                // Repository labels often carry the language as a label (e.g.
+                // "JavaScript", "Python"). Best-effort lookup so the polyglot
+                // badge can count distinct languages without a separate API call.
+                const languageLabel = picked.labels.find(l =>
+                  /^(javascript|typescript|python|go|rust|java|ruby|c\+\+|c#|php|swift|kotlin)$/i.test(
+                    l.name,
+                  ),
+                )?.name;
                 void logActivityEvent(userId, 'contribution_completed', {
                   issue_id: picked.id,
                   issue_url: picked.url,
+                  repository_owner: picked.repository.owner,
+                  repository_name: picked.repository.name,
+                  language: languageLabel ?? null,
                   closing_pr_url: result.closingPrUrl ?? null,
                   closing_pr_author: result.closingPrAuthor ?? null,
                 });
