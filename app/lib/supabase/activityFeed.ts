@@ -1,6 +1,6 @@
 import { createClient as createSupabaseJsClient } from '@supabase/supabase-js';
 import { env } from '@/app/lib/env';
-import { Database } from '@/app/types/supabase';
+import { Database, Json } from '@/app/types/supabase';
 
 export type FeedEventType = 'issue_picked' | 'contribution_completed' | 'badge_earned';
 
@@ -13,6 +13,12 @@ export interface ActivityFeedItem {
   payload: Record<string, unknown>;
   createdAt: string;
 }
+
+// The Database generic threads `Tables<>` correctly but `Views<>` resolves to
+// `never` for `.select('*')` on @supabase/supabase-js@2 (see the open
+// upstream issue), so we narrow with an explicit row shape mirrored from
+// app/types/supabase.ts.
+type PublicActivityFeedRow = Database['public']['Views']['public_activity_feed']['Row'];
 
 function toAvatarUrl(username: string): string {
   // user_profiles.id stores the Supabase auth UUID (despite the misleading
@@ -59,13 +65,13 @@ export async function getPublicActivityFeed(
   // The view's WHERE clause (migration 010) already restricts event_type to
   // the three FeedEventType values, so the cast here narrows without losing
   // safety; no extra runtime filter needed.
-  return data.map(row => ({
+  return (data as PublicActivityFeedRow[]).map(row => ({
     id: row.id,
     userId: row.user_id,
     username: row.username,
     avatarUrl: toAvatarUrl(row.username),
     eventType: row.event_type as FeedEventType,
-    payload: (row.payload as Record<string, unknown>) ?? {},
+    payload: (row.payload as Json as Record<string, unknown>) ?? {},
     createdAt: row.created_at,
   }));
 }
