@@ -155,6 +155,75 @@ export interface Database {
           closing_pr_author?: string | null;
         };
       };
+      issue_tips: {
+        Row: {
+          id: string;
+          issue_url: string;
+          user_id: string;
+          content: string;
+          like_count: number;
+          report_count: number;
+          hidden_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          issue_url: string;
+          user_id: string;
+          content: string;
+          like_count?: number;
+          report_count?: number;
+          hidden_at?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          issue_url?: string;
+          user_id?: string;
+          content?: string;
+          like_count?: number;
+          report_count?: number;
+          hidden_at?: string | null;
+          created_at?: string;
+        };
+      };
+      issue_tip_likes: {
+        Row: {
+          tip_id: string;
+          user_id: string;
+          created_at: string;
+        };
+        Insert: {
+          tip_id: string;
+          user_id: string;
+          created_at?: string;
+        };
+        Update: {
+          tip_id?: string;
+          user_id?: string;
+          created_at?: string;
+        };
+      };
+      issue_tip_reports: {
+        Row: {
+          tip_id: string;
+          user_id: string;
+          reason: string | null;
+          created_at: string;
+        };
+        Insert: {
+          tip_id: string;
+          user_id: string;
+          reason?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          tip_id?: string;
+          user_id?: string;
+          reason?: string | null;
+          created_at?: string;
+        };
+      };
     };
     Views: {
       picked_issues_counts: {

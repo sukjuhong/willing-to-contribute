@@ -367,5 +367,20 @@
     "keepLocalDesc": "현재 로컬 저장소 목록을 유지합니다",
     "useGistDesc": "클라우드 저장소 목록을 사용합니다",
     "combineDesc": "두 저장소 목록을 합칩니다"
+  },
+  "tips": {
+    "toggle": "기여 팁",
+    "add": "팁 작성",
+    "countLabel": "팁 {count}개",
+    "placeholder": "기여자에게 도움이 될 팁을 공유하세요 (최대 280자)",
+    "submit": "등록",
+    "charCount": "{count}/{max}",
+    "empty": "아직 팁이 없습니다. 첫 팁을 남겨보세요!",
+    "like": "좋아요",
+    "report": "신고",
+    "reported": "신고됨",
+    "deleteConfirm": "이 팁을 삭제할까요?",
+    "loginRequired": "GitHub로 로그인하면 팁을 작성할 수 있습니다.",
+    "submitError": "팁을 등록하지 못했습니다. 잠시 후 다시 시도해주세요."
   }
 }
