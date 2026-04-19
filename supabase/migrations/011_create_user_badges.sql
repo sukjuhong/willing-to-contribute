@@ -89,66 +89,75 @@ begin
   end if;
 
   -- 3. polyglot — contribution_completed events spanning >= 3 distinct languages.
-  --    Languages are read from payload->>'language'; events without that field
-  --    do not count. NULL/empty values filtered out.
-  select count(distinct nullif(payload->>'language', ''))
-  into v_distinct_languages
-  from user_activity_events
-  where user_id = p_user_id
-    and event_type = 'contribution_completed'
-    and payload ? 'language';
+  --    Skip the count(distinct …) scan once the badge is owned. lower() makes
+  --    the count case-insensitive in case payload writers vary in casing.
+  if not exists (
+    select 1 from user_badges
+    where user_id = p_user_id and badge_id = 'polyglot'
+  ) then
+    select count(distinct lower(nullif(payload->>'language', '')))
+    into v_distinct_languages
+    from user_activity_events
+    where user_id = p_user_id
+      and event_type = 'contribution_completed'
+      and payload ? 'language';
 
-  if coalesce(v_distinct_languages, 0) >= 3 then
-    insert into user_badges (user_id, badge_id, metadata)
-      values (
-        p_user_id,
-        'polyglot',
-        jsonb_build_object('language_count', v_distinct_languages)
-      )
-      on conflict do nothing
-      returning true into v_inserted;
-    if v_inserted then
-      insert into user_activity_events (user_id, event_type, payload)
-        values (p_user_id, 'badge_earned', jsonb_build_object(
-          'badge_id', 'polyglot',
-          'name_key', 'badge.polyglot.name',
-          'language_count', v_distinct_languages
-        ));
+    if coalesce(v_distinct_languages, 0) >= 3 then
+      insert into user_badges (user_id, badge_id, metadata)
+        values (
+          p_user_id,
+          'polyglot',
+          jsonb_build_object('language_count', v_distinct_languages)
+        )
+        on conflict do nothing
+        returning true into v_inserted;
+      if v_inserted then
+        insert into user_activity_events (user_id, event_type, payload)
+          values (p_user_id, 'badge_earned', jsonb_build_object(
+            'badge_id', 'polyglot',
+            'name_key', 'badge.polyglot.name',
+            'language_count', v_distinct_languages
+          ));
+      end if;
+      v_inserted := null;
     end if;
-    v_inserted := null;
   end if;
 
   -- 4. explorer — contribution_completed events to >= 5 distinct repos.
-  --    Repo identity = "owner/name" derived from payload fields written by
-  --    the client (see app/hooks/usePickedIssues.ts). Falls back to empty
-  --    string which gets filtered.
-  select count(distinct nullif(
-    coalesce(payload->>'repository_owner', '') ||
-    '/' ||
-    coalesce(payload->>'repository_name', ''),
-    '/'
-  ))
-  into v_distinct_repos
-  from user_activity_events
-  where user_id = p_user_id
-    and event_type = 'contribution_completed';
+  --    Same IF NOT EXISTS optimization. Repo identity is lower-cased so
+  --    "Owner/Repo" and "owner/repo" don't double-count.
+  if not exists (
+    select 1 from user_badges
+    where user_id = p_user_id and badge_id = 'explorer'
+  ) then
+    select count(distinct lower(nullif(
+      coalesce(payload->>'repository_owner', '') ||
+      '/' ||
+      coalesce(payload->>'repository_name', ''),
+      '/'
+    )))
+    into v_distinct_repos
+    from user_activity_events
+    where user_id = p_user_id
+      and event_type = 'contribution_completed';
 
-  if coalesce(v_distinct_repos, 0) >= 5 then
-    insert into user_badges (user_id, badge_id, metadata)
-      values (
-        p_user_id,
-        'explorer',
-        jsonb_build_object('repo_count', v_distinct_repos)
-      )
-      on conflict do nothing
-      returning true into v_inserted;
-    if v_inserted then
-      insert into user_activity_events (user_id, event_type, payload)
-        values (p_user_id, 'badge_earned', jsonb_build_object(
-          'badge_id', 'explorer',
-          'name_key', 'badge.explorer.name',
-          'repo_count', v_distinct_repos
-        ));
+    if coalesce(v_distinct_repos, 0) >= 5 then
+      insert into user_badges (user_id, badge_id, metadata)
+        values (
+          p_user_id,
+          'explorer',
+          jsonb_build_object('repo_count', v_distinct_repos)
+        )
+        on conflict do nothing
+        returning true into v_inserted;
+      if v_inserted then
+        insert into user_activity_events (user_id, event_type, payload)
+          values (p_user_id, 'badge_earned', jsonb_build_object(
+            'badge_id', 'explorer',
+            'name_key', 'badge.explorer.name',
+            'repo_count', v_distinct_repos
+          ));
+      end if;
     end if;
   end if;
 end;

@@ -70,24 +70,35 @@ function BadgeCard({
 
 export default function BadgeGrid({ userId }: BadgeGridProps) {
   const t = useTranslations();
-  const { earned } = useUserBadges(userId);
+  const { earned, loading } = useUserBadges(userId);
 
   const earnedById = new Map(earned.map(b => [b.badgeId, b]));
   const earnedCount = earned.length;
   const total = BADGE_DEFINITIONS.length;
+  // Suppress the locked-grid flicker on the very first fetch — once we have any
+  // badges (or a finished load), render the real grid even while refreshing.
+  const showSkeleton = loading && earned.length === 0;
 
   return (
     <section className="rounded-lg border border-border bg-card p-4">
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-sm font-semibold text-foreground">{t('badge.gridTitle')}</h3>
         <span className="text-xs text-muted-foreground">
-          {t('badge.progress', { earned: earnedCount, total })}
+          {showSkeleton ? '…' : t('badge.progress', { earned: earnedCount, total })}
         </span>
       </div>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {BADGE_DEFINITIONS.map(badge => (
-          <BadgeCard key={badge.id} badge={badge} earned={earnedById.get(badge.id)} />
-        ))}
+        {showSkeleton
+          ? BADGE_DEFINITIONS.map(badge => (
+              <div
+                key={badge.id}
+                className="h-[120px] rounded-lg border border-dashed border-border/40 bg-muted/20 animate-pulse"
+                aria-hidden
+              />
+            ))
+          : BADGE_DEFINITIONS.map(badge => (
+              <BadgeCard key={badge.id} badge={badge} earned={earnedById.get(badge.id)} />
+            ))}
       </div>
     </section>
   );
