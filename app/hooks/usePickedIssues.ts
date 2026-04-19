@@ -21,6 +21,45 @@ interface StateChange {
   to: string | undefined;
 }
 
+// Canonical names matched in any case. Common GitHub label patterns we accept:
+//   "JavaScript", "lang:python", "language:rust", "language/go".
+const LANGUAGE_NAMES = [
+  'javascript',
+  'typescript',
+  'python',
+  'go',
+  'rust',
+  'java',
+  'ruby',
+  'c++',
+  'c#',
+  'php',
+  'swift',
+  'kotlin',
+  'dart',
+  'scala',
+  'elixir',
+  'haskell',
+  'shell',
+  'html',
+  'css',
+] as const;
+
+const LANGUAGE_LABEL_RE = new RegExp(
+  `^(?:lang|language)?[:/\\-\\s]?\\s*(${LANGUAGE_NAMES.map(n => n.replace(/[+#]/g, '\\$&')).join('|')})$`,
+  'i',
+);
+
+function detectLanguageFromLabels(
+  labels: ReadonlyArray<{ name: string }>,
+): string | null {
+  for (const label of labels) {
+    const m = LANGUAGE_LABEL_RE.exec(label.name);
+    if (m) return m[1].toLowerCase();
+  }
+  return null;
+}
+
 // Process items in batches to avoid rate limits
 async function batchProcess<T, R>(
   items: T[],
@@ -215,6 +254,9 @@ const usePickedIssues = (
                 void logActivityEvent(userId, 'contribution_completed', {
                   issue_id: picked.id,
                   issue_url: picked.url,
+                  repository_owner: picked.repository.owner,
+                  repository_name: picked.repository.name,
+                  language: detectLanguageFromLabels(picked.labels),
                   closing_pr_url: result.closingPrUrl ?? null,
                   closing_pr_author: result.closingPrAuthor ?? null,
                 });

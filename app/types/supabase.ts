@@ -93,6 +93,26 @@ export interface Database {
           created_at?: string;
         };
       };
+      user_badges: {
+        Row: {
+          user_id: string;
+          badge_id: string;
+          earned_at: string;
+          metadata: Json;
+        };
+        Insert: {
+          user_id: string;
+          badge_id: string;
+          earned_at?: string;
+          metadata?: Json;
+        };
+        Update: {
+          user_id?: string;
+          badge_id?: string;
+          earned_at?: string;
+          metadata?: Json;
+        };
+      };
       picked_issues: {
         Row: {
           id: string;
