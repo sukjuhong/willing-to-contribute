@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 import { useLocaleSwitch } from '@/app/providers/IntlProvider';
 import { Card } from '@/components/ui/card';
 import { formatRelativeTime } from '@/app/utils/formatRelativeTime';
-import type { ActivityFeedItem, FeedEventType } from '@/app/lib/supabase/activityFeed';
+import type { ActivityFeedItem } from '@/app/lib/supabase/activityFeed';
 
 interface FeedListProps {
   items: ActivityFeedItem[];
@@ -46,7 +46,7 @@ function FeedRow({ item }: { item: ActivityFeedItem }) {
   const badge = badgeLabel(item.payload);
 
   let description: React.ReactNode;
-  switch (item.eventType as FeedEventType) {
+  switch (item.eventType) {
     case 'issue_picked':
       description = repo
         ? tFeed('event.issuePickedRepo', { user: item.username, repo })

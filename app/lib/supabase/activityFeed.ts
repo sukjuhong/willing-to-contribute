@@ -1,6 +1,6 @@
 import { createClient as createSupabaseJsClient } from '@supabase/supabase-js';
 import { env } from '@/app/lib/env';
-import { Database, Json } from '@/app/types/supabase';
+import { Database } from '@/app/types/supabase';
 
 export type FeedEventType = 'issue_picked' | 'contribution_completed' | 'badge_earned';
 
@@ -12,25 +12,6 @@ export interface ActivityFeedItem {
   eventType: FeedEventType;
   payload: Record<string, unknown>;
   createdAt: string;
-}
-
-interface PublicActivityFeedRow {
-  id: string;
-  user_id: string;
-  event_type: string;
-  payload: Json;
-  created_at: string;
-  username: string;
-}
-
-const ALLOWED_TYPES: ReadonlySet<FeedEventType> = new Set([
-  'issue_picked',
-  'contribution_completed',
-  'badge_earned',
-]);
-
-function isFeedEventType(value: string): value is FeedEventType {
-  return ALLOWED_TYPES.has(value as FeedEventType);
 }
 
 function toAvatarUrl(username: string): string {
@@ -75,15 +56,16 @@ export async function getPublicActivityFeed(
     return [];
   }
 
-  return (data as unknown as PublicActivityFeedRow[])
-    .filter(row => isFeedEventType(row.event_type))
-    .map(row => ({
-      id: row.id,
-      userId: row.user_id,
-      username: row.username,
-      avatarUrl: toAvatarUrl(row.username),
-      eventType: row.event_type as FeedEventType,
-      payload: (row.payload as Record<string, unknown>) ?? {},
-      createdAt: row.created_at,
-    }));
+  // The view's WHERE clause (migration 010) already restricts event_type to
+  // the three FeedEventType values, so the cast here narrows without losing
+  // safety; no extra runtime filter needed.
+  return data.map(row => ({
+    id: row.id,
+    userId: row.user_id,
+    username: row.username,
+    avatarUrl: toAvatarUrl(row.username),
+    eventType: row.event_type as FeedEventType,
+    payload: (row.payload as Record<string, unknown>) ?? {},
+    createdAt: row.created_at,
+  }));
 }
