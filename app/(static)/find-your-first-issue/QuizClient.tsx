@@ -1,31 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { FaGithub, FaStar, FaCodeBranch } from 'react-icons/fa';
 import { LuBookmark, LuShare2, LuCheck } from 'react-icons/lu';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Issue } from '@/app/types';
-
-const TOP_LANGUAGES = [
-  'JavaScript',
-  'TypeScript',
-  'Python',
-  'Go',
-  'Rust',
-  'Java',
-  'C++',
-  'C#',
-  'Ruby',
-  'PHP',
-  'Swift',
-  'Kotlin',
-  'Dart',
-  'Scala',
-  'Elixir',
-];
+import { TOP_15_LANGUAGES } from '@/app/lib/findFirstIssue';
 
 type Level = 'beginner' | 'some-oss' | 'regular';
 type Interest = 'docs' | 'bug' | 'feature' | 'ui';
@@ -36,34 +20,21 @@ interface QuizState {
   interest: Interest | '';
 }
 
-const LEVEL_OPTIONS: { value: Level; label: string; desc: string }[] = [
-  {
-    value: 'beginner',
-    label: 'Complete Beginner',
-    desc: 'I have never contributed to open source before',
-  },
-  {
-    value: 'some-oss',
-    label: 'Some Experience',
-    desc: 'I have made 1-5 open source contributions',
-  },
-  {
-    value: 'regular',
-    label: 'Regular Contributor',
-    desc: 'I contribute to open source regularly',
-  },
-];
+const LEVEL_VALUES: Level[] = ['beginner', 'some-oss', 'regular'];
+const INTEREST_VALUES: Interest[] = ['docs', 'bug', 'feature', 'ui'];
 
-const INTEREST_OPTIONS: { value: Interest; label: string; desc: string }[] = [
-  {
-    value: 'docs',
-    label: 'Documentation',
-    desc: 'Improve guides, README files, and examples',
-  },
-  { value: 'bug', label: 'Bug Fixes', desc: 'Find and squash bugs in the codebase' },
-  { value: 'feature', label: 'New Features', desc: 'Add new functionality to projects' },
-  { value: 'ui', label: 'UI / Design', desc: 'Improve interfaces and user experience' },
-];
+const LEVEL_KEY_MAP: Record<Level, { label: string; desc: string }> = {
+  beginner: { label: 'levelBeginner', desc: 'levelBeginnerDesc' },
+  'some-oss': { label: 'levelSomeOss', desc: 'levelSomeOssDesc' },
+  regular: { label: 'levelRegular', desc: 'levelRegularDesc' },
+};
+
+const INTEREST_KEY_MAP: Record<Interest, { label: string; desc: string }> = {
+  docs: { label: 'interestDocs', desc: 'interestDocsDesc' },
+  bug: { label: 'interestBug', desc: 'interestBugDesc' },
+  feature: { label: 'interestFeature', desc: 'interestFeatureDesc' },
+  ui: { label: 'interestUi', desc: 'interestUiDesc' },
+};
 
 const INTEREST_LABEL_MAP: Record<Interest, string> = {
   docs: 'documentation',
@@ -159,6 +130,7 @@ function ResultCard({ issue }: ResultCardProps) {
 export default function QuizClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations('findFirstIssue');
 
   const [step, setStep] = useState<1 | 2 | 3 | 'results'>(1);
   const [quiz, setQuiz] = useState<QuizState>({ lang: '', level: '', interest: '' });
@@ -167,48 +139,70 @@ export default function QuizClient() {
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
 
+  const levelOptions = useMemo(
+    () =>
+      LEVEL_VALUES.map(value => ({
+        value,
+        label: t(LEVEL_KEY_MAP[value].label),
+        desc: t(LEVEL_KEY_MAP[value].desc),
+      })),
+    [t],
+  );
+
+  const interestOptions = useMemo(
+    () =>
+      INTEREST_VALUES.map(value => ({
+        value,
+        label: t(INTEREST_KEY_MAP[value].label),
+        desc: t(INTEREST_KEY_MAP[value].desc),
+      })),
+    [t],
+  );
+
+  const fetchIssues = useCallback(
+    async (q: QuizState) => {
+      setLoading(true);
+      setError('');
+      try {
+        const res = await fetch(buildApiUrl(q.lang, q.interest));
+        if (!res.ok) throw new Error('Failed to fetch');
+        const data = await res.json();
+        const allIssues: Issue[] = data.issues || [];
+        setIssues(allIssues.slice(0, 10));
+      } catch {
+        setError(t('loadError'));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [t],
+  );
+
   // Restore from URL params on mount
   useEffect(() => {
     const lang = searchParams.get('lang') || '';
     const level = (searchParams.get('level') as Level) || '';
     const interest = (searchParams.get('interest') as Interest) || '';
 
-    if (lang || level || interest) {
-      const restored: QuizState = {
-        lang: lang
-          ? TOP_LANGUAGES.find(l => l.toLowerCase() === lang.toLowerCase()) || lang
-          : '',
-        level,
-        interest,
-      };
-      setQuiz(restored);
-      if (lang && level && interest) {
-        setStep('results');
-        fetchIssues(restored);
-      } else if (lang && level) {
-        setStep(3);
-      } else if (lang) {
-        setStep(2);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (!lang && !level && !interest) return;
 
-  async function fetchIssues(q: QuizState) {
-    setLoading(true);
-    setError('');
-    try {
-      const res = await fetch(buildApiUrl(q.lang, q.interest));
-      if (!res.ok) throw new Error('Failed to fetch');
-      const data = await res.json();
-      const allIssues: Issue[] = data.issues || [];
-      setIssues(allIssues.slice(0, 10));
-    } catch {
-      setError('Could not load issues. Please try again.');
-    } finally {
-      setLoading(false);
+    const restored: QuizState = {
+      lang: lang
+        ? (TOP_15_LANGUAGES.find(l => l.toLowerCase() === lang.toLowerCase()) ?? lang)
+        : '',
+      level,
+      interest,
+    };
+    setQuiz(restored);
+    if (lang && level && interest) {
+      setStep('results');
+      fetchIssues(restored);
+    } else if (lang && level) {
+      setStep(3);
+    } else if (lang) {
+      setStep(2);
     }
-  }
+  }, [searchParams, fetchIssues]);
 
   function handleLangSelect(lang: string) {
     const next = { ...quiz, lang };
@@ -311,7 +305,7 @@ export default function QuizClient() {
             We will find issues in projects that use your language.
           </p>
           <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
-            {TOP_LANGUAGES.map(lang => (
+            {TOP_15_LANGUAGES.map(lang => (
               <button
                 key={lang}
                 onClick={() => handleLangSelect(lang)}
@@ -334,7 +328,7 @@ export default function QuizClient() {
             This helps us calibrate the difficulty of recommended issues.
           </p>
           <div className="space-y-3">
-            {LEVEL_OPTIONS.map(opt => (
+            {levelOptions.map(opt => (
               <button
                 key={opt.value}
                 onClick={() => handleLevelSelect(opt.value)}
@@ -364,7 +358,7 @@ export default function QuizClient() {
             Pick the area where you would like to make your first impact.
           </p>
           <div className="grid sm:grid-cols-2 gap-3">
-            {INTEREST_OPTIONS.map(opt => (
+            {interestOptions.map(opt => (
               <button
                 key={opt.value}
                 onClick={() => handleInterestSelect(opt.value)}
@@ -425,7 +419,7 @@ export default function QuizClient() {
                     {' '}
                     &middot;{' '}
                     <span className="text-foreground font-medium capitalize">
-                      {INTEREST_OPTIONS.find(o => o.value === quiz.interest)?.label}
+                      {interestOptions.find(o => o.value === quiz.interest)?.label}
                     </span>
                   </>
                 )}

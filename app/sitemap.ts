@@ -1,28 +1,11 @@
 import { MetadataRoute } from 'next';
-
-const TOP_15_LANGUAGES = [
-  'javascript',
-  'typescript',
-  'python',
-  'go',
-  'rust',
-  'java',
-  'c++',
-  'c#',
-  'ruby',
-  'php',
-  'swift',
-  'kotlin',
-  'dart',
-  'scala',
-  'elixir',
-];
+import { TOP_15_LANGUAGES } from '@/app/lib/findFirstIssue';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://pickssue.dev';
 
   const findFirstIssueUrls: MetadataRoute.Sitemap = TOP_15_LANGUAGES.map(lang => ({
-    url: `${baseUrl}/find-your-first-issue?lang=${lang}`,
+    url: `${baseUrl}/find-your-first-issue?lang=${lang.toLowerCase()}`,
     changeFrequency: 'weekly' as const,
     priority: 0.8,
   }));
