@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
 import { Issue, Label } from '../types';
 import { FaGithub, FaClock, FaStar, FaCodeBranch } from 'react-icons/fa';
 import {
@@ -339,9 +340,12 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
           </div>
 
           <div className="flex flex-col items-end ml-3 shrink-0 text-xs text-muted-foreground gap-1">
-            <span className="font-mono text-foreground/70">
+            <Link
+              href={`/repos/${issue.repository.owner}/${issue.repository.name}`}
+              className="font-mono text-foreground/70 hover:text-primary transition-colors"
+            >
               {issue.repository.owner}/{issue.repository.name}
-            </span>
+            </Link>
             <div className="flex items-center gap-2">
               {issue.repository.stargazersCount !== undefined && (
                 <span className="inline-flex items-center gap-0.5">
@@ -423,7 +427,13 @@ const IssueItem: React.FC<IssueItemProps> = ({ issue, compact = false }) => {
           <div className="flex items-center mt-3 text-sm text-muted-foreground flex-wrap gap-y-1">
             <div className="flex items-center mr-4">
               <span className="text-xs font-mono">
-                {issue.repository.owner}/{issue.repository.name} #{issue.number}
+                <Link
+                  href={`/repos/${issue.repository.owner}/${issue.repository.name}`}
+                  className="hover:text-primary transition-colors"
+                >
+                  {issue.repository.owner}/{issue.repository.name}
+                </Link>{' '}
+                #{issue.number}
               </span>
             </div>
 

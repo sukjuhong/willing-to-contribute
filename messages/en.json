@@ -389,6 +389,19 @@
     "useGistDesc": "Use the repository list from your cloud backup",
     "combineDesc": "Combine both repository lists"
   },
+  "repoLanding": {
+    "heading": "Contribute to {owner}/{name} on Pickssue",
+    "metaTitle": "Contribute to {owner}/{name} - Beginner-Friendly Issues",
+    "metaDescription": "Discover beginner-friendly issues, contributor tips, and maintainer responsiveness for {owner}/{name} on Pickssue.",
+    "issuesHeading": "Beginner-Friendly Issues",
+    "noIssues": "No picked issues found for this repository yet.",
+    "tipsHeading": "Contributor Tips",
+    "noTips": "No contributor tips yet for this repository.",
+    "tipsSortPopular": "Popular",
+    "tipsSortRecent": "Recent",
+    "ctaDesc": "Find more beginner-friendly issues across all repositories.",
+    "ctaLink": "Browse all issues on Pickssue"
+  },
   "tips": {
     "toggle": "Tips",
     "add": "Add a tip",
