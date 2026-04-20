@@ -30,7 +30,9 @@ const INTEREST_LABEL_MAP: Record<Interest, string> = {
 function buildApiUrl(lang: string, interest: Interest | ''): string {
   const params = new URLSearchParams();
   if (lang) params.set('language', lang);
-  if (interest) params.set('label', INTEREST_LABEL_MAP[interest as Interest]);
+  if (interest && INTEREST_LABEL_MAP[interest]) {
+    params.set('label', INTEREST_LABEL_MAP[interest]);
+  }
   params.set('minStars', '500');
   params.set('freshness', '3m');
   return `/api/recommended?${params.toString()}`;
@@ -231,8 +233,9 @@ export default function QuizClient() {
     const next = { ...quiz, interest };
     setQuiz(next);
     setStep('results');
+    // URL update below triggers the useEffect that invokes fetchIssues
+    // with an AbortSignal, avoiding duplicate requests and race conditions.
     updateUrl(next);
-    fetchIssues(next);
   }
 
   function updateUrl(q: Partial<QuizState>) {
