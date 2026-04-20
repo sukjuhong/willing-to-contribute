@@ -389,6 +389,19 @@
     "useGistDesc": "클라우드 저장소 목록을 사용합니다",
     "combineDesc": "두 저장소 목록을 합칩니다"
   },
+  "repoLanding": {
+    "heading": "Pickssue에서 {owner}/{name} 기여하기",
+    "metaTitle": "{owner}/{name} 기여하기 - 입문자 이슈 모음",
+    "metaDescription": "Pickssue에서 {owner}/{name}의 입문자 친화적 이슈, 기여 팁, 메인테이너 응답성을 확인하세요.",
+    "issuesHeading": "입문자 친화 이슈",
+    "noIssues": "이 저장소에 아직 픽된 이슈가 없습니다.",
+    "tipsHeading": "기여 팁",
+    "noTips": "이 저장소에 아직 기여 팁이 없습니다.",
+    "tipsSortPopular": "인기순",
+    "tipsSortRecent": "최신순",
+    "ctaDesc": "모든 저장소의 입문자 친화 이슈를 찾아보세요.",
+    "ctaLink": "Pickssue에서 이슈 둘러보기"
+  },
   "tips": {
     "toggle": "기여 팁",
     "add": "팁 작성",
