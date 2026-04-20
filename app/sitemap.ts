@@ -18,11 +18,10 @@ async function getTopPickedRepos(
       .from('picked_issues_counts')
       .select('repository_owner, repository_name, pick_count')
       .order('pick_count', { ascending: false })
-      .limit(limit);
+      .limit(limit * 5);
 
     if (!data) return [];
 
-    // Deduplicate repos
     const seen = new Set<string>();
     const repos: { owner: string; name: string }[] = [];
     for (const row of data as PickedIssueCountRow[]) {
@@ -30,6 +29,7 @@ async function getTopPickedRepos(
       if (!seen.has(key)) {
         seen.add(key);
         repos.push({ owner: row.repository_owner, name: row.repository_name });
+        if (repos.length >= limit) break;
       }
     }
     return repos;

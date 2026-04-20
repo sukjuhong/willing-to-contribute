@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/app/lib/supabase/server';
+import { calculateMaintainerScore } from '@/app/api/recommended/maintainerScore';
 import { MaintainerScore } from '@/app/types';
 import RepoLandingClient from './RepoLandingClient';
 
@@ -54,27 +55,15 @@ async function fetchMaintainerScore(
   owner: string,
   repo: string,
 ): Promise<MaintainerScoreData | null> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://pickssue.dev';
   try {
-    const res = await fetch(`${baseUrl}/api/v1/score/${owner}/${repo}`, {
-      next: { revalidate: 21600 },
-    });
-    if (!res.ok) return null;
-    const data = (await res.json()) as {
-      owner: string;
-      repo: string;
-      grade: 'A' | 'B' | 'C';
-      avgResponseTimeHours: number;
-      avgMergeTimeHours: number;
-      mergeRate: number;
-    };
+    const score = await calculateMaintainerScore(owner, repo);
     return {
-      owner: data.owner,
-      repo: data.repo,
-      grade: data.grade,
-      avgResponseTimeHours: data.avgResponseTimeHours,
-      avgMergeTimeHours: data.avgMergeTimeHours,
-      mergeRate: data.mergeRate,
+      owner,
+      repo,
+      grade: score.grade,
+      avgResponseTimeHours: score.avgResponseTimeHours,
+      avgMergeTimeHours: score.avgMergeTimeHours,
+      mergeRate: score.mergeRate,
     };
   } catch {
     return null;
@@ -87,7 +76,9 @@ async function fetchRepoData(owner: string, repoName: string) {
   // Fetch top issues by pick count
   const { data: issuesData } = await supabase
     .from('picked_issues_counts')
-    .select('issue_url, repository_owner, repository_name, title, pick_count')
+    .select(
+      'issue_url, issue_number, repository_owner, repository_name, title, pick_count',
+    )
     .eq('repository_owner', owner)
     .eq('repository_name', repoName)
     .order('pick_count', { ascending: false })
@@ -124,7 +115,7 @@ async function fetchRepoData(owner: string, repoName: string) {
 
   const issues: RepoIssue[] = ((issuesData as PickedIssueRow[] | null) ?? []).map(r => ({
     issueUrl: r.issue_url,
-    issueNumber: Number(r.issue_url.split('/').pop() ?? r.issue_number ?? 0),
+    issueNumber: Number(r.issue_number ?? r.issue_url.split('/').pop() ?? 0),
     title: r.title,
     labels: [],
     pickCount: Number(r.pick_count),
@@ -194,7 +185,9 @@ export default async function RepoLandingPage({ params }: PageProps) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c'),
+        }}
       />
       <RepoLandingClient
         owner={owner}
