@@ -1,0 +1,17 @@
+export const TOP_15_LANGUAGES = [
+  'JavaScript',
+  'TypeScript',
+  'Python',
+  'Go',
+  'Rust',
+  'Java',
+  'C++',
+  'C#',
+  'Ruby',
+  'PHP',
+  'Swift',
+  'Kotlin',
+  'Dart',
+  'Scala',
+  'Elixir',
+] as const;

@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next';
 import { createClient } from '@/app/lib/supabase/server';
+import { TOP_15_LANGUAGES } from '@/app/lib/findFirstIssue';
 
 const BASE_URL = 'https://pickssue.dev';
 
@@ -48,6 +49,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
+  const findFirstIssueUrls: MetadataRoute.Sitemap = TOP_15_LANGUAGES.map(lang => ({
+    url: `${baseUrl}/find-your-first-issue?lang=${lang.toLowerCase()}`,
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
+  }));
+
   return [
     {
       url: baseUrl,
@@ -55,6 +62,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly',
       priority: 1,
     },
+    {
+      url: `${baseUrl}/find-your-first-issue`,
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    ...findFirstIssueUrls,
     {
       url: `${baseUrl}/about`,
       changeFrequency: 'monthly',
