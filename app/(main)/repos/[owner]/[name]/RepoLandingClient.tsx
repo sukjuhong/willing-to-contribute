@@ -44,9 +44,7 @@ export default function RepoLandingClient({
   const sortedTips =
     tipSort === 'popular'
       ? [...tips].sort((a, b) => b.likeCount - a.likeCount)
-      : [...tips].sort(
-          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-        );
+      : [...tips].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 
   return (
     <div className="space-y-8 max-w-3xl mx-auto">

@@ -115,7 +115,9 @@ async function fetchRepoData(owner: string, repoName: string) {
 
   const issues: RepoIssue[] = ((issuesData as PickedIssueRow[] | null) ?? []).map(r => ({
     issueUrl: r.issue_url,
-    issueNumber: Number(r.issue_number ?? r.issue_url.split('/').pop() ?? 0),
+    issueNumber: Number(
+      r.issue_number ?? r.issue_url.replace(/\/$/, '').split('/').pop() ?? 0,
+    ),
     title: r.title,
     labels: [],
     pickCount: Number(r.pick_count),
