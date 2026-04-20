@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { FaGithub, FaBookmark } from 'react-icons/fa';
@@ -41,10 +41,13 @@ export default function RepoLandingClient({
   const { locale } = useLocaleSwitch();
   const [tipSort, setTipSort] = useState<TipSort>('popular');
 
-  const sortedTips =
-    tipSort === 'popular'
-      ? [...tips].sort((a, b) => b.likeCount - a.likeCount)
-      : [...tips].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  const sortedTips = useMemo(
+    () =>
+      tipSort === 'popular'
+        ? [...tips].sort((a, b) => b.likeCount - a.likeCount)
+        : [...tips].sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
+    [tips, tipSort],
+  );
 
   return (
     <div className="space-y-8 max-w-3xl mx-auto">

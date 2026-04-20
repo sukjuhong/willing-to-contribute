@@ -84,34 +84,16 @@ async function fetchRepoData(owner: string, repoName: string) {
     .order('pick_count', { ascending: false })
     .limit(20);
 
-  // Fetch visible tips for this repo's issues
-  // We get all issue_urls for this repo first, then fetch tips
-  const issueUrls = (issuesData as PickedIssueRow[] | null)?.map(r => r.issue_url) ?? [];
-
-  let tipsData: IssueTipRow[] = [];
-  if (issueUrls.length > 0) {
-    const { data } = await supabase
-      .from('issue_tips')
-      .select('id, issue_url, content, like_count, created_at')
-      .in('issue_url', issueUrls)
-      .is('hidden_at', null)
-      .order('like_count', { ascending: false })
-      .limit(50);
-    tipsData = (data as IssueTipRow[] | null) ?? [];
-  }
-
-  // Also fetch tips for issues not in picked list (by repo URL pattern)
-  if (issueUrls.length === 0) {
-    const repoUrlPattern = `https://github.com/${owner}/${repoName}/issues/`;
-    const { data } = await supabase
-      .from('issue_tips')
-      .select('id, issue_url, content, like_count, created_at')
-      .like('issue_url', `${repoUrlPattern}%`)
-      .is('hidden_at', null)
-      .order('like_count', { ascending: false })
-      .limit(50);
-    tipsData = (data as IssueTipRow[] | null) ?? [];
-  }
+  // Fetch all visible tips for this repo (by repo URL pattern) regardless of pick state
+  const repoUrlPattern = `https://github.com/${owner}/${repoName}/issues/`;
+  const { data: tipsRaw } = await supabase
+    .from('issue_tips')
+    .select('id, issue_url, content, like_count, created_at')
+    .like('issue_url', `${repoUrlPattern}%`)
+    .is('hidden_at', null)
+    .order('like_count', { ascending: false })
+    .limit(50);
+  const tipsData: IssueTipRow[] = (tipsRaw as IssueTipRow[] | null) ?? [];
 
   const issues: RepoIssue[] = ((issuesData as PickedIssueRow[] | null) ?? []).map(r => ({
     issueUrl: r.issue_url,
@@ -169,8 +151,10 @@ export default async function RepoLandingPage({ params }: PageProps) {
     fetchMaintainerScore(owner, name),
   ]);
 
-  // If no data at all, show 404
-  if (issues.length === 0 && tips.length === 0 && !maintainerScore) {
+  // If there's no Pickssue-unique data for this repo, show 404.
+  // maintainerScore is always truthy due to FALLBACK_SCORE in calculateMaintainerScore,
+  // so only issues/tips determine whether the repo is worth a landing page.
+  if (issues.length === 0 && tips.length === 0) {
     notFound();
   }
 
