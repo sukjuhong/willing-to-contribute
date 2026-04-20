@@ -422,7 +422,12 @@
     "ctaButton": "GitHub로 로그인",
     "noIssues": "이 조합으로는 이슈를 찾을 수 없습니다. 다른 조건을 선택해보세요.",
     "loadError": "이슈를 불러오지 못했습니다. 다시 시도해주세요.",
-    "retry": "재시도"
+    "retry": "재시도",
+    "stepLabelLanguage": "언어",
+    "stepLabelExperience": "경험",
+    "stepLabelInterest": "관심 분야",
+    "stepLabelResults": "추천 결과",
+    "shareTitle": "첫 오픈소스 이슈 추천"
   },
   "tips": {
     "toggle": "기여 팁",

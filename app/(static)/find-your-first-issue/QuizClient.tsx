@@ -20,22 +20,6 @@ interface QuizState {
   interest: Interest | '';
 }
 
-const LEVEL_VALUES: Level[] = ['beginner', 'some-oss', 'regular'];
-const INTEREST_VALUES: Interest[] = ['docs', 'bug', 'feature', 'ui'];
-
-const LEVEL_KEY_MAP: Record<Level, { label: string; desc: string }> = {
-  beginner: { label: 'levelBeginner', desc: 'levelBeginnerDesc' },
-  'some-oss': { label: 'levelSomeOss', desc: 'levelSomeOssDesc' },
-  regular: { label: 'levelRegular', desc: 'levelRegularDesc' },
-};
-
-const INTEREST_KEY_MAP: Record<Interest, { label: string; desc: string }> = {
-  docs: { label: 'interestDocs', desc: 'interestDocsDesc' },
-  bug: { label: 'interestBug', desc: 'interestBugDesc' },
-  feature: { label: 'interestFeature', desc: 'interestFeatureDesc' },
-  ui: { label: 'interestUi', desc: 'interestUiDesc' },
-};
-
 const INTEREST_LABEL_MAP: Record<Interest, string> = {
   docs: 'documentation',
   bug: 'bug',
@@ -140,39 +124,60 @@ export default function QuizClient() {
   const [copied, setCopied] = useState(false);
 
   const levelOptions = useMemo(
-    () =>
-      LEVEL_VALUES.map(value => ({
-        value,
-        label: t(LEVEL_KEY_MAP[value].label),
-        desc: t(LEVEL_KEY_MAP[value].desc),
-      })),
+    () => [
+      {
+        value: 'beginner' as Level,
+        label: t('levelBeginner'),
+        desc: t('levelBeginnerDesc'),
+      },
+      {
+        value: 'some-oss' as Level,
+        label: t('levelSomeOss'),
+        desc: t('levelSomeOssDesc'),
+      },
+      {
+        value: 'regular' as Level,
+        label: t('levelRegular'),
+        desc: t('levelRegularDesc'),
+      },
+    ],
     [t],
   );
 
   const interestOptions = useMemo(
-    () =>
-      INTEREST_VALUES.map(value => ({
-        value,
-        label: t(INTEREST_KEY_MAP[value].label),
-        desc: t(INTEREST_KEY_MAP[value].desc),
-      })),
+    () => [
+      {
+        value: 'docs' as Interest,
+        label: t('interestDocs'),
+        desc: t('interestDocsDesc'),
+      },
+      { value: 'bug' as Interest, label: t('interestBug'), desc: t('interestBugDesc') },
+      {
+        value: 'feature' as Interest,
+        label: t('interestFeature'),
+        desc: t('interestFeatureDesc'),
+      },
+      { value: 'ui' as Interest, label: t('interestUi'), desc: t('interestUiDesc') },
+    ],
     [t],
   );
 
   const fetchIssues = useCallback(
-    async (q: QuizState) => {
+    async (q: QuizState, signal?: AbortSignal) => {
       setLoading(true);
       setError('');
       try {
-        const res = await fetch(buildApiUrl(q.lang, q.interest));
+        const res = await fetch(buildApiUrl(q.lang, q.interest), { signal });
         if (!res.ok) throw new Error('Failed to fetch');
         const data = await res.json();
+        if (signal?.aborted) return;
         const allIssues: Issue[] = data.issues || [];
         setIssues(allIssues.slice(0, 10));
-      } catch {
+      } catch (err) {
+        if ((err as Error).name === 'AbortError') return;
         setError(t('loadError'));
       } finally {
-        setLoading(false);
+        if (!signal?.aborted) setLoading(false);
       }
     },
     [t],
@@ -186,6 +191,8 @@ export default function QuizClient() {
 
     if (!lang && !level && !interest) return;
 
+    const controller = new AbortController();
+
     const restored: QuizState = {
       lang: lang
         ? (TOP_15_LANGUAGES.find(l => l.toLowerCase() === lang.toLowerCase()) ?? lang)
@@ -196,12 +203,14 @@ export default function QuizClient() {
     setQuiz(restored);
     if (lang && level && interest) {
       setStep('results');
-      fetchIssues(restored);
+      fetchIssues(restored, controller.signal);
     } else if (lang && level) {
       setStep(3);
     } else if (lang) {
       setStep(2);
     }
+
+    return () => controller.abort();
   }, [searchParams, fetchIssues]);
 
   function handleLangSelect(lang: string) {
@@ -246,7 +255,7 @@ export default function QuizClient() {
     const url = buildShareUrl(quiz);
     if (typeof navigator !== 'undefined' && navigator.share) {
       try {
-        await navigator.share({ title: 'My first open source issue picks', url });
+        await navigator.share({ title: t('shareTitle'), url });
       } catch {
         // cancelled
       }
@@ -261,7 +270,12 @@ export default function QuizClient() {
     }
   }
 
-  const stepLabels = ['Language', 'Experience', 'Interest', 'Results'];
+  const stepLabels = [
+    t('stepLabelLanguage'),
+    t('stepLabelExperience'),
+    t('stepLabelInterest'),
+    t('stepLabelResults'),
+  ];
   const currentStepIndex = step === 'results' ? 3 : (step as number) - 1;
 
   return (
@@ -298,12 +312,8 @@ export default function QuizClient() {
       {/* Step 1: Language */}
       {step === 1 && (
         <div>
-          <h2 className="text-xl font-bold text-foreground mb-2">
-            What is your primary programming language?
-          </h2>
-          <p className="text-sm text-muted-foreground mb-6">
-            We will find issues in projects that use your language.
-          </p>
+          <h2 className="text-xl font-bold text-foreground mb-2">{t('step1Title')}</h2>
+          <p className="text-sm text-muted-foreground mb-6">{t('step1Desc')}</p>
           <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
             {TOP_15_LANGUAGES.map(lang => (
               <button
@@ -321,12 +331,8 @@ export default function QuizClient() {
       {/* Step 2: Experience Level */}
       {step === 2 && (
         <div>
-          <h2 className="text-xl font-bold text-foreground mb-2">
-            What is your open source experience level?
-          </h2>
-          <p className="text-sm text-muted-foreground mb-6">
-            This helps us calibrate the difficulty of recommended issues.
-          </p>
+          <h2 className="text-xl font-bold text-foreground mb-2">{t('step2Title')}</h2>
+          <p className="text-sm text-muted-foreground mb-6">{t('step2Desc')}</p>
           <div className="space-y-3">
             {levelOptions.map(opt => (
               <button
@@ -343,7 +349,7 @@ export default function QuizClient() {
             onClick={() => setStep(1)}
             className="mt-4 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            Back
+            {t('back')}
           </button>
         </div>
       )}
@@ -351,12 +357,8 @@ export default function QuizClient() {
       {/* Step 3: Interest */}
       {step === 3 && (
         <div>
-          <h2 className="text-xl font-bold text-foreground mb-2">
-            What type of contribution interests you?
-          </h2>
-          <p className="text-sm text-muted-foreground mb-6">
-            Pick the area where you would like to make your first impact.
-          </p>
+          <h2 className="text-xl font-bold text-foreground mb-2">{t('step3Title')}</h2>
+          <p className="text-sm text-muted-foreground mb-6">{t('step3Desc')}</p>
           <div className="grid sm:grid-cols-2 gap-3">
             {interestOptions.map(opt => (
               <button
@@ -373,7 +375,7 @@ export default function QuizClient() {
             onClick={() => setStep(2)}
             className="mt-4 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            Back
+            {t('back')}
           </button>
         </div>
       )}
@@ -382,7 +384,7 @@ export default function QuizClient() {
       {step === 'results' && (
         <div>
           <div className="flex items-center justify-between mb-2">
-            <h2 className="text-xl font-bold text-foreground">Your Recommended Issues</h2>
+            <h2 className="text-xl font-bold text-foreground">{t('resultsTitle')}</h2>
             <div className="flex items-center gap-2">
               <button
                 onClick={handleShare}
@@ -392,12 +394,12 @@ export default function QuizClient() {
                 {copied ? (
                   <>
                     <LuCheck className="size-3.5 text-primary" />
-                    <span>Copied!</span>
+                    <span>{t('copied')}</span>
                   </>
                 ) : (
                   <>
                     <LuShare2 className="size-3.5" />
-                    <span>Share</span>
+                    <span>{t('share')}</span>
                   </>
                 )}
               </button>
@@ -405,7 +407,7 @@ export default function QuizClient() {
                 onClick={handleRestart}
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                Retake quiz
+                {t('retake')}
               </button>
             </div>
           </div>
@@ -445,15 +447,13 @@ export default function QuizClient() {
                 onClick={() => fetchIssues(quiz)}
                 className="ml-3 underline hover:no-underline"
               >
-                Retry
+                {t('retry')}
               </button>
             </div>
           )}
 
           {!loading && !error && issues.length === 0 && (
-            <p className="mt-4 text-muted-foreground text-sm">
-              No issues found for this combination. Try different filters.
-            </p>
+            <p className="mt-4 text-muted-foreground text-sm">{t('noIssues')}</p>
           )}
 
           {!loading && issues.length > 0 && (
@@ -467,18 +467,17 @@ export default function QuizClient() {
               {/* CTA */}
               <div className="mt-8 p-6 rounded-xl bg-card border border-primary/20 text-center">
                 <h3 className="text-lg font-bold text-foreground mb-2">
-                  Save these to your Pickssue list
+                  {t('ctaTitle')}
                 </h3>
                 <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
-                  Sign in with GitHub to bookmark issues, track their status, and get
-                  notified when they change.
+                  {t('ctaDesc')}
                 </p>
                 <Link
                   href="/issues"
                   className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-2.5 rounded-lg transition-colors text-sm"
                 >
                   <FaGithub className="size-4" />
-                  Sign in with GitHub
+                  {t('ctaButton')}
                 </Link>
               </div>
             </>

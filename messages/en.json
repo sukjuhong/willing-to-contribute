@@ -422,7 +422,12 @@
     "ctaButton": "Sign in with GitHub",
     "noIssues": "No issues found for this combination. Try different filters.",
     "loadError": "Could not load issues. Please try again.",
-    "retry": "Retry"
+    "retry": "Retry",
+    "stepLabelLanguage": "Language",
+    "stepLabelExperience": "Experience",
+    "stepLabelInterest": "Interest",
+    "stepLabelResults": "Results",
+    "shareTitle": "My first open source issue picks"
   },
   "tips": {
     "toggle": "Tips",
